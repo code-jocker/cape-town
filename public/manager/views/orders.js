@@ -12,7 +12,7 @@ export async function render(root) {
   try {
     const s = await api('/api/settings');
     state.currency = s.currency || 'RWF';
-  } catch {}
+  } catch (e) {}
 
   const toolbar = el(
     'div',
@@ -96,7 +96,7 @@ function drawTable(table, orders) {
         'tr',
         {},
         el('td', { text: o.orderNumber }),
-        el('td', { text: `T${o.table?.number ?? '?'}` }),
+        el('td', { text: `T${(o.table && o.table.number != null ? o.table.number : '?')}` }),
         el('td', { text: count }),
         el('td', { text: money(o.total, state.currency) }),
         el('td', {}, statusBadge(o.status)),
@@ -127,13 +127,13 @@ async function viewOrder(id) {
     const body = el(
       'div',
       {},
-      el('div', { class: 'row-between', style: 'margin-bottom:10px' }, el('strong', { text: `${o.orderNumber} · Table ${o.table?.number ?? '?'}` }), statusBadge(o.status)),
+      el('div', { class: 'row-between', style: 'margin-bottom:10px' }, el('strong', { text: `${o.orderNumber} · Table ${(o.table && o.table.number != null ? o.table.number : '?')}` }), statusBadge(o.status)),
       el(
         'ul',
         { class: 'w-items' },
         (o.items || []).map((i) => {
           const opts = (i.selectedOptions || []).flatMap((x) => x.choices.map((c) => c.label));
-          return el('li', { text: `${i.quantity}× ${i.nameSnapshot?.en || ''}${opts.length ? ' · ' + opts.join(', ') : ''}${i.note ? ' · ' + i.note : ''}` });
+          return el('li', { text: `${i.quantity}× ${(i.nameSnapshot && i.nameSnapshot.en) || ''}${opts.length ? ' · ' + opts.join(', ') : ''}${i.note ? ' · ' + i.note : ''}` });
         })
       ),
       el('hr'),

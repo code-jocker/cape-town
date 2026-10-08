@@ -4,8 +4,8 @@
    ============================================================ */
 
 :root {
-  --color-primary: #c75b2a;
-  --color-primary-dark: #a0471f;
+  --color-primary: #b84d1e;
+  --color-primary-dark: #963d18;
   --color-primary-soft: #fbe9e1;
   --color-on-primary: #ffffff;
   --color-header-label: #ffe8d1;
@@ -29,30 +29,80 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --color-bg: #141110;
-    --color-surface: #231e1b;
-    --color-text: #f5f5f5;
-    --color-text-muted: #b9ada6;
-    --color-divider: #3a322e;
-    --color-primary: #b8682d;
-    --color-primary-dark: #9a5322;
-    --color-primary-soft: #35281f;
-    --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.4);
-  }
+[data-theme='dark'] {
+  --color-bg: #1a1512;
+  --color-surface: #26211d;
+  --color-text: #fefcfa;
+  --color-text-muted: #b8b0a8;
+  --color-divider: #3d352e;
+  --color-primary: #e07b4a;
+  --color-primary-dark: #c75b2a;
+  --color-primary-soft: #3d2d26;
+  --color-on-primary: #1a1512;
+  --color-header-label: #8b6b52;
+  --color-fab: #fefcfa;
+  --color-success: #66bb6a;
+  --color-warning: #ffb74d;
+  --color-danger: #ef5350;
 }
 
-[data-theme='dark'] {
-  --color-bg: #141110;
-  --color-surface: #231e1b;
-  --color-text: #f5f5f5;
-  --color-text-muted: #b9ada6;
-  --color-divider: #3a322e;
-  --color-primary: #b8682d;
-  --color-primary-dark: #9a5322;
-  --color-primary-soft: #35281f;
-  --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.4);
+:root {
+  --color-primary-50: #fff4f0;
+  --color-primary-100: #fbe9e1;
+  --color-primary-200: #f3c9b8;
+  --color-primary-300: #e6a082;
+  --color-primary-400: #d6734d;
+  --color-primary-500: #c75b2a;
+  --color-primary-600: #b84d1e;
+  --color-primary-700: #963d18;
+  --color-primary-800: #773014;
+  --color-primary-900: #5f2610;
+
+  --color-success-50: #e8f5e9;
+  --color-success-100: #c8e6c9;
+  --color-success-200: #a5d6a7;
+  --color-success-300: #81c784;
+  --color-success-400: #66bb6a;
+  --color-success-500: #4caf50;
+  --color-success-600: #43a047;
+  --color-success-700: #388e3c;
+  --color-success-800: #2e7d32;
+  --color-success-900: #1b5e20;
+
+  --color-warning-50: #fff8e1;
+  --color-warning-100: #ffecb3;
+  --color-warning-200: #ffe082;
+  --color-warning-300: #ffd54f;
+  --color-warning-400: #ffca28;
+  --color-warning-500: #ffc107;
+  --color-warning-600: #ffb300;
+  --color-warning-700: #ffa000;
+  --color-warning-800: #ff8f00;
+  --color-warning-900: #ff6f00;
+
+  --color-danger-50: #fbe9e9;
+  --color-danger-100: #ffcdd2;
+  --color-danger-200: #ef9a9a;
+  --color-danger-300: #e57373;
+  --color-danger-400: #ef5350;
+  --color-danger-500: #f44336;
+  --color-danger-600: #e53935;
+  --color-danger-700: #d32f2f;
+  --color-danger-800: #c62828;
+  --color-danger-900: #b71c1c;
+
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #eeeeee;
+  --color-neutral-300: #e0e0e0;
+  --color-neutral-400: #bdbdbd;
+  --color-neutral-500: #9e9e9e;
+  --color-neutral-600: #757575;
+  --color-neutral-700: #616161;
+  --color-neutral-800: #424242;
+  --color-neutral-900: #212121;
+  --color-neutral-950: #0a0a0a;
 }
 
 * {
@@ -255,28 +305,44 @@ h3 {
   border-radius: var(--radius-pill);
   font-size: 12px;
   font-weight: 700;
-  background: var(--color-primary-soft);
-  color: var(--color-primary-dark);
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
 }
 
 .badge-success {
-  background: #e6f2e7;
-  color: var(--color-success);
+  background: var(--color-success-100);
+  color: var(--color-success-700);
 }
 
 .badge-danger {
-  background: #fbe9e9;
-  color: var(--color-danger);
+  background: var(--color-danger-100);
+  color: var(--color-danger-700);
 }
 
 .badge-warning {
-  background: #fdf3e0;
-  color: #92610a;
+  background: var(--color-warning-100);
+  color: var(--color-warning-800);
 }
 
-[data-theme='dark'] .badge-success { background: #1d331e; }
-[data-theme='dark'] .badge-danger { background: #3a1c1c; }
-[data-theme='dark'] .badge-warning { background: #37290f; }
+[data-theme='dark'] .badge {
+  background: var(--color-primary-800);
+  color: var(--color-primary-200);
+}
+
+[data-theme='dark'] .badge-success {
+  background: var(--color-success-800);
+  color: var(--color-success-200);
+}
+
+[data-theme='dark'] .badge-danger {
+  background: var(--color-danger-800);
+  color: var(--color-danger-200);
+}
+
+[data-theme='dark'] .badge-warning {
+  background: var(--color-warning-800);
+  color: var(--color-warning-200);
+}
 
 /* ---------- Forms ---------- */
 .input,
@@ -321,7 +387,7 @@ label {
   text-align: center;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-on-primary);
   background: var(--color-danger);
   transform: translateY(-100%);
   transition: transform 0.2s ease;
@@ -333,7 +399,7 @@ label {
 
 .conn-banner.reconnecting {
   background: var(--color-warning);
-  color: #111;
+  color: var(--color-neutral-900);
 }
 
 /* ---------- Offline banner (customer app) ---------- */
@@ -344,7 +410,7 @@ label {
   font-weight: 700;
   font-size: 14px;
   background: var(--color-danger);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 .offline-banner.show {
@@ -507,6 +573,136 @@ label {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
+}
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-divider) transparent;
+}
+
+/* ---------- Mobile app safe areas ---------- */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+/* PWA standalone mode — hide browser chrome */
+@media (display-mode: standalone), (display-mode: minimal-ui) {
+  html, body {
+    background: var(--color-bg);
+  }
+  body {
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+  }
+}
+
+/* iOS status bar safe area */
+@supports (padding: max(0px)) {
+  body {
+    padding-top: max(var(--safe-top), env(safe-area-inset-top));
+    padding-bottom: max(var(--safe-bottom), env(safe-area-inset-bottom));
+    padding-left: max(var(--safe-left), env(safe-area-inset-left));
+    padding-right: max(var(--safe-right), env(safe-area-inset-right));
+  }
+}
+
+/* ---------- Touch-friendly: larger tap targets ---------- */
+@media (pointer: coarse) {
+  .btn, .chip, .tab, .fab, .add-btn, .stepper button, .opt-choice, .lang-btn, .search-btn, .sheet-close, .fab-item, .switch {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+/* ---------- Mobile: bottom sheet, tab bar ---------- */
+@media (max-width: 768px) {
+  .sheet {
+    border-radius: 20px 20px 0 0;
+    padding-bottom: calc(20px + var(--safe-bottom));
+  }
+  .sheet-backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+}
+
+/* Prevent zoom on input focus (iOS) */
+input, textarea, select {
+  font-size: 16px !important;
+}
+
+/* Smooth scroll for old browsers */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ---------- Browser update banner ---------- */
+#browser-update-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #b45309;
+  color: #fff;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 0.85rem;
+  z-index: 9999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding-bottom: calc(10px + var(--safe-bottom));
+}
+#browser-update-banner button {
+  background: rgba(255,255,255,0.2);
+  border: 0;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+/* ---------- Flex gap fallback for old Chrome (< v66) ---------- */
+.flex-gap-4 { gap: 4px; }
+.flex-gap-4 > *:not(:last-child) { margin-right: 4px; }
+.flex-gap-5 { gap: 5px; }
+.flex-gap-5 > *:not(:last-child) { margin-right: 5px; }
+.flex-gap-6 { gap: 6px; }
+.flex-gap-6 > *:not(:last-child) { margin-right: 6px; }
+.flex-gap-8 { gap: 8px; }
+.flex-gap-8 > *:not(:last-child) { margin-right: 8px; }
+.flex-gap-10 { gap: 10px; }
+.flex-gap-10 > *:not(:last-child) { margin-right: 10px; }
+.flex-gap-12 { gap: 12px; }
+.flex-gap-12 > *:not(:last-child) { margin-right: 12px; }
+.flex-gap-14 { gap: 14px; }
+.flex-gap-14 > *:not(:last-child) { margin-right: 14px; }
+.flex-gap-16 { gap: 16px; }
+.flex-gap-16 > *:not(:last-child) { margin-right: 16px; }
+.flex-gap-18 { gap: 18px; }
+.flex-gap-18 > *:not(:last-child) { margin-right: 18px; }
+.flex-gap-24 { gap: 24px; }
+.flex-gap-24 > *:not(:last-child) { margin-right: 24px; }
+
+/* Global fallback: any flex container with a gap value gets margin-right on children */
+@supports not (gap: 1px) {
+  .flex > *:not(:last-child) { margin-right: 8px; }
+}
+
+/* Fallback for browsers without :focus-visible (Chrome < 86) */
+.btn:focus,
+.chip:focus,
+.add-btn:focus,
+.stepper button:focus,
+.opt-choice:focus,
+.fab:focus,
+.lang-btn:focus,
+.search-btn:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* ---------- Focus visible ---------- */

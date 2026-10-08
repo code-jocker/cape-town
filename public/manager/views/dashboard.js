@@ -16,10 +16,10 @@ export async function render(root) {
   try {
     const s = await api('/api/settings');
     currency = s.currency || 'RWF';
-  } catch {}
+  } catch (e) {}
   try {
     stats = await api('/api/orders/stats/live');
-  } catch {}
+  } catch (e) {}
 
   const grid = el('div', { class: 'kpi-grid' });
   const cards = {
@@ -44,7 +44,7 @@ export async function render(root) {
     const from = new Date(Date.now() - 6 * 86400000);
     const rows = await api(`/api/reports/sales?from=${from.toISOString().slice(0, 10)}&to=${to.toISOString().slice(0, 10)}&group=day`);
     drawBars(bars, rows);
-  } catch {
+  } catch (e) {
     bars.append(el('div', { class: 'muted', text: 'No sales data yet.' }));
   }
 

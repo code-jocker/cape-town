@@ -6,6 +6,8 @@
   color: var(--color-text);
   display: flex;
   flex-direction: column;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
 }
 
 .w-head {
@@ -51,6 +53,7 @@
   color: #fff;
 }
 
+/* Desktop: top tabs */
 .w-tabs {
   display: flex;
   gap: 4px;
@@ -76,6 +79,7 @@
   justify-content: center;
   gap: 8px;
   transition: color 0.15s var(--ease), border-color 0.15s var(--ease), background 0.15s var(--ease);
+  min-height: 48px;
 }
 .tab:hover {
   color: var(--color-primary-dark);
@@ -103,6 +107,7 @@
   flex: 1;
   padding: 16px;
   background: var(--color-bg);
+  padding-bottom: calc(80px + var(--safe-bottom));
 }
 .view {
   display: none;
@@ -116,6 +121,43 @@
   padding: 50px 20px;
   font-size: 0.95rem;
   font-weight: 500;
+}
+
+/* Mobile: bottom tab bar */
+@media (max-width: 768px) {
+  .w-tabs {
+    display: none;
+  }
+  .w-main {
+    padding-bottom: calc(70px + var(--safe-bottom));
+  }
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    background: #fff;
+    border-top: 1px solid var(--color-divider);
+    z-index: 30;
+    padding-bottom: var(--safe-bottom);
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+  }
+  .tab-bar .tab {
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 4px 12px;
+    font-size: 0.72rem;
+    border-bottom: 2px solid transparent;
+  }
+  .tab-bar .tab .ico {
+    font-size: 1.3rem;
+  }
+  .tab-bar .tab.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+  }
 }
 
 .w-card {
@@ -303,7 +345,7 @@
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: #2a2320;
+  background: var(--color-text);
   color: #fff;
   padding: 10px 18px;
   border-radius: 999px;

@@ -12,7 +12,7 @@ export async function render(root) {
   try {
     const s = await api('/api/settings');
     currency = s.currency || 'RWF';
-  } catch {}
+  } catch (e) {}
   const toolbar = el('div', { class: 'toolbar' }, el('button', { class: 'btn btn-primary btn-sm', id: 'new-promo', text: '+ New promo' }));
   const panel = el('div', { class: 'panel' });
   const list = el('div', { id: 'promo-list' });
@@ -82,13 +82,13 @@ function draw(list) {
 }
 
 function promoEditor(p, list) {
-  const code = el('input', { class: 'input', value: p?.code || '', placeholder: 'WELCOME10' });
+  const code = el('input', { class: 'input', value: (p && p.code) || '', placeholder: 'WELCOME10' });
   const type = el('select', { class: 'input' });
-  for (const t of ['percent', 'fixed']) type.append(el('option', { value: t, text: t, selected: (p?.type || 'percent') === t }));
-  const value = el('input', { class: 'input', type: 'number', min: 0, value: p?.value ?? 10 });
-  const from = el('input', { class: 'input', type: 'date', value: p?.validFrom ? new Date(p.validFrom).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10) });
-  const to = el('input', { class: 'input', type: 'date', value: p?.validTo ? new Date(p.validTo).toISOString().slice(0, 10) : '' });
-  const maxUses = el('input', { class: 'input', type: 'number', min: 0, value: p?.maxUses ?? 0 });
+  for (const t of ['percent', 'fixed']) type.append(el('option', { value: t, text: t, selected: ((p && p.type) || 'percent') === t }));
+  const value = el('input', { class: 'input', type: 'number', min: 0, value: (p && p.value != null ? p.value : 10 )});
+  const from = el('input', { class: 'input', type: 'date', value: (p && p.validFrom) ? new Date(p.validFrom).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10) });
+  const to = el('input', { class: 'input', type: 'date', value: (p && p.validTo) ? new Date(p.validTo).toISOString().slice(0, 10) : '' });
+  const maxUses = el('input', { class: 'input', type: 'number', min: 0, value: (p && p.maxUses != null ? p.maxUses : 0 )});
   const active = el('input', { type: 'checkbox', checked: p ? p.isActive !== false : true });
 
   openModal({

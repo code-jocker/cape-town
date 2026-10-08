@@ -20,12 +20,12 @@ export async function render(root) {
     tagline: el('input', { class: 'input', value: s.tagline || '' }),
     location: el('input', { class: 'input', value: s.location || '' }),
     currency: el('input', { class: 'input', value: s.currency || 'RWF' }),
-    taxRate: el('input', { class: 'input', type: 'number', min: 0, max: 100, step: '0.1', value: s.taxRate ?? 0 }),
-    serviceCharge: el('input', { class: 'input', type: 'number', min: 0, max: 100, step: '0.1', value: s.serviceCharge ?? 0 }),
+    taxRate: el('input', { class: 'input', type: 'number', min: 0, max: 100, step: '0.1', value: (s.taxRate != null ? s.taxRate : 0 )}),
+    serviceCharge: el('input', { class: 'input', type: 'number', min: 0, max: 100, step: '0.1', value: (s.serviceCharge != null ? s.serviceCharge : 0 )}),
     announcement: el('textarea', { class: 'input', rows: 2, maxlength: 200 }, s.announcement || ''),
-    warnMin: el('input', { class: 'input', type: 'number', min: 1, max: 120, value: s.lateThresholds?.warnMin ?? 10 }),
-    lateMin: el('input', { class: 'input', type: 'number', min: 2, max: 240, value: s.lateThresholds?.lateMin ?? 20 }),
-    autoCloseHours: el('input', { class: 'input', type: 'number', min: 1, max: 48, value: s.autoCloseHours ?? 3 })
+    warnMin: el('input', { class: 'input', type: 'number', min: 1, max: 120, value: (s.lateThresholds && s.lateThresholds.warnMin != null ? s.lateThresholds.warnMin : 10 )}),
+    lateMin: el('input', { class: 'input', type: 'number', min: 2, max: 240, value: (s.lateThresholds && s.lateThresholds.lateMin != null ? s.lateThresholds.lateMin : 20 )}),
+    autoCloseHours: el('input', { class: 'input', type: 'number', min: 1, max: 48, value: (s.autoCloseHours != null ? s.autoCloseHours : 3 )})
   };
 
   const langs = {};

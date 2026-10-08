@@ -13,7 +13,7 @@ export async function render(root) {
   try {
     const s = await api('/api/settings');
     currency = s.currency || 'RWF';
-  } catch {}
+  } catch (e) {}
   await reload();
 
   const toolbar = el(
@@ -76,7 +76,7 @@ function drawCats(list) {
       el(
         'div',
         { class: 'stock-row', style: 'margin-bottom:6px' },
-        el('div', {}, el('div', { class: 'name', text: c.name?.en || '' }), el('div', { class: 'st', text: `${count} items · ${c.isActive ? 'active' : 'hidden'}` })),
+        el('div', {}, el('div', { class: 'name', text: (c.name && c.name.en) || '' }), el('div', { class: 'st', text: `${count} items · ${c.isActive ? 'active' : 'hidden'}` })),
         el(
           'div',
           { style: 'display:flex;gap:6px' },
@@ -113,14 +113,17 @@ function drawItems(list) {
   const tbl = el('table', { class: 'data-table' });
   tbl.append(el('thead', {}, el('tr', {}, ['', 'Name', 'Category', 'Price', 'Station', 'Available', ''].map((h) => el('th', { text: h })))));
   const tb = el('tbody');
-  const catName = (id) => categories.find((c) => String(c._id) === String(id))?.name?.en || '—';
+    const catName = (id) => {
+      const cat = categories.find((c) => String(c._id) === String(id));
+      return (cat && cat.name && cat.name.en) || '—';
+    };
   for (const i of items) {
     tb.append(
       el(
         'tr',
         {},
-        el('td', {}, i.image?.thumbUrl ? el('img', { class: 'thumb', src: i.image.thumbUrl, alt: '' }) : el('div', { class: 'thumb' })),
-        el('td', { text: i.name?.en || '' }),
+        el('td', {}, (i.image && i.image.thumbUrl) ? el('img', { class: 'thumb', src: i.image.thumbUrl, alt: '' }) : el('div', { class: 'thumb' })),
+        el('td', { text: (i.name && i.name.en) || '' }),
         el('td', { text: catName(i.category) }),
         el('td', { text: money(i.price, currency) }),
         el('td', { text: i.station }),
@@ -140,10 +143,10 @@ function drawItems(list) {
 
 /* ---------------- category editor ---------------- */
 function categoryEditor(cat) {
-  const en = el('input', { class: 'input', value: cat?.name?.en || '' });
-  const fr = el('input', { class: 'input', value: cat?.name?.fr || '' });
-  const rw = el('input', { class: 'input', value: cat?.name?.rw || '' });
-  const sort = el('input', { class: 'input', type: 'number', value: cat?.sortOrder ?? categories.length });
+  const en = el('input', { class: 'input', value: (cat && cat.name && cat.name.en) || '' });
+  const fr = el('input', { class: 'input', value: (cat && cat.name && cat.name.fr) || '' });
+  const rw = el('input', { class: 'input', value: (cat && cat.name && cat.name.rw) || '' });
+  const sort = el('input', { class: 'input', type: 'number', value: (cat && cat.sortOrder != null ? cat.sortOrder : categories.length )});
   const active = el('input', { type: 'checkbox', checked: cat ? cat.isActive !== false : true });
   const body = el(
     'div',
@@ -185,29 +188,29 @@ function categoryEditor(cat) {
 /* ---------------- item editor ---------------- */
 function itemEditor(item) {
   const f = {
-    en: el('input', { class: 'input', value: item?.name?.en || '' }),
-    fr: el('input', { class: 'input', value: item?.name?.fr || '' }),
-    rw: el('input', { class: 'input', value: item?.name?.rw || '' }),
-    descEn: el('textarea', { class: 'input', rows: 2 }, item?.description?.en || ''),
-    descFr: el('textarea', { class: 'input', rows: 2 }, item?.description?.fr || ''),
-    descRw: el('textarea', { class: 'input', rows: 2 }, item?.description?.rw || ''),
-    price: el('input', { class: 'input', type: 'number', min: 0, value: item?.price ?? 0 }),
+    en: el('input', { class: 'input', value: (item && item.name && item.name.en) || '' }),
+    fr: el('input', { class: 'input', value: (item && item.name && item.name.fr) || '' }),
+    rw: el('input', { class: 'input', value: (item && item.name && item.name.rw) || '' }),
+    descEn: el('textarea', { class: 'input', rows: 2 }, (item && item.description && item.description.en) || ''),
+    descFr: el('textarea', { class: 'input', rows: 2 }, (item && item.description && item.description.fr) || ''),
+    descRw: el('textarea', { class: 'input', rows: 2 }, (item && item.description && item.description.rw) || ''),
+    price: el('input', { class: 'input', type: 'number', min: 0, value: (item && item.price != null ? item.price : 0 )}),
     category: el('select', { class: 'input' }),
     station: el('select', { class: 'input' }),
-    prep: el('input', { class: 'input', type: 'number', min: 0, max: 180, value: item?.prepTimeMinutes ?? 10 }),
-    from: el('input', { class: 'input', type: 'time', value: item?.availableFrom || '' }),
-    to: el('input', { class: 'input', type: 'time', value: item?.availableTo || '' }),
+    prep: el('input', { class: 'input', type: 'number', min: 0, max: 180, value: (item && item.prepTimeMinutes != null ? item.prepTimeMinutes : 10 )}),
+    from: el('input', { class: 'input', type: 'time', value: (item && item.availableFrom) || '' }),
+    to: el('input', { class: 'input', type: 'time', value: (item && item.availableTo) || '' }),
     available: el('input', { type: 'checkbox', checked: item ? item.isAvailable !== false : true }),
-    trackStock: el('input', { type: 'checkbox', checked: item?.trackStock || false }),
-    stockQty: el('input', { class: 'input', type: 'number', min: 0, value: item?.stockQty ?? 0 }),
-    lowStock: el('input', { class: 'input', type: 'number', min: 0, value: item?.lowStockThreshold ?? 3 }),
-    tags: el('input', { class: 'input', value: (item?.tags || []).join(', '), placeholder: 'vegetarian, spicy, popular, new' })
+    trackStock: el('input', { type: 'checkbox', checked: (item && item.trackStock) || false }),
+    stockQty: el('input', { class: 'input', type: 'number', min: 0, value: (item && item.stockQty != null ? item.stockQty : 0 )}),
+    lowStock: el('input', { class: 'input', type: 'number', min: 0, value: (item && item.lowStockThreshold != null ? item.lowStockThreshold : 3 )}),
+    tags: el('input', { class: 'input', value: ((item && item.tags) || []).join(', '), placeholder: 'vegetarian, spicy, popular, new' })
   };
-  for (const c of categories) f.category.append(el('option', { value: String(c._id), text: c.name?.en || '', selected: item && String(item.category) === String(c._id) }));
-  for (const s of ['kitchen', 'bar', 'dessert']) f.station.append(el('option', { value: s, text: s, selected: (item?.station || 'kitchen') === s }));
+  for (const c of categories) f.category.append(el('option', { value: String(c._id), text: (c.name && c.name.en) || '', selected: item && String(item.category) === String(c._id) }));
+  for (const s of ['kitchen', 'bar', 'dessert']) f.station.append(el('option', { value: s, text: s, selected: ((item && item.station) || 'kitchen') === s }));
 
   // image
-  let image = item?.image ? { ...item.image } : { url: '', thumbUrl: '' };
+  let image = (item && item.image) ? { ...item.image } : { url: '', thumbUrl: '' };
   const preview = image.thumbUrl ? el('img', { class: 'thumb', src: image.thumbUrl, style: 'width:80px;height:80px', alt: '' }) : el('div', { class: 'thumb', style: 'width:80px;height:80px' });
   const file = el('input', { type: 'file', accept: 'image/*' });
   file.addEventListener('change', async () => {
@@ -217,7 +220,7 @@ function itemEditor(item) {
     try {
       const res = await fetch('/api/upload/image', { method: 'POST', body: fd, credentials: 'include' });
       const json = await res.json();
-      if (!json.ok) throw new Error(json.error?.message || 'Upload failed');
+      if (!json.ok) throw new Error((json.error && json.error.message) || 'Upload failed');
       image = json.data;
       preview.src = image.thumbUrl;
       toast('Image uploaded');
@@ -227,7 +230,7 @@ function itemEditor(item) {
   });
 
   // options editor
-  let options = (item?.options || []).map((o) => ({ ...o, choices: o.choices.map((c) => ({ ...c })) }));
+  let options = ((item && item.options) || []).map((o) => ({ ...o, choices: o.choices.map((c) => ({ ...c })) }));
   const optWrap = el('div', { class: 'full' });
   function drawOptions() {
     optWrap.innerHTML = '';
@@ -236,7 +239,7 @@ function itemEditor(item) {
       const choicesWrap = el('div');
       opt.choices.forEach((ch, ci) => {
         const lbl = el('input', { class: 'input', value: ch.label, placeholder: 'Choice', style: 'flex:1' });
-        const price = el('input', { class: 'input', type: 'number', value: ch.extraPrice ?? 0, style: 'width:90px' });
+        const price = el('input', { class: 'input', type: 'number', value: (ch.extraPrice != null ? ch.extraPrice : 0), style: 'width:90px' });
         lbl.addEventListener('input', () => (ch.label = lbl.value));
         price.addEventListener('input', () => (ch.extraPrice = Number(price.value)));
         choicesWrap.append(

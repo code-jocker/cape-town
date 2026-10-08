@@ -25,7 +25,7 @@ export async function requireStaff(roles) {
   installAuthRedirect();
   try {
     me = await api('/api/auth/me');
-  } catch {
+  } catch (e) {
     const back = encodeURIComponent(location.pathname + location.search);
     location.href = `/login.html?next=${back}`;
     return new Promise(() => {}); // never resolves; page is navigating away
@@ -60,7 +60,7 @@ export function homeFor(role) {
 export async function logout() {
   try {
     await api('/api/auth/logout', { method: 'POST' });
-  } catch {
+  } catch (e) {
     /* ignore */
   }
   location.href = '/login.html';

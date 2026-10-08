@@ -18,7 +18,7 @@ export async function render(root) {
   try {
     const s = await api('/api/settings');
     currency = s.currency || 'RWF';
-  } catch {}
+  } catch (e) {}
 
   const { from, to } = rangeParams();
   const fromI = el('input', { class: 'input', type: 'date', value: from });
@@ -79,7 +79,7 @@ async function draw(wrap, from, to) {
     wrap.append(panel('Peak hours (orders by day × hour)', heatmap(peak)));
     wrap.append(panel('Staff performance', staffTable(staffp)));
 
-    if (canc.byReason?.length) {
+    if (canc.byReason && canc.byReason.length) {
       wrap.append(panel('Cancellations by reason', hBars(canc.byReason.map((r) => ({ label: r.reason || '—', value: r.count })))));
     }
   } catch (err) {

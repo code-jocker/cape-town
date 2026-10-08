@@ -9,12 +9,16 @@ import { el, $, $$, delegate } from '../shared/dom.js';
 import { money } from '../shared/format.js';
 import { t, getLang, setLang, LANGUAGES } from '../shared/i18n.js';
 import { connectSocket, on, joinCustomerOrders } from '../shared/socket.js';
+import { requestNotificationPermission } from '../shared/audio.js';
+import { Haptic } from '../shared/haptics.js';
+import { createPullToRefresh } from '../shared/pull-to-refresh.js';
 import * as cart from './cart.js';
 import { initTracker, refresh as refreshTracker } from './tracker.js';
 
 const state = {
   token: '', tableId: '', tableNumber: 0, sessionId: '', currency: 'RWF',
   items: [], categories: [], announcement: '', openNow: true, eta: 15,
+  openingHours: [],
   activeCat: 'all', query: ''
 };
 
@@ -89,6 +93,7 @@ async function loadMenu() {
   state.announcement = data.announcement || '';
   state.openNow = data.openNow !== false;
   state.eta = data.etaMinutes || 15;
+  state.openingHours = data.openingHours || [];
   renderTicker();
   renderClosed();
   renderMenu();
@@ -106,8 +111,18 @@ function renderTicker() {
 function renderClosed() {
   const banner = $('#closed-banner');
   if (state.openNow) { banner.classList.add('hidden'); return; }
-  banner.textContent = t('menu.closed');
+  banner.textContent = closedText();
   banner.classList.remove('hidden');
+}
+
+function closedText() {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Kigali' }));
+  const today = (state.openingHours || []).find((h) => h.day === days[now.getDay()]);
+  if (today && !today.closed && today.open && today.close) {
+    return `${t('menu.closed')} ${t('menu.hours', { open: today.open, close: today.close })}`;
+  }
+  return t('menu.closed');
 }
 
 function setupChips() {
@@ -120,15 +135,35 @@ function setupChips() {
   }
   delegate(chips, 'click', '.chip', (e, target) => {
     state.activeCat = target.dataset.cat;
-    $$('.chip', chips).forEach((ch) => ch.classList.toggle('active', ch === target));
+    $$('.chip', chips).forEach((ch) => {
+      const active = ch === target;
+      ch.classList.toggle('active', active);
+      ch.setAttribute('aria-selected', String(active));
+    });
     const section = document.getElementById(`sec-${target.dataset.cat}`);
     if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  chips.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const list = $$('.chip', chips);
+    const idx = list.indexOf(document.activeElement);
+    if (idx === -1) return;
+    const next = list[(idx + (e.key === 'ArrowRight' ? 1 : list.length - 1)) % list.length];
+    next.focus();
+    next.click();
+    e.preventDefault();
   });
   setupScrollSpy();
 }
 
 function chip(catId, label) {
-  return el('button', { class: `chip${catId === state.activeCat ? ' active' : ''}`, role: 'tab', 'data-cat': catId, text: label });
+  return el('button', {
+    class: `chip${catId === state.activeCat ? ' active' : ''}`,
+    role: 'tab',
+    'data-cat': catId,
+    'aria-selected': catId === state.activeCat ? 'true' : 'false',
+    text: label
+  });
 }
 
 function renderMenu() {
@@ -147,6 +182,16 @@ function renderMenu() {
     for (const item of items) section.append(itemRow(item));
     list.append(section);
   }
+
+  // Setup pull-to-refresh on menu list
+  if (!list._ptr) {
+    list._ptr = createPullToRefresh(list, async () => {
+      await loadMenu();
+      renderMenu();
+      refreshCartBar();
+      updateRowActions();
+    });
+  }
 }
 
 function itemRow(item) {
@@ -155,7 +200,7 @@ function itemRow(item) {
   const row = el('div', { class: `item-row${soldOut ? ' soldout' : ''}`, 'data-item': item._id });
 
   const img = el('img', {
-    class: 'item-photo', src: item.image?.thumbUrl || item.image?.url || '/icons/logo.svg',
+    class: 'item-photo', src: (item.image && item.image.thumbUrl) || (item.image && item.image.url) || '/icons/logo.svg',
     alt: '', width: '64', height: '80', loading: 'lazy', decoding: 'async'
   });
 
@@ -173,7 +218,7 @@ function itemRow(item) {
   if (soldOut) {
     action.append(el('span', { class: 'badge badge-danger', text: t('common.soldOut') }));
   } else if (inCart > 0) {
-    action.append(stepper(item._id, inCart));
+    action.append(stepper(item._id, inCart, locName(item.name)));
   } else {
     action.append(el('button', { class: 'add-btn', 'data-add': item._id, text: `+ ${t('common.add')}` }));
   }
@@ -188,11 +233,11 @@ function itemRow(item) {
   return row;
 }
 
-function stepper(itemId, qty) {
+function stepper(itemId, qty, label) {
   return el('div', { class: 'stepper', 'data-stepper': itemId },
-    el('button', { 'data-dec': itemId, 'aria-label': '-', text: '−' }),
+    el('button', { 'data-dec': itemId, 'aria-label': `− ${label}`, text: '−' }),
     el('span', { class: 'qty', text: String(qty) }),
-    el('button', { 'data-inc': itemId, 'aria-label': '+', text: '+' })
+    el('button', { 'data-inc': itemId, 'aria-label': `+ ${label}`, text: '+' })
   );
 }
 
@@ -250,13 +295,21 @@ function renderFiltered() {
   if (q && !$$('#menu-list .item-row:not(.hidden)').length) {
     if (!$('#empty-search')) $('#menu-list').append(el('p', { id: 'empty-search', class: 'muted', style: 'text-align:center;padding:30px;', text: t('menu.empty') }));
   } else {
-    $('#empty-search')?.remove();
+    const emptyEl = $('#empty-search');
+    if (emptyEl) emptyEl.remove();
   }
 }
 
+const norm = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
 function matches(item, q) {
-  const hay = [item.name?.en, item.name?.fr, item.name?.rw, item.description?.en].filter(Boolean).join(' ').toLowerCase();
-  return hay.includes(q);
+  const name = item.name || {};
+  const desc = item.description || {};
+  const hay = [name.en, name.fr, name.rw, desc.en, desc.fr, desc.rw]
+    .filter(Boolean)
+    .map(norm)
+    .join(' ');
+  return hay.includes(norm(q));
 }
 
 /* ============================== Item sheet ============================== */
@@ -278,6 +331,7 @@ function openItemSheet(item) {
         choice.extraPrice ? el('span', { class: 'extra', text: `+ ${money(choice.extraPrice, state.currency)}` }) : null
       );
       const toggle = () => {
+        Haptic.selection();
         const set = selections.get(opt.name);
         if (opt.multiple) { set.has(choice.label) ? set.delete(choice.label) : set.add(choice.label); }
         else { set.clear(); set.add(choice.label); group.querySelectorAll('.opt-choice').forEach((o) => o.classList.remove('selected')); }
@@ -296,8 +350,8 @@ function openItemSheet(item) {
 
   let qty = 1;
   const qtyLabel = el('span', { class: 'qty', style: 'min-width:28px;text-align:center;font-weight:700;', text: '1' });
-  const dec = el('button', { text: '−', onclick: () => { qty = Math.max(1, qty - 1); qtyLabel.textContent = qty; updatePrice(); } });
-  const inc = el('button', { text: '+', onclick: () => { qty = Math.min(50, qty + 1); qtyLabel.textContent = qty; updatePrice(); } });
+  const dec = el('button', { text: '−', onclick: () => { Haptic.selection(); qty = Math.max(1, qty - 1); qtyLabel.textContent = qty; updatePrice(); } });
+  const inc = el('button', { text: '+', onclick: () => { Haptic.selection(); qty = Math.min(50, qty + 1); qtyLabel.textContent = qty; updatePrice(); } });
   dec.style.cssText = inc.style.cssText = 'width:38px;height:38px;border:1.5px solid var(--color-divider);border-radius:50%;background:var(--color-bg);font-size:18px;cursor:pointer;';
   const qtyRow = el('div', { class: 'row', style: 'gap:12px;margin:6px 0 4px;' },
     el('span', { style: 'font-weight:600;', text: t('common.quantity') }), dec, qtyLabel, inc);
@@ -311,6 +365,7 @@ function openItemSheet(item) {
 
   const addBtn = el('button', { class: 'btn btn-primary', style: 'flex:1;', text: t('common.add') });
   addBtn.addEventListener('click', () => {
+    Haptic.addToCart();
     for (const opt of item.options || []) {
       if (opt.required && selections.get(opt.name).size === 0) {
         toast(`${opt.name} — ${t('common.required')}`); return;
@@ -319,10 +374,12 @@ function openItemSheet(item) {
     const selectedOptions = [...selections.entries()]
       .filter(([, set]) => set.size)
       .map(([name, set]) => {
-        const choices = [...set].map((label) => {
-          const c = (item.options.find((o) => o.name === name)?.choices || []).find((x) => x.label === label);
-          return { label, extraPrice: c?.extraPrice || 0 };
-        });
+      const choices = [...set].map((label) => {
+        const opt = item.options.find((o) => o.name === name);
+        const choicesList = (opt && opt.choices) || [];
+        const c = choicesList.find((x) => x.label === label);
+        return { label, extraPrice: (c && c.extraPrice) || 0 };
+      });
         return { name, choices };
       });
     cart.addToCart(state.tableId, {
@@ -344,7 +401,7 @@ function linePrice(item, selections) {
   for (const [, set] of selections) {
     for (const label of set) {
       const c = (item.options || []).flatMap((o) => o.choices).find((x) => x.label === label);
-      if (c?.extraPrice) price += c.extraPrice;
+      if (c && c.extraPrice) price += c.extraPrice;
     }
   }
   return price;
@@ -360,32 +417,67 @@ function openCartSheet() {
     openSheet(t('cart.title'), body, null);
     return;
   }
+  const estimate = el('div', { class: 'total-label', text: money(cart.cartEstimate(c), state.currency) });
+  const updateTotal = () => {
+    estimate.textContent = money(cart.cartEstimate(cart.getCart(state.tableId)), state.currency);
+  };
+
   for (const line of c.lines) {
     const opts = (line.selectedOptions || []).map((o) => `${o.name}: ${o.choices.map((x) => x.label).join(', ')}`).join(' · ');
-    const decB = el('button', { 'aria-label': '-', text: '−' });
-    const incB = el('button', { 'aria-label': '+', text: '+' });
-    const qtyEl = el('span', { text: String(line.quantity), style: 'min-width:20px;text-align:center;' });
-    decB.onclick = () => { cart.changeQuantity(state.tableId, line._sig, -1); closeSheet(); refreshCartBar(); updateRowActions(); if (cart.getCart(state.tableId).lines.length) openCartSheet(); };
-    incB.onclick = () => { cart.changeQuantity(state.tableId, line._sig, +1); qtyEl.textContent = line.quantity + 1; };
     const unit = line.price + (line.selectedOptions || []).reduce((s, o) => s + (o.extras || o.choices || []).reduce((x, e) => x + (e.extraPrice || 0), 0), 0);
+    const qtyEl = el('span', { text: String(line.quantity), style: 'min-width:20px;text-align:center;' });
+    const priceEl = el('div', { class: 'cart-line-price', text: money(unit * line.quantity, state.currency) });
+    const refreshLine = () => {
+      const cur = cart.getCart(state.tableId).lines.find((l) => l._sig === line._sig);
+      if (!cur) return false;
+      qtyEl.textContent = String(cur.quantity);
+      priceEl.textContent = money(unit * cur.quantity, state.currency);
+      updateTotal();
+      return true;
+    };
+    const decB = el('button', { 'aria-label': `− ${line.name}`, text: '−' });
+    const incB = el('button', { 'aria-label': `+ ${line.name}`, text: '+' });
+    decB.onclick = () => {
+      Haptic.removeFromCart();
+      cart.changeQuantity(state.tableId, line._sig, -1);
+      if (!cart.getCart(state.tableId).lines.some((l) => l._sig === line._sig)) {
+        closeSheet();
+        refreshCartBar();
+        updateRowActions();
+        if (cart.getCart(state.tableId).lines.length) openCartSheet();
+        return;
+      }
+      refreshLine();
+      refreshCartBar();
+      updateRowActions();
+    };
+    incB.onclick = () => {
+      Haptic.addToCart();
+      cart.changeQuantity(state.tableId, line._sig, +1);
+      refreshLine();
+      refreshCartBar();
+      updateRowActions();
+    };
     body.append(el('div', { class: 'cart-line' },
       el('div', { class: 'cart-line-info' },
         el('div', { class: 'cart-line-name', text: line.name }),
         opts ? el('div', { class: 'cart-line-opts', text: opts }) : null,
         line.note ? el('div', { class: 'cart-line-opts', text: '“' + line.note + '”' }) : null,
         el('div', { class: 'qty-inline' }, decB, qtyEl, incB)),
-      el('div', { class: 'cart-line-price', text: money(unit * line.quantity, state.currency) })
+      priceEl
     ));
   }
 
   const promoInput = el('input', { class: 'input', placeholder: t('cart.promo'), value: c.promo || '', maxlength: '40' });
   const applyBtn = el('button', { class: 'btn btn-ghost btn-sm', text: t('cart.promoApply') });
-  applyBtn.onclick = () => { cart.setPromo(state.tableId, promoInput.value); toast(promoInput.value ? t('cart.promoApply') : ''); };
+  applyBtn.onclick = () => { cart.setPromo(state.tableId, promoInput.value); updateTotal(); toast(promoInput.value ? t('cart.promoApply') : ''); };
   body.append(el('div', { class: 'opt-group' }, el('h4', { text: t('cart.promo') }), el('div', { class: 'row' }, promoInput, applyBtn)));
 
-  const estimate = el('div', { class: 'total-label', text: money(cart.cartEstimate(c), state.currency) });
   const checkout = el('button', { class: 'btn btn-primary', style: 'flex:1;', text: t('cart.checkout') });
-  checkout.onclick = () => placeOrder();
+  checkout.onclick = () => {
+    Haptic.heavy();
+    placeOrder();
+  };
   const foot = el('div', { class: 'sheet-foot' }, estimate, checkout);
   openSheet(t('cart.title'), body, foot);
 }
@@ -407,11 +499,11 @@ async function placeOrder() {
 
   try {
     const data = await apiRetryable('/api/public/orders', { method: 'POST', body });
-    onOrderPlaced(data);
+    onOrderPlaced(data, idempotencyKey);
   } catch (err) {
     if (err instanceof ApiError) {
       // Server rejected it (validation, sold out, closed). Do not retry blindly.
-      cart.clearPendingOrder(state.tableId);
+      cart.clearPendingOrder(state.tableId, { idempotencyKey });
       toast(err.message);
     } else {
       // Network failure — keep pending, tell the user it was NOT sent.
@@ -420,8 +512,8 @@ async function placeOrder() {
   }
 }
 
-function onOrderPlaced(data) {
-  cart.clearPendingOrder(state.tableId);
+function onOrderPlaced(data, idempotencyKey) {
+  if (idempotencyKey) cart.clearPendingOrder(state.tableId, { idempotencyKey });
   cart.clearCart(state.tableId);
   const order = data.order;
   cart.addOrder(state.tableId, { id: order.id, orderNumber: order.orderNumber, status: order.status, total: order.total, createdAt: order.createdAt });
@@ -432,16 +524,24 @@ function onOrderPlaced(data) {
   joinCustomerOrders(cart.getOrders(state.tableId).map((o) => o.id));
   switchView('tracker');
   refreshTracker().catch(() => {});
+  requestNotificationPermission();
   toast(t('order.placed'));
 }
 
-function restoreOfflineOrder() {
-  const pending = cart.getPendingOrder(state.tableId);
-  if (!pending) return;
+async function restoreOfflineOrder() {
+  const pending = cart.getPendingOrders(state.tableId);
+  if (!pending.length) return;
   toast(t('order.retrying'));
-  apiRetryable('/api/public/orders', { method: 'POST', body: pending })
-    .then(onOrderPlaced)
-    .catch(() => toast(t('order.notSent')));
+  for (const p of [...pending]) {
+    try {
+      const data = await apiRetryable('/api/public/orders', { method: 'POST', body: p });
+      cart.clearPendingOrder(state.tableId, p);
+      onOrderPlaced(data, p.idempotencyKey);
+    } catch (err) {
+      if (err instanceof ApiError) cart.clearPendingOrder(state.tableId, p);
+      else toast(t('order.notSent'));
+    }
+  }
 }
 
 /* ============================== Cart bar + row actions ============================== */
@@ -467,7 +567,7 @@ function updateRowActions() {
     if (!item || item.isAvailable === false) continue;
     const action = $('.item-action', row);
     const qty = cartLineQty(item);
-    action.replaceChildren(qty > 0 ? stepper(item._id, qty) : el('button', { class: 'add-btn', 'data-add': item._id, text: `+ ${t('common.add')}` }));
+    action.replaceChildren(qty > 0 ? stepper(item._id, qty, locName(item.name)) : el('button', { class: 'add-btn', 'data-add': item._id, text: `+ ${t('common.add')}` }));
   }
   refreshCartBar();
 }
@@ -476,6 +576,7 @@ function updateRowActions() {
 delegate(document, 'click', '[data-add]', (e, target) => {
   const item = state.items.find((i) => i._id === target.dataset.add);
   if (!item) return;
+  Haptic.addToCart();
   const hasOpts = (item.options || []).some((o) => o.required || o.choices.length);
   if (hasOpts) { openItemSheet(item); return; }
   cart.addToCart(state.tableId, { itemId: item._id, name: locName(item.name), price: item.price, quantity: 1, selectedOptions: [], note: '' });
@@ -484,13 +585,19 @@ delegate(document, 'click', '[data-add]', (e, target) => {
 delegate(document, 'click', '[data-inc]', (e, target) => {
   const item = state.items.find((i) => i._id === target.dataset.inc);
   const line = cart.getCart(state.tableId).lines.find((l) => l.itemId === item._id && !(l.selectedOptions || []).length);
-  if (line) cart.changeQuantity(state.tableId, line._sig, +1);
+  if (line) {
+    Haptic.addToCart();
+    cart.changeQuantity(state.tableId, line._sig, +1);
+  }
   updateRowActions();
 });
 delegate(document, 'click', '[data-dec]', (e, target) => {
   const item = state.items.find((i) => i._id === target.dataset.dec);
   const line = cart.getCart(state.tableId).lines.find((l) => l.itemId === item._id && !(l.selectedOptions || []).length);
-  if (line) cart.changeQuantity(state.tableId, line._sig, -1);
+  if (line) {
+    Haptic.removeFromCart();
+    cart.changeQuantity(state.tableId, line._sig, -1);
+  }
   updateRowActions();
 });
 
@@ -500,12 +607,23 @@ function setupFab() {
   const fab = $('#fab');
   const menu = $('#fab-menu');
   fab.addEventListener('click', () => {
+    Haptic.selection();
     const open = menu.classList.toggle('hidden');
     fab.setAttribute('aria-expanded', String(!open));
   });
-  delegate(menu, 'click', '.fab-item', (e, target) => sendRequest(target.dataset.request));
+  delegate(menu, 'click', '.fab-item', (e, target) => {
+    Haptic.medium();
+    sendRequest(target.dataset.request);
+  });
   document.addEventListener('click', (e) => {
     if (!e.target.closest('#fab-wrap')) { menu.classList.add('hidden'); fab.setAttribute('aria-expanded', 'false'); }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+      menu.classList.add('hidden');
+      fab.setAttribute('aria-expanded', 'false');
+      fab.focus();
+    }
   });
 }
 
@@ -518,7 +636,7 @@ async function sendRequest(type) {
   try {
     await api('/api/public/requests', { method: 'POST', body: { type, tableToken: state.token } });
     toast(type === 'bill' ? t('order.billRequested') : t('fab.done'));
-  } catch {
+  } catch (e) {
     localStorage.removeItem(key);
     toast(t('order.failed'));
   }
@@ -571,6 +689,7 @@ function setupSocket() {
 
 function openSheet(title, bodyNode, footNode) {
   const root = $('#sheet-root');
+  const previousFocus = document.activeElement;
   const backdrop = el('div', { class: 'sheet-backdrop' });
   const sheet = el('div', { class: 'sheet', role: 'dialog', 'aria-modal': 'true' },
     el('div', { class: 'sheet-grab' }),
@@ -578,16 +697,33 @@ function openSheet(title, bodyNode, footNode) {
     bodyNode, footNode);
   root.append(backdrop, sheet);
   requestAnimationFrame(() => { backdrop.classList.add('open'); sheet.classList.add('open'); });
-  const close = () => { backdrop.classList.remove('open'); sheet.classList.remove('open'); setTimeout(() => { backdrop.remove(); sheet.remove(); }, 250); };
+  const closeBtn = $('.sheet-close', sheet);
+  closeBtn.focus();
+  const close = () => {
+    backdrop.classList.remove('open');
+    sheet.classList.remove('open');
+    setTimeout(() => { backdrop.remove(); sheet.remove(); }, 250);
+    if (previousFocus && previousFocus.focus) previousFocus.focus();
+  };
   backdrop.onclick = close;
-  $('.sheet-close', sheet).onclick = close;
+  closeBtn.onclick = close;
+  sheet.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { close(); return; }
+    if (e.key !== 'Tab') return;
+    const f = sheet.querySelectorAll('button, input, textarea, select, [tabindex="0"]');
+    if (!f.length) return;
+    const first = f[0];
+    const last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+    else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+  });
   sheet._close = close;
   return sheet;
 }
 
 function closeSheet() {
   const sheet = $('#sheet-root .sheet');
-  if (sheet?._close) sheet._close();
+  if (sheet && sheet._close) sheet._close();
 }
 
 let toastTimer = null;
@@ -599,8 +735,8 @@ function toast(message) {
   toastTimer = setTimeout(() => node.classList.add('hidden'), 2600);
 }
 
-function locName(name) { return name?.[getLang()] || name?.en || ''; }
-function locDesc(item) { return item.description?.[getLang()] || item.description?.en || ''; }
+function locName(name) { return (name && name[getLang()]) || (name && name.en) || ''; }
+function locDesc(item) { return (item.description && item.description[getLang()]) || (item.description && item.description.en) || ''; }
 
 function applyI18n() {
   $('#lang-btn').textContent = getLang().toUpperCase();

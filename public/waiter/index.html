@@ -2,13 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script src="/shared/browser-check.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#9A5322" />
     <meta name="color-scheme" content="light" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Waiter" />
+    <meta name="description" content="Cape Town K Hotel — waiter dashboard" />
     <title>Waiter · Cape Town K Hotel</title>
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <link rel="stylesheet" href="/shared/base.css" />
     <link rel="stylesheet" href="/waiter/waiter.css" />
-    <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
   </head>
   <body class="waiter-body">
     <header class="w-head">
@@ -26,6 +34,11 @@
       <button class="tab active" data-tab="ready">Ready <span class="pill" data-badge="ready">0</span></button>
       <button class="tab" data-tab="requests">Requests <span class="pill" data-badge="requests">0</span></button>
       <button class="tab" data-tab="sessions">Tables <span class="pill" data-badge="sessions">0</span></button>
+    </nav>
+    <nav class="tab-bar hidden" id="w-tab-bar">
+      <button class="tab active" data-tab="ready"><span class="ico">📋</span><span>Ready</span></button>
+      <button class="tab" data-tab="requests"><span class="ico">🔔</span><span>Requests</span></button>
+      <button class="tab" data-tab="sessions"><span class="ico">🍽️</span><span>Tables</span></button>
     </nav>
 
     <main class="w-main">

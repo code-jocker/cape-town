@@ -9,7 +9,7 @@ const keyFor = (tableId) => `ep-cart-${tableId}`;
 export function getCart(tableId) {
   try {
     return JSON.parse(localStorage.getItem(keyFor(tableId))) || { lines: [], promo: '' };
-  } catch {
+  } catch (e) {
     return { lines: [], promo: '' };
   }
 }
@@ -97,24 +97,28 @@ export function toOrderPayload(tableId) {
   };
 }
 
-/* ---------- Offline order queue (one pending order per table) ---------- */
+/* ---------- Offline order queue (per table) ---------- */
 
 const pendingKey = (tableId) => `ep-pending-${tableId}`;
 
 export function savePendingOrder(tableId, payload) {
-  localStorage.setItem(pendingKey(tableId), JSON.stringify(payload));
+  const list = getPendingOrders(tableId);
+  list.push(payload);
+  localStorage.setItem(pendingKey(tableId), JSON.stringify(list));
 }
 
-export function getPendingOrder(tableId) {
+export function getPendingOrders(tableId) {
   try {
-    return JSON.parse(localStorage.getItem(pendingKey(tableId)));
-  } catch {
-    return null;
+    const list = JSON.parse(localStorage.getItem(pendingKey(tableId)));
+    return Array.isArray(list) ? list : [];
+  } catch (e) {
+    return [];
   }
 }
 
-export function clearPendingOrder(tableId) {
-  localStorage.removeItem(pendingKey(tableId));
+export function clearPendingOrder(tableId, payload) {
+  const list = getPendingOrders(tableId).filter((p) => p.idempotencyKey !== payload.idempotencyKey);
+  localStorage.setItem(pendingKey(tableId), JSON.stringify(list));
 }
 
 /* ---------- Active orders of this table session ---------- */
@@ -124,7 +128,7 @@ const ordersKey = (tableId) => `ep-orders-${tableId}`;
 export function getOrders(tableId) {
   try {
     return JSON.parse(localStorage.getItem(ordersKey(tableId))) || [];
-  } catch {
+  } catch (e) {
     return [];
   }
 }

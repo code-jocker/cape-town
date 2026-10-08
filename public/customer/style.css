@@ -2,6 +2,8 @@
 
 body {
   padding-bottom: 170px; /* room for cart bar + fab */
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 /* ---------- Boot / error ---------- */
@@ -32,7 +34,7 @@ body {
   border: 1.5px solid rgba(255, 255, 255, 0.5);
   border-radius: var(--radius-pill);
   background: transparent;
-  color: #fff;
+  color: var(--color-on-primary);
   font: inherit;
   font-size: 13px;
   font-weight: 700;
@@ -41,6 +43,42 @@ body {
 }
 .lang-btn:hover {
   background: rgba(255, 255, 255, 0.15);
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--color-on-primary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.15s var(--ease), transform 0.1s var(--ease);
+}
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-on-primary);
+  outline-offset: 2px;
+}
+.theme-toggle .icon-sun {
+  display: none;
+}
+.theme-toggle .icon-moon {
+  display: block;
+}
+[data-theme='dark'] .theme-toggle .icon-sun {
+  display: block;
+}
+[data-theme='dark'] .theme-toggle .icon-moon {
+  display: none;
 }
 
 .hero-tagline {
@@ -75,7 +113,7 @@ body {
   padding: 4px 14px;
   border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.16);
-  color: #fff;
+  color: var(--color-on-primary);
   font-size: 13px;
   font-weight: 700;
 }
@@ -106,7 +144,7 @@ body {
 /* ---------- Closed banner ---------- */
 .closed-banner {
   background: var(--color-danger);
-  color: #fff;
+  color: var(--color-on-primary);
   text-align: center;
   font-weight: 600;
   font-size: 14px;
@@ -145,7 +183,7 @@ body {
   border: none;
   border-radius: 50%;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -249,10 +287,15 @@ body {
   font-weight: 700;
   padding: 2px 8px;
   border-radius: var(--radius-pill);
-  background: var(--color-primary-soft);
-  color: var(--color-primary-dark);
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
   text-transform: uppercase;
   letter-spacing: 0.03em;
+}
+
+[data-theme='dark'] .tag {
+  background: var(--color-primary-800);
+  color: var(--color-primary-200);
 }
 
 .item-price {
@@ -296,7 +339,7 @@ body {
   align-items: center;
   gap: 2px;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   border-radius: var(--radius-pill);
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(199, 91, 42, 0.25);
@@ -307,7 +350,7 @@ body {
   height: 40px;
   border: none;
   background: transparent;
-  color: #fff;
+  color: var(--color-on-primary);
   font-size: 19px;
   cursor: pointer;
   transition: background 0.15s var(--ease);
@@ -347,7 +390,7 @@ body {
   border: none;
   border-radius: 50%;
   background: var(--color-fab);
-  color: #fff;
+  color: var(--color-on-primary);
   display: grid;
   place-items: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
@@ -403,7 +446,7 @@ body {
   border: none;
   border-radius: var(--radius-pill);
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   font: inherit;
   font-size: 16px;
   font-weight: 700;

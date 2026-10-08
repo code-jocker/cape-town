@@ -20,19 +20,19 @@ async function loadReady() {
     const d = await api('/api/orders?status=ready&limit=100');
     state.ready = d.orders;
     renderReady();
-  } catch {}
+  } catch (e) {}
 }
 async function loadRequests() {
   try {
     state.requests = await api('/api/requests?status=open');
     renderRequests();
-  } catch {}
+  } catch (e) {}
 }
 async function loadSessions() {
   try {
     state.sessions = await api('/api/sessions?status=open');
     renderSessions();
-  } catch {}
+  } catch (e) {}
 }
 
 function badges() {
@@ -48,7 +48,7 @@ function orderItems(order) {
     { class: 'w-items' },
     (order.items || []).map((i) => {
       const opts = (i.selectedOptions || []).flatMap((o) => o.choices.map((c) => c.label));
-      const li = el('li', { text: `${i.quantity}× ${i.nameSnapshot?.en || 'Item'}` });
+      const li = el('li', { text: `${i.quantity}× ${(i.nameSnapshot && i.nameSnapshot.en) || 'Item'}` });
       if (opts.length) li.append(el('span', { class: 'opts', text: ` · ${opts.join(', ')}` }));
       if (i.note) li.append(el('span', { class: 'opts', text: ` · ${i.note}` }));
       return li;
@@ -72,7 +72,7 @@ function renderReady() {
           'div',
           { class: 'w-card-top' },
           el('span', { class: 'no', text: o.orderNumber }),
-          el('span', { class: 'tbl', text: `Table ${o.table?.number ?? '?'}` }),
+          el('span', { class: 'tbl', text: `Table ${(o.table && o.table.number != null ? o.table.number : '?')}` }),
           el('span', { class: 'amt', text: money(o.total, state.currency) })
         ),
         orderItems(o),
@@ -106,7 +106,7 @@ function renderRequests() {
           'div',
           { class: 'w-card-top' },
           el('span', { class: 'req-type', text: r.type }),
-          el('span', { class: 'tbl', text: `Table ${r.table?.number ?? '?'}` })
+          el('span', { class: 'tbl', text: `Table ${(r.table && r.table.number != null ? r.table.number : '?')}` })
         ),
         el('div', { class: 'w-meta', text: `${elapsed(r.createdAt)} ago` }),
         el('div', { class: 'w-actions' }, el('button', { class: 'btn btn-primary', 'data-handle': String(r._id), text: 'Mark handled' }))
@@ -134,7 +134,7 @@ function renderSessions() {
         el(
           'div',
           { class: 'w-card-top' },
-          el('span', { class: 'tbl', text: `Table ${s.table?.number ?? '?'}` }),
+          el('span', { class: 'tbl', text: `Table ${(s.table && s.table.number != null ? s.table.number : '?')}` }),
           el('span', { class: `badge ${paid ? 'badge-paid' : 'badge-due'}`, text: paid ? 'Paid' : `${due} due` }),
           el('span', { class: 'amt', text: money(s.totalAmount || 0, state.currency) })
         ),
@@ -173,7 +173,7 @@ function closeBill() {
 function renderBill() {
   const s = state.billSession;
   if (!s) return;
-  $('#bill-title').textContent = `Table ${s.table?.number ?? '?'} · ${s.sessionId}`;
+  $('#bill-title').textContent = `Table ${(s.table && s.table.number != null ? s.table.number : '?')} · ${s.sessionId}`;
   const body = $('#bill-body');
   body.innerHTML = '';
 
@@ -218,7 +218,7 @@ function renderBill() {
 
   const foot = $('#bill-foot');
   foot.innerHTML = '';
-  const paid = s.totals?.paymentStatus === 'paid';
+  const paid = (s.totals && s.totals.paymentStatus) === 'paid';
   if (!paid) {
     foot.append(
       el(
@@ -282,11 +282,11 @@ function printBill() {
     if (o.status === 'cancelled') continue;
     total += o.total || 0;
     lines.push(el('div', { class: 'p-row' }, el('span', { text: o.orderNumber }), el('span', { text: money(o.total, state.currency) })));
-    for (const i of o.items || []) lines.push(el('div', { text: `  ${i.quantity}× ${i.nameSnapshot?.en || ''}` }));
+    for (const i of o.items || []) lines.push(el('div', { text: `  ${i.quantity}× ${(i.nameSnapshot && i.nameSnapshot.en) || ''}` }));
   }
   area.append(
     el('h3', { text: 'Cape Town K Hotel' }),
-    el('div', { class: 'p-row' }, el('span', { text: `Table ${s.table?.number ?? '?'}` }), el('span', { text: s.sessionId })),
+    el('div', { class: 'p-row' }, el('span', { text: `Table ${(s.table && s.table.number != null ? s.table.number : '?')}` }), el('span', { text: s.sessionId })),
     el('hr'),
     ...lines,
     el('hr'),
@@ -309,9 +309,9 @@ function printOrder(id) {
   area.innerHTML = '';
   area.append(
     el('h3', { text: 'Cape Town K Hotel' }),
-    el('div', { class: 'p-row' }, el('span', { text: o.orderNumber }), el('span', { text: `Table ${o.table?.number ?? '?'}` })),
+    el('div', { class: 'p-row' }, el('span', { text: o.orderNumber }), el('span', { text: `Table ${(o.table && o.table.number != null ? o.table.number : '?')}` })),
     el('hr'),
-    el('ul', {}, (o.items || []).map((i) => el('li', { text: `${i.quantity}× ${i.nameSnapshot?.en || ''}` }))),
+    el('ul', {}, (o.items || []).map((i) => el('li', { text: `${i.quantity}× ${(i.nameSnapshot && i.nameSnapshot.en) || ''}` }))),
     el('hr'),
     el('div', { class: 'p-row' }, el('span', { text: 'TOTAL' }), el('span', { text: money(o.total, state.currency) }))
   );
@@ -364,11 +364,14 @@ $('#bill-foot').addEventListener('click', (e) => {
 });
 
 /* tabs */
-delegate($('#w-tabs'), 'click', '.tab', (e, tab) => {
+function activateTab(tab) {
   $$('.tab').forEach((t) => t.classList.remove('active'));
   tab.classList.add('active');
   $$('.view').forEach((v) => v.classList.remove('active'));
   $(`[data-view="${tab.dataset.tab}"]`).classList.add('active');
+}
+delegate($('body'), 'click', '.tab', (e, tab) => {
+  activateTab(tab);
 });
 
 $('#logout').addEventListener('click', logout);
@@ -386,7 +389,7 @@ function toast(msg) {
 function wireSocket() {
   on('order:ready', (p) => {
     vibrate(120);
-    notify(`Order ${p.no || ''} ready`, `Table ${p.table ?? ''}`);
+    notify(`Order ${p.no || ''} ready`, `Table ${(p.table != null ? p.table : '')}`);
     loadReady();
     loadSessions();
   });
@@ -396,7 +399,7 @@ function wireSocket() {
   });
   on('request:new', (p) => {
     vibrate([150, 80, 150]);
-    notify('New request', `Table ${p.table ?? ''} · ${p.type || ''}`);
+    notify('New request', `Table ${(p.table != null ? p.table : '')} · ${p.type || ''}`);
     loadRequests();
   });
   on('request:handled', () => loadRequests());
@@ -411,11 +414,26 @@ async function boot() {
   try {
     const s = await api('/api/settings');
     state.currency = s.currency || 'RWF';
-  } catch {}
+  } catch (e) {}
   wireSocket();
   await loadAll();
   await connectSocket({ mode: 'staff', onReady: loadAll });
   setInterval(loadAll, 20000);
+
+  // Mobile: switch to bottom tab bar on small screens
+  if (window.innerWidth <= 768) {
+    $('#w-tabs').classList.add('hidden');
+    $('#w-tab-bar').classList.remove('hidden');
+  }
+  window.addEventListener('resize', () => {
+    if (window.innerWidth <= 768) {
+      $('#w-tabs').classList.add('hidden');
+      $('#w-tab-bar').classList.remove('hidden');
+    } else {
+      $('#w-tabs').classList.remove('hidden');
+      $('#w-tab-bar').classList.add('hidden');
+    }
+  });
 }
 
 boot();

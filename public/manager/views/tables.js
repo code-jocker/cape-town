@@ -80,9 +80,9 @@ async function regen(t, grid) {
 }
 
 function tableEditor(t, grid) {
-  const number = el('input', { class: 'input', type: 'number', min: 1, value: t?.number ?? tables.length + 1 });
-  const label = el('input', { class: 'input', value: t?.label || '' });
-  const capacity = el('input', { class: 'input', type: 'number', min: 1, value: t?.capacity ?? 4 });
+  const number = el('input', { class: 'input', type: 'number', min: 1, value: (t && t.number != null ? t.number : tables.length + 1 )});
+  const label = el('input', { class: 'input', value: (t && t.label) || '' });
+  const capacity = el('input', { class: 'input', type: 'number', min: 1, value: (t && t.capacity != null ? t.capacity : 4 )});
   const active = el('input', { type: 'checkbox', checked: t ? t.isActive !== false : true });
   openModal({
     title: t ? `Edit table ${t.number}` : 'New table',

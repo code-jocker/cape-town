@@ -1,23 +1,70 @@
 /* Cape Town K Hotel service worker.
  * Strategy:
- *   - static assets + icons + uploads: stale-while-revalidate (fast, offline-safe)
- *   - /menu HTML: network-first, fall back to cache (always fresh, works offline)
+ *   - precache: every page + all shared/customer modules + icons
+ *   - static assets: stale-while-revalidate (fast, offline-safe)
+ *   - navigations: network-first, fall back to cache, then /offline.html
  *   - /api/public/menu: network-first, cache last good copy (menu browsable offline)
  *   - everything else under /api: network only (never cache orders/requests)
  * Every handler ALWAYS resolves to a Response so respondWith never rejects.
  */
-const VERSION = 'ep-v2';
+const VERSION = 'ep-v3';
 const STATIC = `${VERSION}-static`;
 const RUNTIME = `${VERSION}-runtime`;
 
-const PRECACHE = ['/menu', '/shared/base.css', '/customer/style.css', '/customer/menu.js', '/icons/icon-192.png'];
+const PRECACHE = [
+  '/menu',
+  '/kitchen/index.html',
+  '/waiter/index.html',
+  '/manager/index.html',
+  '/login.html',
+  '/offline.html',
+  '/shared/base.css',
+  '/shared/browser-check.js',
+  '/shared/api.js',
+  '/shared/audio.js',
+  '/shared/auth.js',
+  '/shared/dom.js',
+  '/shared/format.js',
+  '/shared/i18n.js',
+  '/shared/socket.js',
+  '/shared/store.js',
+  '/shared/theme.js',
+  '/shared/haptics.js',
+  '/shared/pull-to-refresh.js',
+  '/customer/style.css',
+  '/customer/menu.js',
+  '/customer/cart.js',
+  '/customer/tracker.js',
+  '/kitchen/kitchen.css',
+  '/kitchen/kitchen.js',
+  '/waiter/waiter.css',
+  '/waiter/waiter.js',
+  '/manager/manager.css',
+  '/manager/manager.js',
+  '/manager/ui.js',
+  '/manager/views/audit.js',
+  '/manager/views/dashboard.js',
+  '/manager/views/menu.js',
+  '/manager/views/orders.js',
+  '/manager/views/promos.js',
+  '/manager/views/reports.js',
+  '/manager/views/settings.js',
+  '/manager/views/staff.js',
+  '/manager/views/tables.js',
+  '/login.js',
+  '/manifest.json',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/icons/logo.svg'
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(STATIC)
-      .then((c) => c.addAll(PRECACHE))
-      .catch(() => {})
+      .then((cache) =>
+        Promise.all(PRECACHE.map((url) => cache.add(url).catch(() => {})))
+      )
       .then(() => self.skipWaiting())
   );
 });
@@ -44,9 +91,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // HTML navigation (/menu): network-first with cache fallback.
+  // HTML navigation: network-first with offline fallback.
   if (req.mode === 'navigate' || url.pathname === '/menu') {
-    event.respondWith(networkFirst(req, STATIC));
+    event.respondWith(networkFirst(req, STATIC, ['/offline.html']));
     return;
   }
 
@@ -58,14 +105,14 @@ self.addEventListener('fetch', (event) => {
 async function matchCache(cacheName, key) {
   try {
     return await caches.match(key, { cacheName });
-  } catch {
+  } catch (e) {
     return undefined;
   }
 }
 function putCache(cacheName, req, res) {
   try {
     caches.open(cacheName).then((c) => c.put(req, res.clone())).catch(() => {});
-  } catch {
+  } catch (e) {
     /* ignore */
   }
 }
@@ -73,14 +120,17 @@ function offlineResponse() {
   return new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain' } });
 }
 
-async function networkFirst(req, cacheName) {
+async function networkFirst(req, cacheName, fallbacks = []) {
   try {
     const fresh = await fetch(req);
     if (fresh && fresh.ok) putCache(cacheName, req, fresh);
     return fresh;
-  } catch {
-    const cached = (await matchCache(cacheName, req)) || (await matchCache(cacheName, '/menu'));
-    return cached || offlineResponse();
+  } catch (e) {
+    for (const key of [req, ...fallbacks]) {
+      const cached = await matchCache(cacheName, key);
+      if (cached) return cached;
+    }
+    return offlineResponse();
   }
 }
 
@@ -95,7 +145,7 @@ async function staleWhileRevalidate(req, cacheName) {
   if (cached) return cached;
   try {
     return await fetch(req);
-  } catch {
+  } catch (e) {
     return offlineResponse();
   }
 }

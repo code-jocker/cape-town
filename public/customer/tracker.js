@@ -11,6 +11,7 @@ import { money } from '../shared/format.js';
 import { t } from '../shared/i18n.js';
 import { el, $ } from '../shared/dom.js';
 import { on } from '../shared/socket.js';
+import { playStatus, notify } from '../shared/audio.js';
 import { addOrder, getOrders } from './cart.js';
 
 const STEP_KEYS = ['pending', 'accepted', 'preparing', 'ready', 'served'];
@@ -67,8 +68,13 @@ function updateLocalOrder(id, status) {
   const orders = getOrders(tableId);
   const local = orders.find((o) => o.id === id);
   if (local) {
+    const was = local.status;
     local.status = status;
     addOrder(tableId, local);
+    if (status !== was && (status === 'ready' || status === 'served')) {
+      playStatus();
+      notify(t('order.tracking'), `${local.orderNumber} — ${t(`status.${status}`)}`);
+    }
   }
   const card = $(`[data-order-card="${id}"]`);
   if (card) {
@@ -198,7 +204,7 @@ function buildFeedback(order) {
           body: { sid: sessionId, rating, comment: comment.value || undefined }
         });
         box.replaceChildren(el('p', { class: 'badge badge-success', text: t('feedback.thanks') }));
-      } catch {
+      } catch (e) {
         send.disabled = false;
       }
     }

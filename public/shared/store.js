@@ -9,7 +9,7 @@ export function storeGet(key, fallback = null) {
   try {
     const raw = localStorage.getItem(PREFIX + key);
     return raw == null ? fallback : JSON.parse(raw);
-  } catch {
+  } catch (e) {
     return fallback;
   }
 }
@@ -17,7 +17,7 @@ export function storeGet(key, fallback = null) {
 export function storeSet(key, value) {
   try {
     localStorage.setItem(PREFIX + key, JSON.stringify(value));
-  } catch {
+  } catch (e) {
     /* storage full/private mode — in-memory only */
   }
   window.dispatchEvent(new CustomEvent(PREFIX + key, { detail: value }));
@@ -35,7 +35,7 @@ export function storeSubscribe(key, fn) {
 function safeParse(raw) {
   try {
     return raw == null ? null : JSON.parse(raw);
-  } catch {
+  } catch (e) {
     return null;
   }
 }

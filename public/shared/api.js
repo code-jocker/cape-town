@@ -35,8 +35,8 @@ export function setDefaultHeader(name, value) {
 }
 
 async function rawRequest(path, { method = 'GET', body, headers = {}, timeout = 12000, signal } = {}) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(new DOMException('timeout', 'TimeoutError')), timeout);
+  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timer = controller ? setTimeout(() => controller.abort(new DOMException('timeout', 'TimeoutError')), timeout) : setTimeout(() => {}, 0);
   if (signal) signal.addEventListener('abort', () => controller.abort(), { once: true });
   try {
     const res = await fetch(path, {
@@ -48,17 +48,18 @@ async function rawRequest(path, { method = 'GET', body, headers = {}, timeout = 
       },
       body: body ? JSON.stringify(body) : undefined,
       credentials: authCookieBased ? 'include' : 'same-origin',
-      signal: controller.signal
+      signal: controller ? controller.signal : undefined
     });
     let json = null;
     try {
       json = await res.json();
-    } catch {
+    } catch (e) {
       /* non-JSON response */
     }
     if (res.status === 401 && onUnauthorized) onUnauthorized();
     if (json && typeof json.ok === 'boolean') {
-      if (!json.ok) throw new ApiError(json.error?.code, json.error?.message || 'Request failed', res.status);
+      const errObj = json.error || {};
+      if (!json.ok) throw new ApiError(errObj.code, errObj.message || 'Request failed', res.status);
       return json.data;
     }
     if (!res.ok) throw new ApiError('HTTP_' + res.status, res.statusText || 'Request failed', res.status);

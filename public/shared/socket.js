@@ -57,7 +57,7 @@ export async function connectSocket({ mode = 'staff', tableToken = null, orderId
  */
 export function joinCustomerOrders(orderIds) {
   customerCtx.orderIds = [...orderIds];
-  if (socket?.connected && customerCtx.tableToken) {
+  if (socket && socket.connected && customerCtx.tableToken) {
     socket.emit('join', { tableToken: customerCtx.tableToken, orderIds: customerCtx.orderIds });
   }
 }
@@ -72,15 +72,18 @@ export function on(event, fn) {
   if (!handlers.has(event)) handlers.set(event, new Set());
   handlers.get(event).add(fn);
   if (socket) socket.on(event, fn);
-  return () => handlers.get(event)?.delete(fn);
+  return () => {
+    const set = handlers.get(event);
+    if (set) set.delete(fn);
+  };
 }
 
 export function emit(event, payload) {
-  if (socket?.connected) socket.emit(event, payload);
+  if (socket && socket.connected) socket.emit(event, payload);
 }
 
 export function is_connected() {
-  return !!socket?.connected;
+  return !!(socket && socket.connected);
 }
 
 function loadIoScript() {

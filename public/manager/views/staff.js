@@ -1,6 +1,6 @@
 import { $, el } from '../../shared/dom.js';
 import { api } from '../../shared/api.js';
-import { openModal, closeModal, field, toast, confirmAction } from '../ui.js';
+import { openModal, closeModal, field, toast } from '../ui.js';
 import { dateTime } from '../../shared/format.js';
 
 export const title = 'Staff';
@@ -58,10 +58,10 @@ function draw(list) {
 }
 
 function staffEditor(u, list) {
-  const name = el('input', { class: 'input', value: u?.name || '' });
-  const username = el('input', { class: 'input', value: u?.username || '', disabled: !!u });
+  const name = el('input', { class: 'input', value: (u && u.name) || '' });
+  const username = el('input', { class: 'input', value: (u && u.username) || '', disabled: !!u });
   const role = el('select', { class: 'input' });
-  for (const r of ['manager', 'chef', 'waiter']) role.append(el('option', { value: r, text: r, selected: (u?.role || 'waiter') === r }));
+  for (const r of ['manager', 'chef', 'waiter']) role.append(el('option', { value: r, text: r, selected: ((u && u.role) || 'waiter') === r }));
   const active = el('input', { type: 'checkbox', checked: u ? u.isActive !== false : true });
   const password = el('input', { class: 'input', type: 'password', placeholder: u ? '(unchanged)' : 'min 6 chars' });
 

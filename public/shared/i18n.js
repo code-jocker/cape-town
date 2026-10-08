@@ -47,7 +47,8 @@ const dict = {
     'menu.title': 'Menu',
     'menu.empty': 'Nothing matches your search.',
     'menu.searchPlaceholder': 'Search the menu…',
-    'menu.closed': 'We are currently closed. Opening hours: 10:00 – 23:00.',
+    'menu.closed': 'We are currently closed.',
+    'menu.hours': 'Opening hours: {open} – {close}.',
     'menu.tags.vegetarian': 'Vegetarian',
     'menu.tags.spicy': 'Spicy',
     'menu.tags.popular': 'Popular',
@@ -186,7 +187,8 @@ const dict = {
     'menu.title': 'Menu',
     'menu.empty': 'Aucun résultat pour votre recherche.',
     'menu.searchPlaceholder': 'Rechercher dans le menu…',
-    'menu.closed': 'Nous sommes fermés. Horaires : 10h00 – 23h00.',
+    'menu.closed': 'Nous sommes fermés.',
+    'menu.hours': 'Horaires : {open} – {close}.',
     'menu.tags.vegetarian': 'Végétarien',
     'menu.tags.spicy': 'Épicé',
     'menu.tags.popular': 'Populaire',
@@ -325,7 +327,8 @@ const dict = {
     'menu.title': 'Ibiribwa',
     'menu.empty': 'Nta kintu cyabonetse.',
     'menu.searchPlaceholder': 'Shakisha ku biribwa…',
-    'menu.closed': 'Tufunze. Amasaha: 10:00 – 23:00.',
+    'menu.closed': 'Tufunze.',
+    'menu.hours': 'Amasaha: {open} – {close}.',
     'menu.tags.vegetarian': 'Imboga',
     'menu.tags.spicy': 'Gipima',
     'menu.tags.popular': 'Cyakundwa',
@@ -456,7 +459,7 @@ export function setLang(code) {
 /** Translate a key, with {var} interpolation. Falls back to English, then the key. */
 export function t(key, vars = {}) {
   const langDict = dict[getLang()] || dict.en;
-  let str = langDict[key] ?? dict.en[key] ?? key;
+  let str = langDict[key] !== undefined ? langDict[key] : dict.en[key] !== undefined ? dict.en[key] : key;
   for (const [name, value] of Object.entries(vars)) {
     str = str.replaceAll(`{${name}}`, value);
   }

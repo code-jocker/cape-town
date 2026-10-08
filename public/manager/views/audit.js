@@ -75,7 +75,7 @@ function summarize(before, after) {
   for (const k of keys) {
     const bv = JSON.stringify(b[k]);
     const av = JSON.stringify(a[k]);
-    if (bv !== av) parts.push(`${k}: ${bv ?? '—'} → ${av ?? '—'}`);
+    if (bv !== av) parts.push(`${k}: ${(bv != null ? bv : '—')} → ${(av != null ? av : '—')}`);
   }
   const s = parts.join('; ');
   return s.length > 120 ? s.slice(0, 120) + '…' : s;

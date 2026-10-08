@@ -82,7 +82,7 @@ async function boot() {
     for (const fn of liveListeners) {
       try {
         fn(payload);
-      } catch {}
+      } catch (e) {}
     }
   });
   on('order:new', () => toast('New order received'));

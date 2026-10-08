@@ -2,13 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script src="/shared/browser-check.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#9A5322" />
     <meta name="color-scheme" content="light" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Manager" />
+    <meta name="description" content="Cape Town K Hotel — manager dashboard" />
     <title>Manager · Cape Town K Hotel</title>
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <link rel="stylesheet" href="/shared/base.css" />
     <link rel="stylesheet" href="/manager/manager.css" />
-    <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
   </head>
   <body class="mgr-body">
     <aside class="sidebar" id="sidebar">
@@ -24,6 +32,7 @@
         <span id="whoami" class="muted"></span>
         <button class="btn btn-ghost btn-sm" id="logout">Logout</button>
       </div>
+      <button class="collapse-toggle" id="collapse-toggle" aria-label="Toggle sidebar" title="Collapse sidebar"> collapses</button>
     </aside>
 
     <div class="mgr-main">

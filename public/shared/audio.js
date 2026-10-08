@@ -62,7 +62,7 @@ export async function notify(title, body) {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
   try {
     new Notification(title, { body, icon: '/icons/icon-192.png' });
-  } catch {
+  } catch (e) {
     /* notification failures are never fatal */
   }
 }
@@ -71,7 +71,7 @@ export async function requestNotificationPermission() {
   if ('Notification' in window && Notification.permission === 'default') {
     try {
       await Notification.requestPermission();
-    } catch {
+    } catch (e) {
       /* ignore */
     }
   }

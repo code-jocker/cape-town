@@ -41,7 +41,7 @@ async function refresh() {
     const data = await api('/api/orders?status=active&limit=100');
     state.orders = new Map(data.orders.map((o) => [String(o._id), o]));
     render();
-  } catch {
+  } catch (e) {
     /* keep the last good board on a transient error */
   }
 }
@@ -55,10 +55,10 @@ function scheduleRefresh() {
 async function loadSettings() {
   try {
     const s = await api('/api/settings');
-    state.warnMin = s.lateThresholds?.warnMin ?? 10;
-    state.lateMin = s.lateThresholds?.lateMin ?? 20;
+    state.warnMin = (s.lateThresholds && s.lateThresholds.warnMin != null ? s.lateThresholds.warnMin : 10);
+    state.lateMin = (s.lateThresholds && s.lateThresholds.lateMin != null ? s.lateThresholds.lateMin : 20);
     state.currency = s.currency || 'RWF';
-  } catch {
+  } catch (e) {
     /* defaults are fine */
   }
 }
@@ -87,7 +87,7 @@ function buildTicket(order) {
   const items = (order.items || []).filter((i) => state.station === 'all' || i.station === state.station);
   const lis = items.map((i) => {
     const opts = (i.selectedOptions || []).flatMap((o) => o.choices.map((c) => c.label));
-    const li = el('li', {}, el('span', { class: 'qty', text: `${i.quantity}×` }), el('span', { text: i.nameSnapshot?.en || 'Item' }));
+    const li = el('li', {}, el('span', { class: 'qty', text: `${i.quantity}×` }), el('span', { text: (i.nameSnapshot && i.nameSnapshot.en) || 'Item' }));
     if (opts.length) li.append(el('span', { class: 'opts', text: `· ${opts.join(', ')}` }));
     if (i.note) li.append(el('div', { class: 't-note', text: i.note }));
     return li;
@@ -114,7 +114,7 @@ function buildTicket(order) {
       'div',
       { class: 't-top' },
       el('span', { class: 't-no', text: order.orderNumber }),
-      el('span', { class: 't-table', text: `T${order.table?.number ?? '?'}` }),
+      el('span', { class: 't-table', text: `T${(order.table && order.table.number != null ? order.table.number : '?')}` }),
       el('span', { class: 't-timer', text: timerText(order) })
     ),
     el('ul', { class: 't-items' }, lis),
@@ -185,7 +185,7 @@ function printTicket(id) {
   area.innerHTML = '';
   area.append(
     el('h3', { text: 'Cape Town K Hotel' }),
-    el('div', { class: 'p-row' }, el('span', { text: order.orderNumber }), el('span', { text: `Table ${order.table?.number ?? '?'}` })),
+    el('div', { class: 'p-row' }, el('span', { text: order.orderNumber }), el('span', { text: `Table ${(order.table && order.table.number != null ? order.table.number : '?')}` })),
     el('div', { class: 'p-row' }, el('span', { text: timeHM(new Date(order.createdAt)) }), el('span', { text: new Date().toLocaleTimeString() })),
     el('hr'),
     el(
@@ -193,7 +193,7 @@ function printTicket(id) {
       {},
       (order.items || []).map((i) => {
         const opts = (i.selectedOptions || []).flatMap((o) => o.choices.map((c) => c.label));
-        const li = el('li', { class: 'p-row' }, el('span', { text: `${i.quantity}× ${i.nameSnapshot?.en || ''}` }));
+        const li = el('li', { class: 'p-row' }, el('span', { text: `${i.quantity}× ${(i.nameSnapshot && i.nameSnapshot.en) || ''}` }));
         if (opts.length) li.append(el('div', { text: `   ${opts.join(', ')}` }));
         if (i.note) li.append(el('div', { text: `   > ${i.note}` }));
         return li;
@@ -237,7 +237,7 @@ function renderStock(filter) {
   list.innerHTML = '';
   const q = filter.trim().toLowerCase();
   for (const item of stockItems) {
-    const name = item.name?.en || '';
+    const name = (item.name && item.name.en) || '';
     if (q && !name.toLowerCase().includes(q)) continue;
     list.append(
       el(
@@ -321,7 +321,7 @@ function alertNewOrder(payload) {
   if (!state.shift || !audioEnabled()) return;
   playNewOrder();
   vibrate([200, 100, 200]);
-  notify(`New order ${payload.no || ''}`, `Table ${payload.table ?? '?'}`);
+  notify(`New order ${payload.no || ''}`, `Table ${(payload.table != null ? payload.table : '?')}`);
 }
 
 /* ---------------- toast ---------------- */

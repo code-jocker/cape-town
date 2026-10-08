@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#141110" />
+    <meta name="color-scheme" content="dark" />
+    <title>Kitchen · Cape Town K Hotel</title>
+    <link rel="stylesheet" href="/shared/base.css" />
+    <link rel="stylesheet" href="/kitchen/kitchen.css" />
+    <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
+  </head>
+  <body class="kitchen-body">
+    <header class="k-head">
+      <div class="k-head-left">
+        <img src="/icons/logo.svg" alt="" width="30" height="30" />
+        <div>
+          <h1 data-i18n="kitchen.title">Kitchen</h1>
+          <p class="k-sub"><span id="whoami"></span> · <span id="clock"></span></p>
+        </div>
+      </div>
+      <div class="k-head-right">
+        <div class="station-filter" id="station-filter" role="tablist" aria-label="Station filter">
+          <button class="chip active" data-station="all" role="tab">All</button>
+          <button class="chip" data-station="kitchen" role="tab">Kitchen</button>
+          <button class="chip" data-station="bar" role="tab">Bar</button>
+          <button class="chip" data-station="dessert" role="tab">Dessert</button>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="stock-btn" title="Out-of-stock">Stock</button>
+        <button class="btn btn-ghost btn-sm" id="sound-btn" title="Toggle sound">🔊</button>
+        <button class="btn btn-primary btn-sm" id="shift-btn">Start shift</button>
+      </div>
+    </header>
+
+    <div class="k-summary" id="k-summary"></div>
+
+    <main class="board" id="board">
+      <section class="col" data-col="new">
+        <h2 class="col-title new">NEW <span class="count" data-count="new">0</span></h2>
+        <div class="col-body" data-body="new"></div>
+      </section>
+      <section class="col" data-col="preparing">
+        <h2 class="col-title preparing">PREPARING <span class="count" data-count="preparing">0</span></h2>
+        <div class="col-body" data-body="preparing"></div>
+      </section>
+      <section class="col" data-col="ready">
+        <h2 class="col-title ready">READY <span class="count" data-count="ready">0</span></h2>
+        <div class="col-body" data-body="ready"></div>
+      </section>
+    </main>
+
+    <!-- Out-of-stock panel -->
+    <div class="stock-panel" id="stock-panel" hidden>
+      <div class="stock-head">
+        <h2>Menu availability</h2>
+        <button class="btn btn-ghost btn-sm" id="stock-close">Close</button>
+      </div>
+      <input class="input" id="stock-search" placeholder="Search items…" />
+      <div class="stock-list" id="stock-list"></div>
+    </div>
+
+    <!-- Start-shift overlay (user gesture unlocks audio + notifications) -->
+    <div class="shift-overlay" id="shift-overlay">
+      <div class="shift-card card">
+        <h2>Kitchen display</h2>
+        <p class="muted">Tap <strong>Start shift</strong> to enable new-order sounds, vibration and alerts.</p>
+        <button class="btn btn-primary btn-lg" id="shift-start">Start shift</button>
+        <button class="btn btn-ghost" id="shift-skip">Continue without sound</button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" hidden></div>
+    <div id="print-area" aria-hidden="true"></div>
+
+    <script type="module" src="/kitchen/kitchen.js"></script>
+  </body>
+</html>

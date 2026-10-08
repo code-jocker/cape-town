@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#9A5322" />
+    <meta name="color-scheme" content="light" />
+    <meta name="description" content="Cape Town K Hotel — scan, browse and order from your table" />
+    <title>Cape Town K Hotel — Menu</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="/shared/base.css" />
+  <link rel="stylesheet" href="/customer/style.css" />
+</head>
+<body>
+  <div id="offline-banner" class="offline-banner" role="status">You are offline</div>
+
+  <!-- Boot / error states -->
+  <div id="boot" class="boot">
+    <div class="spinner" aria-hidden="true"></div>
+    <p id="boot-text" class="muted">Loading…</p>
+    <button id="boot-retry" class="btn btn-primary hidden">Retry</button>
+  </div>
+
+  <div id="app" class="hidden">
+    <!-- 1. Hero header -->
+    <header class="hero">
+      <button id="lang-btn" class="lang-btn" aria-label="Language">EN</button>
+      <p class="hero-tagline" data-i18n="app.tagline">RESTAURANT</p>
+      <h1 class="hero-name">CAPE TOWN K HOTEL</h1>
+      <p class="hero-location">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+        <span>Kigali-Kimironko</span>
+      </p>
+      <span id="table-pill" class="table-pill hidden"></span>
+    </header>
+
+    <!-- 2. Promo ticker -->
+    <div id="ticker" class="ticker hidden" role="marquee">
+      <div id="ticker-text" class="ticker-text"></div>
+    </div>
+
+    <div id="closed-banner" class="closed-banner hidden" role="alert"></div>
+
+    <!-- 3. Sticky category bar -->
+    <nav class="cat-bar" aria-label="Categories">
+      <div id="chips" class="chips" role="tablist"></div>
+      <button id="search-btn" class="search-btn" aria-label="Search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </button>
+    </nav>
+    <div id="search-row" class="search-row hidden">
+      <input id="search-input" class="input" type="search" placeholder="Search the menu…" />
+    </div>
+
+    <!-- Views: menu / tracker -->
+    <main id="view-menu">
+      <div id="menu-list"></div>
+    </main>
+
+    <main id="view-tracker" class="hidden">
+      <div class="tracker-head">
+        <button id="back-to-menu" class="btn btn-ghost btn-sm" data-i18n="common.back">Back</button>
+        <h2 data-i18n="order.tracking">Your order</h2>
+        <span id="session-total" class="badge"></span>
+      </div>
+      <div id="orders-panel" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <!-- 6. Floating action button -->
+  <div id="fab-wrap" class="fab-wrap hidden">
+    <div id="fab-menu" class="fab-menu hidden" role="menu">
+      <button class="fab-item" data-request="waiter" role="menuitem" data-i18n="fab.callWaiter">Call waiter</button>
+      <button class="fab-item" data-request="bill" role="menuitem" data-i18n="fab.requestBill">Request bill</button>
+      <button class="fab-item" data-request="water" role="menuitem" data-i18n="fab.water">Water</button>
+    </div>
+    <button id="fab" class="fab" aria-label="Ask for help" aria-expanded="false">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22a10 10 0 1 1 10-10c0 5.5-4.5 10-10 10zm-5-9.5h10v-2H7v2z" opacity=".01"/><path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2zm2 4v2h12V8H6zm0 4v2h8v-2H6z"/></svg>
+    </button>
+  </div>
+
+  <!-- 7. Sticky cart bar -->
+  <button id="cart-bar" class="cart-bar hidden" aria-live="polite"></button>
+
+  <!-- Sheets mount here -->
+  <div id="sheet-root"></div>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script type="module" src="/customer/menu.js"></script>
+</body>
+</html>

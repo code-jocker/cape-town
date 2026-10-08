@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#9A5322" />
+    <meta name="color-scheme" content="light" />
+    <title>Waiter · Cape Town K Hotel</title>
+    <link rel="stylesheet" href="/shared/base.css" />
+    <link rel="stylesheet" href="/waiter/waiter.css" />
+    <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
+  </head>
+  <body class="waiter-body">
+    <header class="w-head">
+      <div class="w-head-left">
+        <img src="/icons/logo.svg" alt="" width="28" height="28" />
+        <h1>Waiter</h1>
+      </div>
+      <div class="w-head-right">
+        <span class="muted" id="whoami"></span>
+        <button class="btn btn-ghost btn-sm" id="logout">Logout</button>
+      </div>
+    </header>
+
+    <nav class="w-tabs" id="w-tabs">
+      <button class="tab active" data-tab="ready">Ready <span class="pill" data-badge="ready">0</span></button>
+      <button class="tab" data-tab="requests">Requests <span class="pill" data-badge="requests">0</span></button>
+      <button class="tab" data-tab="sessions">Tables <span class="pill" data-badge="sessions">0</span></button>
+    </nav>
+
+    <main class="w-main">
+      <section class="view active" data-view="ready" id="view-ready"></section>
+      <section class="view" data-view="requests" id="view-requests"></section>
+      <section class="view" data-view="sessions" id="view-sessions"></section>
+    </main>
+
+    <!-- Bill sheet -->
+    <div class="sheet-backdrop" id="bill-backdrop" hidden></div>
+    <div class="sheet" id="bill-sheet" hidden>
+      <div class="sheet-head">
+        <h2 id="bill-title">Bill</h2>
+        <button class="btn btn-ghost btn-sm" id="bill-close">Close</button>
+      </div>
+      <div class="sheet-body" id="bill-body"></div>
+      <div class="sheet-foot" id="bill-foot"></div>
+    </div>
+
+    <div class="toast" id="toast" hidden></div>
+    <div id="print-area" aria-hidden="true"></div>
+
+    <script type="module" src="/waiter/waiter.js"></script>
+  </body>
+</html>

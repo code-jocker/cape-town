@@ -35,6 +35,8 @@ export default [
         FormData: 'readonly',
         alert: 'readonly',
         confirm: 'readonly',
+        prompt: 'readonly',
+        Element: 'readonly',
         speechSynthesis: 'readonly',
         performance: 'readonly',
         CSS: 'readonly',
@@ -48,18 +50,29 @@ export default [
         IntersectionObserver: 'readonly'
       }
     },
-    {
-      rules: {
-        'no-empty': ['error', { allowEmptyCatch: true }]
-      }
-    },
     rules: {
       'no-unused-vars': ['error', { argsIgnorePattern: '^_|next', caughtErrors: 'none' }],
       'no-prototype-builtins': 'off',
-      'no-console': 'off'
+      'no-console': 'off',
+      'no-empty': ['error', { allowEmptyCatch: true }]
     }
   },
   {
-    ignores: ['node_modules/**', 'public/uploads/**', 'coverage/**']
+    ignores: ['node_modules/**', 'public/uploads/**', 'coverage/**', '.kilo/**']
+  },
+  {
+    files: ['server/**/*.js', '*.cjs'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'readonly'
+      }
+    }
   }
 ];

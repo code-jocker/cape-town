@@ -19,7 +19,6 @@ const NAV = [
   { route: 'audit', label: 'Audit log', ico: '📜', load: () => import('./views/audit.js') }
 ];
 
-let current = null;
 const liveListeners = new Set();
 
 /** Views can subscribe to live stats pushes. Returns an unsubscribe fn. */
@@ -45,6 +44,7 @@ async function router() {
   $$('#side-nav a').forEach((a) => a.classList.toggle('active', a.dataset.route === item.route));
   $('#page-title').textContent = item.label;
   $('#sidebar').classList.remove('open');
+  $('#side-backdrop').classList.remove('show');
 
   const root = $('#content');
   root.innerHTML = '';
@@ -53,7 +53,6 @@ async function router() {
   try {
     const mod = await item.load();
     root.innerHTML = '';
-    current = mod;
     await mod.render(root);
   } catch (err) {
     root.innerHTML = '';
@@ -74,7 +73,23 @@ async function boot() {
   setInterval(clock, 30000);
 
   $('#logout').addEventListener('click', logout);
-  $('#menu-toggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
+  const sidebar = $('#sidebar');
+  const backdrop = $('#side-backdrop');
+  const setSidebar = (open) => {
+    sidebar.classList.toggle('open', open);
+    backdrop.classList.toggle('show', open);
+  };
+  $('#menu-toggle').addEventListener('click', () => setSidebar(!sidebar.classList.contains('open')));
+  backdrop.addEventListener('click', () => setSidebar(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setSidebar(false);
+  });
+  $('#collapse-toggle').addEventListener('click', () => {
+    const s = $('#sidebar');
+    s.classList.toggle('collapsed');
+    localStorage.setItem('sidebarCollapsed', String(s.classList.contains('collapsed')));
+  });
+  if (localStorage.getItem('sidebarCollapsed') === 'true') $('#sidebar').classList.add('collapsed');
 
   window.addEventListener('hashchange', router);
 
@@ -86,6 +101,9 @@ async function boot() {
     }
   });
   on('order:new', () => toast('New order received'));
+  on('order:updated', (p) => {
+    if (p && p.status === 'ready') toast(`Order ${p.no || ''} is ready`);
+  });
   setOnReconnect(() => $('#live-dot').classList.remove('off'));
 
   await connectSocket({

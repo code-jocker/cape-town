@@ -12,7 +12,7 @@ import { t } from '../shared/i18n.js';
 import { el, $ } from '../shared/dom.js';
 import { on } from '../shared/socket.js';
 import { playStatus, notify } from '../shared/audio.js';
-import { addOrder, getOrders } from './cart.js';
+import { addOrder, getOrders, setOrders } from './cart.js';
 
 const STEP_KEYS = ['pending', 'accepted', 'preparing', 'ready', 'served'];
 const STEP_PROGRESS = { pending: 10, accepted: 30, preparing: 55, ready: 80, served: 100 };
@@ -24,6 +24,16 @@ let etaMinutes = 15;
 let pollTimer = null;
 let renderedIds = new Set();
 let onFeedback = null; // callback(order) when an order reaches served
+let flashTimer = null;
+
+function flashToast(msg) {
+  const node = $('#toast');
+  if (!node) return;
+  node.textContent = msg;
+  node.classList.remove('hidden');
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(() => node.classList.add('hidden'), 3200);
+}
 
 export function initTracker({ tableId: tid, sessionId: sid, currency: cur, eta, feedbackHandler }) {
   tableId = tid;
@@ -73,6 +83,7 @@ function updateLocalOrder(id, status) {
     addOrder(tableId, local);
     if (status !== was && (status === 'ready' || status === 'served')) {
       playStatus();
+      flashToast(t(status === 'ready' ? 'order.readyToast' : 'order.servedToast', { no: local.orderNumber }));
       notify(t('order.tracking'), `${local.orderNumber} — ${t(`status.${status}`)}`);
     }
   }

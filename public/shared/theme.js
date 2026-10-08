@@ -9,9 +9,19 @@
   const getStoredTheme = () => localStorage.getItem(STORAGE_KEY);
   const setStoredTheme = (theme) => localStorage.setItem(STORAGE_KEY, theme);
 
+  const updateMetaTags = (theme) => {
+    const themeColor = theme === 'dark' ? '#2a2520' : '#9A5322';
+    const colorScheme = theme === 'dark' ? 'dark' : 'light';
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    const metaColorScheme = document.querySelector('meta[name="color-scheme"]');
+    if (metaThemeColor) metaThemeColor.setAttribute('content', themeColor);
+    if (metaColorScheme) metaColorScheme.setAttribute('content', colorScheme);
+  };
+
   const applyTheme = (theme) => {
     document.documentElement.setAttribute(THEME_ATTR, theme);
     document.documentElement.classList.toggle(DARK_CLASS, theme === 'dark');
+    updateMetaTags(theme);
   };
 
   const initTheme = () => {

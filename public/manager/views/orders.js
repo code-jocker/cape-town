@@ -1,4 +1,4 @@
-import { $, el, delegate } from '../../shared/dom.js';
+import { el, delegate } from '../../shared/dom.js';
 import { api } from '../../shared/api.js';
 import { money, dateTime } from '../../shared/format.js';
 import { openModal, statusBadge, toast } from '../ui.js';

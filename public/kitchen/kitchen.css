@@ -14,26 +14,27 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 14px 20px;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-divider);
+  padding: calc(12px + var(--safe-top)) 20px 12px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-on-primary);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
   position: sticky;
   top: 0;
   z-index: 20;
   flex-wrap: wrap;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 12px rgba(160, 71, 31, 0.2);
 }
 .k-head-left h1 {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 800;
   letter-spacing: 0.5px;
-  color: var(--color-text);
+  color: var(--color-on-primary);
 }
 .k-sub {
   margin: 4px 0 0;
   font-size: 0.85rem;
-  color: var(--color-text-muted);
+  color: var(--color-header-label);
   font-weight: 500;
 }
 .k-head-right {
@@ -43,22 +44,22 @@
   flex-wrap: wrap;
 }
 .station-filter .chip {
-  background: var(--color-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-divider);
+  background: rgba(255,255,255,0.12);
+  color: var(--color-on-primary);
+  border: 1px solid rgba(255,255,255,0.25);
   font-weight: 700;
   min-height: 40px;
   padding: 8px 16px;
   font-size: 0.85rem;
 }
 .station-filter .chip.active {
-  background: var(--color-primary);
-  color: #fff;
-  border-color: var(--color-primary);
-  box-shadow: 0 2px 8px rgba(199, 91, 42, 0.35);
+  background: var(--color-header-label);
+  color: var(--color-primary-dark);
+  border-color: var(--color-header-label);
+  box-shadow: 0 2px 8px rgba(255,232,209,0.35);
 }
 .station-filter .chip:hover:not(.active) {
-  background: var(--color-primary-soft);
+  background: rgba(255,255,255,0.22);
   transform: translateY(-1px);
 }
 
@@ -67,18 +68,18 @@
   gap: 16px;
   padding: 12px 20px;
   font-size: 0.85rem;
-  color: var(--color-text-muted);
+  color: var(--color-header-label);
   flex-wrap: wrap;
-  background: var(--color-bg);
-  border-bottom: 1px solid var(--color-divider);
+  background: rgba(160, 71, 31, 0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .k-summary b {
-  color: var(--color-text);
+  color: var(--color-on-primary);
   font-weight: 800;
   font-size: 1rem;
 }
 .k-summary .sep {
-  color: var(--color-divider);
+  color: rgba(255,255,255,0.3);
   margin: 0 4px;
 }
 
@@ -186,7 +187,7 @@
 .col-title .count {
   margin-left: auto;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   border-radius: 999px;
   padding: 2px 12px;
   font-size: 0.85rem;
@@ -228,17 +229,17 @@
   }
 }
 .ticket.warn {
-  border-left-color: #f59e0b;
+  border-left-color: var(--color-warning);
 }
 .ticket.late {
-  border-left-color: #ef4444;
-  background: #fef2f2;
+  border-left-color: var(--color-danger);
+  background: var(--color-danger-50);
 }
 .ticket.ready {
-  border-left-color: #4ade80;
+  border-left-color: var(--color-success);
 }
 .ticket.flash {
-  box-shadow: 0 0 0 2px #f59e0b, 0 4px 16px rgba(0,0,0,0.08);
+  box-shadow: 0 0 0 2px var(--color-warning), 0 4px 16px rgba(0,0,0,0.08);
 }
 .t-top {
   display: flex;
@@ -254,7 +255,7 @@
 }
 .t-table {
   font-size: 0.85rem;
-  color: #fff;
+  color: var(--color-on-primary);
   background: var(--color-primary);
   padding: 2px 10px;
   border-radius: 999px;
@@ -266,10 +267,10 @@
   color: var(--color-text-muted);
 }
 .ticket.warn .t-timer {
-  color: #b45309;
+  color: var(--color-warning-800);
 }
 .ticket.late .t-timer {
-  color: #b91c1c;
+  color: var(--color-danger-800);
 }
 .t-items {
   list-style: none;
@@ -299,12 +300,12 @@
 }
 .t-note {
   font-size: 0.82rem;
-  color: #b45309;
-  background: #fff7ed;
+  color: var(--color-warning-800);
+  background: var(--color-warning-50);
   border-radius: 6px;
   padding: 4px 8px;
   margin-bottom: 8px;
-  border-left: 3px solid #f59e0b;
+  border-left: 3px solid var(--color-warning);
 }
 .t-station {
   font-size: 0.7rem;
@@ -350,7 +351,7 @@
 .stock-panel {
   position: fixed;
   inset: 0;
-  background: rgba(252, 252, 250, 0.95);
+  background: var(--color-bg);
   z-index: 40;
   padding: 24px;
   overflow-y: auto;
@@ -446,7 +447,7 @@
 .shift-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(252, 252, 250, 0.95);
+  background: var(--color-bg);
   display: grid;
   place-items: center;
   z-index: 60;
@@ -488,7 +489,7 @@
   left: 50%;
   transform: translateX(-50%) translateY(20px);
   background: var(--color-text);
-  color: #fff;
+  color: var(--color-on-primary);
   padding: 12px 22px;
   border-radius: 999px;
   z-index: 70;

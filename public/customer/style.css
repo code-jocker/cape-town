@@ -176,6 +176,52 @@ body {
   display: none;
 }
 
+/* ---------- Chip enhancements ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.chip-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+.chip-label {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.chip.active {
+  position: relative;
+}
+.chip.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-on-primary);
+}
+.chip.active .chip-icon {
+  animation: chip-bounce 0.3s var(--ease);
+}
+@keyframes chip-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* ---------- Pull-to-refresh indicator ---------- */
+.ptr-indicator {
+  pointer-events: none;
+}
+.ptr-spinner {
+  flex-shrink: 0;
+}
+
 .search-btn {
   flex: none;
   width: 44px;
@@ -463,6 +509,14 @@ body {
 
 .cart-bar:active {
   transform: scale(0.98);
+}
+
+.cart-bar.has-items {
+  animation: cart-bounce 0.4s var(--ease);
+}
+@keyframes cart-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 /* ---------- Bottom sheets ---------- */

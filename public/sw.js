@@ -7,7 +7,7 @@
  *   - everything else under /api: network only (never cache orders/requests)
  * Every handler ALWAYS resolves to a Response so respondWith never rejects.
  */
-const VERSION = 'ep-v3';
+const VERSION = 'ep-v4';
 const STATIC = `${VERSION}-static`;
 const RUNTIME = `${VERSION}-runtime`;
 

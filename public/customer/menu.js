@@ -134,6 +134,7 @@ function setupChips() {
     chips.append(chip(c._id, locName(c.name)));
   }
   delegate(chips, 'click', '.chip', (e, target) => {
+    Haptic.selection();
     state.activeCat = target.dataset.cat;
     $$('.chip', chips).forEach((ch) => {
       const active = ch === target;
@@ -156,14 +157,41 @@ function setupChips() {
   setupScrollSpy();
 }
 
+const CATEGORY_ICONS = [
+  [/starter/, '🥗'],
+  [/main|grill|brochette|meat|beef|chicken|goat/, '🍖'],
+  [/dessert|sweet|cake|mikate/, '🍰'],
+  [/beer|alcohol|wine|inzoga/, '🍺'],
+  [/soft|drink|juice|soda|beverage/, '🥤'],
+  [/coffee|tea|espresso/, '☕'],
+  [/special/, '⭐']
+];
+
+function categoryIcon(name) {
+  const slug = (name || '').toLowerCase();
+  for (const [re, icon] of CATEGORY_ICONS) {
+    if (re.test(slug)) return icon;
+  }
+  return '';
+}
+
 function chip(catId, label) {
-  return el('button', {
+  const icon = catId === 'all' ? '☰' : categoryIcon(label);
+  const btn = el('button', {
     class: `chip${catId === state.activeCat ? ' active' : ''}`,
     role: 'tab',
     'data-cat': catId,
-    'aria-selected': catId === state.activeCat ? 'true' : 'false',
-    text: label
+    'aria-selected': catId === state.activeCat ? 'true' : 'false'
   });
+  if (icon) {
+    btn.append(
+      el('span', { class: 'chip-icon', 'aria-hidden': 'true', text: icon }),
+      el('span', { class: 'chip-label', text: label })
+    );
+  } else {
+    btn.textContent = label;
+  }
+  return btn;
 }
 
 function renderMenu() {
@@ -316,7 +344,6 @@ function matches(item, q) {
 
 function openItemSheet(item) {
   const selections = new Map(); // option name -> Set(labels)
-  const hasRequired = (item.options || []).some((o) => o.required);
 
   const body = el('div', { class: 'sheet-body' });
   body.append(el('p', { class: 'muted', style: 'margin:0 0 8px;', text: locDesc(item) }));
@@ -556,9 +583,14 @@ function refreshCartBar() {
   const c = cart.getCart(state.tableId);
   const bar = $('#cart-bar');
   const count = cart.cartCount(c);
-  if (!count) { bar.classList.add('hidden'); bar.textContent = ''; return; }
+  if (!count) { bar.classList.add('hidden'); bar.textContent = ''; bar.classList.remove('has-items'); return; }
+  const hadItems = !bar.classList.contains('hidden');
   bar.classList.remove('hidden');
   bar.textContent = `${t('cart.view')} · ${count} ${t('cart.items')} · ${money(cart.cartEstimate(c), state.currency)}`;
+  if (!hadItems) {
+    bar.classList.add('has-items');
+    setTimeout(() => bar.classList.remove('has-items'), 400);
+  }
 }
 
 function updateRowActions() {
@@ -645,9 +677,21 @@ async function sendRequest(type) {
 /* ============================== Nav / views ============================== */
 
 function setupNav() {
-  $('#cart-bar').addEventListener('click', openCartSheet);
-  $('#back-to-menu').addEventListener('click', () => switchView('menu'));
-  $('#lang-btn').addEventListener('click', cycleLang);
+  $('#cart-bar').addEventListener('click', () => {
+    Haptic.medium();
+    openCartSheet();
+  });
+  $('#back-to-menu').addEventListener('click', () => {
+    Haptic.selection();
+    switchView('menu');
+  });
+  $('#lang-btn').addEventListener('click', () => {
+    Haptic.selection();
+    cycleLang();
+  });
+  $('#search-btn').addEventListener('click', () => {
+    Haptic.selection();
+  });
 }
 
 function switchView(view) {

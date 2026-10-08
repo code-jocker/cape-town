@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+.git
+.github
+.env
+.env.*
+!.env.example
+logs
+*.log
+coverage
+.kilo
+.DS_Store
+public/uploads/items
+public/uploads/src
+Dockerfile
+docker-compose.yml

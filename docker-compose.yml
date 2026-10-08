@@ -1,0 +1,43 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    command: ["mongod", "--bind_ip_all"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-paradize}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-change-me}
+      MONGO_INITDB_DATABASE: elite-paradize
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    # MongoDB is internal-only; do not publish 27017 in production.
+    expose:
+      - "27017"
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      BASE_URL: ${BASE_URL:-http://localhost:3000}
+      MONGODB_URI: mongodb://${MONGO_USER:-paradize}:${MONGO_PASSWORD:-change-me}@mongo:27017/elite-paradize?authSource=admin
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      TABLE_TOKEN_SECRET: ${TABLE_TOKEN_SECRET:?set TABLE_TOKEN_SECRET in .env}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+    volumes:
+      - uploads:/app/public/uploads
+    ports:
+      - "3000:3000"
+
+volumes:
+  mongo-data:
+  uploads:

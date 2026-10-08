@@ -1,0 +1,51 @@
+import js from '@eslint/js';
+
+export default [
+  js.configs.recommended,
+  {
+    languageOptions: {
+      ecmaVersion: 2024,
+      sourceType: 'module',
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        fetch: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        navigator: 'readonly',
+        location: 'readonly',
+        history: 'readonly',
+        io: 'readonly',
+        AudioContext: 'readonly',
+        webkitAudioContext: 'readonly',
+        Notification: 'readonly',
+        customElements: 'readonly',
+        caches: 'readonly',
+        clients: 'readonly',
+        self: 'readonly',
+        importScripts: 'readonly',
+        AbortController: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        requestAnimationFrame: 'readonly',
+        URLSearchParams: 'readonly',
+        FormData: 'readonly',
+        alert: 'readonly',
+        confirm: 'readonly',
+        speechSynthesis: 'readonly',
+        performance: 'readonly'
+      }
+    },
+    rules: {
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_|next' }],
+      'no-prototype-builtins': 'off',
+      'no-console': 'off'
+    }
+  },
+  {
+    ignores: ['node_modules/**', 'public/uploads/**', 'coverage/**']
+  }
+];

@@ -1,0 +1,9 @@
+node_modules/
+.env
+public/uploads/*
+!public/uploads/src/
+!public/uploads/.gitkeep
+logs/
+*.log
+coverage/
+.DS_Store

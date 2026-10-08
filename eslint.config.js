@@ -36,11 +36,25 @@ export default [
         alert: 'readonly',
         confirm: 'readonly',
         speechSynthesis: 'readonly',
-        performance: 'readonly'
+        performance: 'readonly',
+        CSS: 'readonly',
+        CustomEvent: 'readonly',
+        DOMException: 'readonly',
+        URL: 'readonly',
+        Response: 'readonly',
+        Request: 'readonly',
+        MutationObserver: 'readonly',
+        ResizeObserver: 'readonly',
+        IntersectionObserver: 'readonly'
+      }
+    },
+    {
+      rules: {
+        'no-empty': ['error', { allowEmptyCatch: true }]
       }
     },
     rules: {
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_|next' }],
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_|next', caughtErrors: 'none' }],
       'no-prototype-builtins': 'off',
       'no-console': 'off'
     }

@@ -45,7 +45,7 @@ export async function qrSheetPdf(tables) {
     if (i > 0 && i % 8 === 0) doc.addPage();
 
     const x = 36 + col * colW;
-    const y = 36 + ((Math.floor(i / 2) % 4) * rowH);
+    const y = 36 + row * rowH;
 
     // card border
     doc.roundedRect(x + 8, y + 8, colW - 16, rowH - 16, 12).lineWidth(1).strokeColor('#E6D5C7').stroke();

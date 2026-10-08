@@ -9,7 +9,6 @@ const MONGO_ERR = {
 };
 
 /** Central error handler — the ONLY place errors are finalized. */
-// eslint-disable-next-line no-unused-vars
 export function errorHandler(err, req, res, _next) {
   let code = 'INTERNAL_ERROR';
   let message = 'Something went wrong. Please try again.';

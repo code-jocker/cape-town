@@ -1,7 +1,7 @@
 import { Settings } from '../models/Settings.js';
 import { audit } from '../models/AuditLog.js';
 import { asyncWrap } from '../utils/asyncWrap.js';
-import { getSettings, invalidateSettings } from '../services/settingsService.js';
+import { invalidateSettings } from '../services/settingsService.js';
 
 /** GET /api/settings (manager) */
 export const getSettingsRoute = asyncWrap(async (req, res) => {

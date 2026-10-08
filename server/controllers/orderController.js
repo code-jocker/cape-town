@@ -1,5 +1,4 @@
 import { Order, ACTIVE_STATUSES } from '../models/Order.js';
-import { Table } from '../models/Table.js';
 import { AppError } from '../utils/AppError.js';
 import { asyncWrap } from '../utils/asyncWrap.js';
 import { transitionOrder, payOrder, getStats } from '../services/orderService.js';

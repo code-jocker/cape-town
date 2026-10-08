@@ -29,7 +29,11 @@ export const createTable = asyncWrap(async (req, res) => {
 
 /** PATCH /api/tables/:id */
 export const updateTable = asyncWrap(async (req, res) => {
-  const { qrToken, tokenVersion, _id, ...changes } = req.body;
+  // Never allow overwriting token/identity fields from the client
+  const changes = { ...req.body };
+  delete changes.qrToken;
+  delete changes.tokenVersion;
+  delete changes._id;
   const before = await Table.findById(req.params.id).lean();
   const table = await Table.findByIdAndUpdate(req.params.id, changes, { new: true, runValidators: true });
   if (!table) throw new AppError('TABLE_NOT_FOUND', 'Table not found', 404);

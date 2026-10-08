@@ -1,6 +1,5 @@
 import { Order } from '../models/Order.js';
 import { MenuItem } from '../models/MenuItem.js';
-import { Category } from '../models/Category.js';
 import { kigaliDateKey } from '../utils/orderNumber.js';
 
 const TZ = 'Africa/Kigali';

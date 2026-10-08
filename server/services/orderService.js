@@ -4,7 +4,6 @@ import { Promo } from '../models/Promo.js';
 import { Payment } from '../models/Payment.js';
 import { audit } from '../models/AuditLog.js';
 import { AppError } from '../utils/AppError.js';
-import { asyncWrap } from '../utils/asyncWrap.js';
 import { nextOrderNumber } from '../utils/orderNumber.js';
 import { computeTotals } from './pricingService.js';
 import { getOrCreateOpenSession, touchSession, refreshSessionTotals, closeSession } from './sessionService.js';
@@ -379,7 +378,6 @@ export async function getStats() {
 
 /** Rough customer-facing ETA from kitchen load + item prep times. */
 export async function estimateWaitMinutes() {
-  const settings = await getSettings();
   const active = await Order.countDocuments({ status: { $in: ['pending', 'accepted', 'preparing'] } });
   const agg = await MenuItem.aggregate([
     { $match: { isAvailable: true } },

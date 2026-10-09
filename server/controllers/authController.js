@@ -53,7 +53,7 @@ export const login = asyncWrap(async (req, res) => {
 });
 
 export const logout = asyncWrap(async (req, res) => {
-  res.clearCookie(AUTH_COOKIE, { path: '/' });
+  res.clearCookie(AUTH_COOKIE, { ...authCookieOptions(config.isProd, 0), maxAge: 0 });
   res.json({ ok: true, data: null });
 });
 

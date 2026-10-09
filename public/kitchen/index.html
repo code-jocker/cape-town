@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <script src="/shared/browser-check.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="api-base" content="https://cape-town-backend.onrender.com" />
     <meta name="theme-color" content="#9A5322" />
     <meta name="color-scheme" content="light" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -28,6 +29,10 @@
         </div>
       </div>
       <div class="k-head-right">
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+          <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
         <div class="station-filter" id="station-filter" role="tablist" aria-label="Station filter">
           <button class="chip active" data-station="all" role="tab">All</button>
           <button class="chip" data-station="kitchen" role="tab">Kitchen</button>
@@ -80,6 +85,7 @@
     <div class="toast" id="toast" hidden></div>
     <div id="print-area" aria-hidden="true"></div>
 
+    <script type="module" src="/shared/theme.js"></script>
     <script type="module" src="/kitchen/kitchen.js"></script>
   </body>
 </html>

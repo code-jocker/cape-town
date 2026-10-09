@@ -6,6 +6,9 @@
  * - on401 hook for staff pages (redirect to login)
  */
 
+const META_API = document.querySelector('meta[name="api-base"]')?.content;
+const BASE_URL = (META_API || '').replace(/\/$/, '');
+
 export class ApiError extends Error {
   constructor(code, message, status) {
     super(message);
@@ -39,7 +42,7 @@ async function rawRequest(path, { method = 'GET', body, headers = {}, timeout = 
   const timer = controller ? setTimeout(() => controller.abort(new DOMException('timeout', 'TimeoutError')), timeout) : setTimeout(() => {}, 0);
   if (signal) signal.addEventListener('abort', () => controller.abort(), { once: true });
   try {
-    const res = await fetch(path, {
+    const res = await fetch(BASE_URL + path, {
       method,
       headers: {
         ...defaultHeaders,

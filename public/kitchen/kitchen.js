@@ -327,10 +327,15 @@ function alertNewOrder(payload) {
 let toastTimer = null;
 function toast(msg) {
   const t = $('#toast');
+  if (!t) return;
   t.textContent = msg;
   t.hidden = false;
+  t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => (t.hidden = true), 2200);
+  toastTimer = setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => { t.hidden = true; }, 300);
+  }, 2200);
 }
 
 /* ---------------- live timers ---------------- */

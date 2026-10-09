@@ -6,10 +6,12 @@ export function toast(msg, kind = '') {
   const t = $('#toast');
   if (!t) return;
   t.textContent = msg;
-  t.className = `toast ${kind}`.trim();
-  t.hidden = false;
+  t.className = `toast ${kind} show`.trim();
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => (t.hidden = true), 2400);
+  toastTimer = setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => { t.hidden = true; }, 300);
+  }, 2400);
 }
 
 /**
@@ -31,13 +33,17 @@ export function openModal({ title, body, footer = null }) {
   }
   $('#modal-backdrop').hidden = false;
   $('#modal').hidden = false;
+  $('#modal').classList.add('open');
 }
 
 export function closeModal() {
-  $('#modal-backdrop').hidden = true;
-  $('#modal').hidden = true;
-  $('#modal-body').innerHTML = '';
-  $('#modal-foot').innerHTML = '';
+  $('#modal').classList.remove('open');
+  setTimeout(() => {
+    $('#modal-backdrop').hidden = true;
+    $('#modal').hidden = true;
+    $('#modal-body').innerHTML = '';
+    $('#modal-foot').innerHTML = '';
+  }, 200);
 }
 
 export function initModal() {

@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cape Town K Hotel | System Walkthrough</title>
+  <style>
+    :root { color-scheme: dark; font-family: "Segoe UI", sans-serif; background: #191512; color: #fffaf5; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; }
+    main { width: min(100%, 1040px); }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 14px; }
+    .brand { color: #ffe8d1; font-size: 12px; font-weight: 700; letter-spacing: 2px; }
+    .size { color: #cfc5bb; font-size: 13px; }
+    .frame { overflow: hidden; border: 1px solid #514139; background: #fefcfa; box-shadow: 0 18px 70px #0008; }
+    canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; }
+    footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 14px; }
+    #caption { min-height: 22px; color: #d3c5b9; font-size: 14px; }
+    button { border: 0; border-radius: 999px; background: #b84d1e; color: white; padding: 11px 20px; font: inherit; font-weight: 700; cursor: pointer; }
+    button:disabled { opacity: .65; cursor: wait; }
+    @media (max-width: 600px) { body { padding: 12px; } header { align-items: flex-start; flex-direction: column; gap: 4px; } footer { align-items: flex-start; flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header><span class="brand">CAPE TOWN K HOTEL · SYSTEM WALKTHROUGH</span><span class="size" id="status">Ready to render · 1280 × 720</span></header>
+    <div class="frame"><canvas id="video" width="1280" height="720"></canvas></div>
+    <footer><span id="caption">A connected restaurant experience, from table to kitchen to checkout.</span><button id="render">Render walkthrough video</button></footer>
+  </main>
+  <script>
+    const canvas = document.querySelector('#video');
+    const ctx = canvas.getContext('2d');
+    const status = document.querySelector('#status');
+    const caption = document.querySelector('#caption');
+    const button = document.querySelector('#render');
+    const W = canvas.width, H = canvas.height, DURATION = 46;
+    const copper = '#b84d1e', dark = '#211a16', ink = '#261d18', muted = '#756960';
+    const scenes = [
+      { title: 'One table. A smoother service.', label: 'CAPE TOWN K HOTEL', sub: 'A connected ordering system for every part of the restaurant.', caption: 'Welcome to a faster, clearer restaurant service flow.' },
+      { title: 'Guests scan and explore', label: '01  ·  CUSTOMER MENU', sub: 'A table QR opens the live menu. Guests browse categories, choose items and add notes.', caption: 'Guests scan the QR code at their table and browse the live menu.' },
+      { title: 'Orders arrive instantly', label: '02  ·  LIVE ORDER', sub: 'The order is checked against menu availability and sent to the right station.', caption: 'A confirmed order is routed to the kitchen or bar in real time.' },
+      { title: 'The kitchen keeps moving', label: '03  ·  KITCHEN DISPLAY', sub: 'Staff move each ticket from new, to preparing, to ready.', caption: 'Kitchen staff update progress on a live preparation board.' },
+      { title: 'Ready for the table', label: '04  ·  FLOOR SERVICE', sub: 'Waiters see ready orders, table activity and guest requests in one place.', caption: 'Waiters serve ready dishes and keep table requests in view.' },
+      { title: 'The manager sees the whole shift', label: '05  ·  MANAGER DASHBOARD', sub: 'Menu, availability, tables, staff, promotions and reports stay under control.', caption: 'Managers oversee service and adjust restaurant operations.' },
+      { title: 'A better service, end to end.', label: 'CAPE TOWN K HOTEL', sub: 'One connected flow from the first scan to the final bill.', caption: 'One simple flow connects the guest experience with the team.' }
+    ];
+    const sceneEnds = [5, 12, 20, 27, 34, 41, 46];
+
+    function rounded(x, y, w, h, r, fill, stroke) {
+      ctx.beginPath(); ctx.roundRect(x, y, w, h, r);
+      if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+      if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1; ctx.stroke(); }
+    }
+    function text(value, x, y, size, color = ink, weight = 400, align = 'left') {
+      ctx.font = `${weight} ${size}px "Segoe UI", sans-serif`; ctx.fillStyle = color; ctx.textAlign = align; ctx.fillText(value, x, y);
+    }
+    function line(x1, y1, x2, y2, color = '#e8e0d8', width = 1) {
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.strokeStyle = color; ctx.lineWidth = width; ctx.stroke();
+    }
+    function pill(label, x, y, fill, color) {
+      ctx.font = '600 13px "Segoe UI", sans-serif'; const w = ctx.measureText(label).width + 24;
+      rounded(x, y, w, 28, 14, fill); text(label, x + w / 2, y + 19, 13, color, 600, 'center');
+    }
+    function phone(x, y, progress) {
+      rounded(x, y, 244, 478, 30, '#231b17'); rounded(x + 8, y + 8, 228, 462, 24, '#fffdfa');
+      rounded(x + 84, y + 12, 76, 14, 9, '#231b17');
+      ctx.fillStyle = copper; ctx.fillRect(x + 8, y + 40, 228, 126);
+      text('CAPE TOWN K HOTEL', x + 122, y + 82, 12, '#ffe8d1', 700, 'center');
+      text('A table worth', x + 122, y + 116, 22, '#fff', 700, 'center');
+      text('staying for.', x + 122, y + 142, 22, '#fff', 700, 'center');
+      pill('Starters', x + 18, y + 180, '#fbe9e1', copper); pill('Mains', x + 94, y + 180, '#f4eee8', muted); pill('Drinks', x + 161, y + 180, '#f4eee8', muted);
+      const items = [['Grilled house special', 'RWF 18,000'], ['Garden salad', 'RWF 9,000'], ['Fresh juice', 'RWF 5,000']];
+      items.forEach((item, i) => {
+        const iy = y + 230 + i * 65;
+        rounded(x + 18, iy, 42, 42, 10, ['#dca176', '#90a477', '#dfbb69'][i]);
+        text(item[0], x + 70, iy + 16, 12, ink, 700); text(item[1], x + 70, iy + 34, 11, muted);
+        rounded(x + 190, iy + 9, 27, 27, 14, copper); text('+', x + 204, iy + 28, 19, '#fff', 500, 'center');
+      });
+      const cartY = y + 425;
+      rounded(x + 18, cartY, 194, 34, 17, copper);
+      text(progress > .56 ? 'Order sent  ·  RWF 32,000' : 'View order  ·  RWF 32,000', x + 115, cartY + 22, 12, '#fff', 700, 'center');
+    }
+    function board(x, y, mode, progress) {
+      rounded(x, y, 640, 426, 14, '#faf8f5', '#e8e0d8');
+      ctx.fillStyle = copper; ctx.fillRect(x, y, 640, 54);
+      text(mode === 'manager' ? 'CAPE TOWN K HOTEL' : 'KITCHEN DISPLAY', x + 24, y + 34, 17, '#fff', 700);
+      text(mode === 'manager' ? 'MANAGER' : 'LIVE  ·  12:42', x + 610, y + 33, 12, '#ffe8d1', 600, 'right');
+      if (mode === 'kitchen') {
+        const cols = [['NEW', '#fff0e9'], ['PREPARING', '#fff7df'], ['READY', '#e8f5e9']];
+        cols.forEach((col, i) => {
+          const cx = x + 18 + i * 204;
+          rounded(cx, y + 72, 190, 328, 10, '#f1ede8');
+          text(col[0], cx + 14, y + 99, 13, i === 2 ? '#388e3c' : copper, 700);
+          const names = i === 0 ? ['Garden salad', 'Still water'] : i === 1 ? ['Grilled special', 'Fresh juice'] : progress > .4 ? ['Table 04 · 2 items', 'Table 02 · 1 item'] : ['Table 04 · 2 items'];
+          names.forEach((name, j) => {
+            const cy = y + 115 + j * 116;
+            rounded(cx + 10, cy, 170, 99, 8, '#fffdfa', '#e8e0d8');
+            text(i === 0 ? `#104${j + 1}` : `TABLE 0${4 - j}`, cx + 22, cy + 25, 11, muted, 600);
+            text(name, cx + 22, cy + 49, 13, ink, 700);
+            text(i === 2 ? 'Ready to serve' : '1 ×  order item', cx + 22, cy + 72, 11, muted);
+            if (i < 2) rounded(cx + 22, cy + 78, 78, 5, 3, col[1]);
+          });
+        });
+      } else {
+        text('Today at a glance', x + 22, y + 88, 15, ink, 700);
+        [['ORDERS', '38', '+12%'], ['REVENUE', 'RWF 842k', 'Today'], ['OPEN TABLES', '9', 'Live']].forEach((item, i) => {
+          const cx = x + 20 + i * 198;
+          rounded(cx, y + 105, 184, 96, 9, '#fffdfa', '#e8e0d8');
+          text(item[0], cx + 14, y + 129, 10, muted, 700); text(item[1], cx + 14, y + 162, 21, ink, 700); pill(item[2], cx + 110, y + 117, '#e8f5e9', '#388e3c');
+        });
+        text('Service overview', x + 22, y + 235, 15, ink, 700);
+        rounded(x + 20, y + 250, 596, 146, 9, '#fffdfa', '#e8e0d8');
+        [['Menu & stock', 'Available'], ['Tables & sessions', '9 active'], ['Staff on shift', '6 team members'], ['Reports', 'Updated just now']].forEach((item, i) => {
+          const yy = y + 281 + i * 29;
+          text(item[0], x + 38, yy, 12, ink, 600); text(item[1], x + 590, yy, 12, i === 0 ? '#388e3c' : muted, 600, 'right');
+          if (i < 3) line(x + 38, yy + 9, x + 598, yy + 9);
+        });
+      }
+    }
+    function draw(seconds) {
+      const sceneIndex = sceneEnds.findIndex((end) => seconds < end);
+      const index = Math.max(0, sceneIndex); const start = index === 0 ? 0 : sceneEnds[index - 1];
+      const scene = scenes[index]; const p = Math.min(1, Math.max(0, (seconds - start) / (sceneEnds[index] - start)));
+      caption.textContent = scene.caption;
+      ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#fefcfa'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#f6f3ef'; ctx.fillRect(0, 0, W, 82);
+      ctx.fillStyle = copper; ctx.fillRect(0, 0, 8, H);
+      text('CAPE TOWN K HOTEL', 58, 48, 16, copper, 700);
+      text('A CONNECTED RESTAURANT SYSTEM', W - 56, 47, 12, muted, 600, 'right');
+      line(56, 82, W - 56, 82);
+      if (index === 0 || index === 6) {
+        const fade = Math.min(1, p * 3, (1 - p) * 3 + .25);
+        ctx.globalAlpha = Math.max(.3, fade);
+        text(scene.label, 76, 225, 13, copper, 700);
+        text(scene.title, 76, 302, 52, ink, 700);
+        text(scene.sub, 76, 350, 20, muted);
+        rounded(76, 395, 62 + p * 210, 4, 2, copper);
+        rounded(888, 174, 300, 382, 16, '#f6f3ef');
+        rounded(934, 220, 208, 282, 14, copper);
+        text('SCAN', 1038, 280, 13, '#ffe8d1', 700, 'center');
+        for (let row = 0; row < 5; row++) for (let col = 0; col < 5; col++) {
+          if ((row * 5 + col + index) % 3 !== 0) ctx.fillStyle = '#fffaf5';
+          else ctx.fillStyle = '#7b351b';
+          ctx.fillRect(973 + col * 26, 310 + row * 26, 18, 18);
+        }
+        rounded(993, 469, 90, 36, 18, '#fffaf5'); text('TABLE 04', 1038, 492, 11, copper, 700, 'center');
+        ctx.globalAlpha = 1;
+      } else {
+        text(scene.label, 58, 130, 12, copper, 700);
+        text(scene.title, 58, 184, 32, ink, 700);
+        text(scene.sub, 58, 218, 15, muted);
+        if (index === 1) phone(145, 235, p);
+        if (index === 2) {
+          phone(88, 235, p);
+          rounded(424, 313, 175, 64, 32, '#fbe9e1'); text('ORDER PLACED', 511, 340, 13, copper, 700, 'center'); text('Table 04  ·  #1042', 511, 361, 12, ink, 600, 'center');
+          line(601, 345, 676, 345, copper, 3);
+          rounded(676, 267, 260, 204, 14, '#fffdfa', '#e8e0d8');
+          text('NEW ORDER', 700, 302, 13, copper, 700); text('Kitchen  ·  Table 04', 700, 333, 18, ink, 700);
+          text('1 × Grilled house special', 700, 372, 13, muted); text('1 × Garden salad', 700, 399, 13, muted);
+          pill('LIVE', 700, 421, '#e8f5e9', '#388e3c');
+        }
+        if (index === 3) board(590, 247, 'kitchen', p);
+        if (index === 3) { pill('NEW', 160, 310, '#fbe9e1', copper); text('Order #1042', 160, 376, 28, ink, 700); text('Table 04', 160, 412, 19, muted); text('Grilled house special', 160, 467, 15, ink, 600); rounded(160, 490, 250, 7, 4, '#eee5dc'); rounded(160, 490, 250 * p, 7, 4, copper); }
+        if (index === 4) {
+          board(570, 247, 'kitchen', .8);
+          rounded(115, 280, 365, 275, 14, '#f6f3ef');
+          text('TABLE 04', 144, 325, 12, copper, 700); text('Ready to serve', 144, 369, 25, ink, 700);
+          text('2 dishes · order #1042', 144, 405, 15, muted);
+          rounded(144, 442, 205, 44, 22, copper); text('Mark as served', 246, 470, 14, '#fff', 700, 'center');
+        }
+        if (index === 5) board(357, 247, 'manager', p);
+      }
+      ctx.fillStyle = '#e8e0d8'; ctx.fillRect(58, 655, W - 116, 3);
+      ctx.fillStyle = copper; ctx.fillRect(58, 655, (W - 116) * seconds / DURATION, 3);
+      text('GUEST', 58, 688, 10, seconds < 20 ? copper : muted, 700);
+      text('KITCHEN', 300, 688, 10, seconds >= 20 && seconds < 27 ? copper : muted, 700);
+      text('FLOOR', 545, 688, 10, seconds >= 27 && seconds < 34 ? copper : muted, 700);
+      text('MANAGEMENT', 760, 688, 10, seconds >= 34 && seconds < 41 ? copper : muted, 700);
+      text(`${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`, W - 58, 688, 10, muted, 600, 'right');
+    }
+    let startAt = 0, recording = false;
+    function animate(now) {
+      if (!recording) { draw(0); return; }
+      const elapsed = Math.min(DURATION, (now - startAt) / 1000);
+      draw(elapsed);
+      if (elapsed < DURATION) requestAnimationFrame(animate);
+      else finish();
+    }
+    async function finish() {
+      if (!recording) return; recording = false;
+      recorder.stop();
+    }
+    let recorder, chunks;
+    button.addEventListener('click', () => {
+      button.disabled = true; button.textContent = 'Rendering…'; status.textContent = 'Rendering 46-second walkthrough';
+      chunks = [];
+      const stream = canvas.captureStream(30);
+      recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp8', videoBitsPerSecond: 850000 });
+      recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
+      recorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        status.textContent = `Uploading ${(blob.size / 1048576).toFixed(2)} MB`; caption.textContent = 'Finishing your walkthrough video…';
+        try {
+          const response = await fetch('/upload', { method: 'POST', headers: { 'Content-Type': 'video/webm' }, body: blob });
+          if (!response.ok) throw new Error(`Upload failed (${response.status})`);
+          const result = await response.json();
+          status.textContent = `Complete · ${(result.bytes / 1048576).toFixed(2)} MB · ${result.duration}s`;
+          caption.textContent = 'Walkthrough saved in public/videos/system-walkthrough.webm';
+          button.textContent = 'Video rendered';
+        } catch (error) {
+          status.textContent = error.message; caption.textContent = 'The render could not be saved.';
+          button.disabled = false; button.textContent = 'Try again';
+        }
+      };
+      recorder.start(1000); recording = true; startAt = performance.now(); requestAnimationFrame(animate);
+    });
+    draw(0);
+  </script>
+</body>
+</html>

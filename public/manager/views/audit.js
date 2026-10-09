@@ -1,6 +1,7 @@
-import { el } from '../../shared/dom.js';
+import { el, $ } from '../../shared/dom.js';
 import { api } from '../../shared/api.js';
 import { dateTime } from '../../shared/format.js';
+import { toast, openModal, closeModal } from '../../ui.js';
 
 export const title = 'Audit log';
 
@@ -8,6 +9,8 @@ const ENTITIES = ['', 'Order', 'User', 'Table', 'MenuItem', 'Category', 'Promo',
 let page = 1;
 
 export async function render(root) {
+  const toolbar = el('div', { class: 'toolbar' });
+
   const entitySel = el('select', { class: 'input' });
   for (const e of ENTITIES) entitySel.append(el('option', { value: e, text: e || 'All entities' }));
   entitySel.addEventListener('change', () => {
@@ -15,13 +18,67 @@ export async function render(root) {
     load(list, entitySel.value);
   });
 
-  const toolbar = el('div', { class: 'toolbar' }, entitySel);
+  const deleteBtn = el('button', { class: 'btn btn-danger btn-sm', text: 'Delete old logs', style: 'margin-left:auto' });
+  deleteBtn.addEventListener('click', () => openDeleteModal());
+
+  toolbar.append(entitySel, deleteBtn);
+
   const panel = el('div', { class: 'panel' });
   const list = el('div', { id: 'audit-list' });
   const pager = el('div', { class: 'toolbar' });
   panel.append(list);
   root.append(toolbar, panel, pager);
   await load(list, '', pager);
+}
+
+function openDeleteModal() {
+  const daysInput = el('input', { class: 'input', type: 'number', min: '1', max: '365', value: '30' });
+  const confirmBtn = el('button', { class: 'btn btn-danger', text: 'Delete old logs' });
+  const cancelBtn = el('button', { class: 'btn btn-ghost btn-sm', text: 'Delete all logs' });
+
+  const body = el('div', { class: 'modal-body' },
+    el('p', { class: 'muted', text: 'Remove audit log entries older than a number of days. This cannot be undone.' }),
+    el('div', { class: 'opt-group' },
+      el('label', { text: 'Days to keep' }),
+      daysInput
+    ),
+    el('p', { class: 'muted', text: 'Click below to delete ALL audit logs (irreversible).' })
+  );
+
+  confirmBtn.onclick = async () => {
+    const days = parseInt(daysInput.value, 10);
+    if (isNaN(days) || days < 1) { toast('Enter a valid number of days', 'text-danger'); return; }
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Deleting…';
+    try {
+      const res = await api(`/api/audit-logs?days=${days}`, { method: 'DELETE' });
+      toast(`${res.data.deleted} log entries deleted`);
+      closeModal();
+    } catch (err) {
+      toast(err.message || 'Delete failed', 'text-danger');
+    } finally {
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = 'Delete old logs';
+    }
+  };
+
+  cancelBtn.onclick = async () => {
+    if (!confirm('Delete ALL audit logs? This cannot be undone.')) return;
+    cancelBtn.disabled = true;
+    cancelBtn.textContent = 'Deleting all…';
+    try {
+      const res = await api('/api/audit-logs?confirm=all', { method: 'DELETE' });
+      toast(`${res.data.deleted} log entries deleted`);
+      closeModal();
+    } catch (err) {
+      toast(err.message || 'Delete failed', 'text-danger');
+    } finally {
+      cancelBtn.disabled = false;
+      cancelBtn.textContent = 'Delete all logs';
+    }
+  };
+
+  openModal({ title: 'Delete old logs', body, footer: el('div', { class: 'row' }, confirmBtn, cancelBtn) });
 }
 
 async function load(list, entity = '', pager) {

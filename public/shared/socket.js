@@ -26,7 +26,12 @@ export async function connectSocket({ mode = 'staff', tableToken = null, orderId
 
   await loadIoScript();
 
-  socket = window.io({
+  const ioUrl = (() => {
+    const meta = document.querySelector('meta[name="api-base"]')?.content;
+    return meta ? meta.replace(/\/$/, '') : '';
+  })();
+
+  socket = window.io(ioUrl || undefined, {
     withCredentials: true,
     reconnection: true,
     reconnectionDelay: 500,
@@ -88,9 +93,11 @@ export function is_connected() {
 
 function loadIoScript() {
   if (window.io) return Promise.resolve();
+  const meta = document.querySelector('meta[name="api-base"]')?.content;
+  const base = (meta || '').replace(/\/$/, '');
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = '/socket.io/socket.io.js';
+    script.src = base + '/socket.io/socket.io.js';
     script.onload = () => resolve();
     script.onerror = () => reject(new Error('socket.io script failed to load'));
     document.head.appendChild(script);

@@ -7,7 +7,9 @@
  */
 
 const META_API = document.querySelector('meta[name="api-base"]')?.content;
-const BASE_URL = (META_API || '').replace(/\/$/, '');
+const GLOBAL_API = window.__API_BASE_URL__;
+const BASE_URL = (META_API || GLOBAL_API || '').replace(/%.*%/, '').replace(/\/$/, '');
+if (!BASE_URL) console.warn('API base URL not configured — falling back to same-origin');
 if (!BASE_URL) console.warn('API base URL not configured — falling back to same-origin');
 
 export class ApiError extends Error {

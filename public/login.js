@@ -40,7 +40,8 @@ form.addEventListener('submit', async (e) => {
     btn.disabled = false;
     btn.textContent = 'Sign in';
     if (err instanceof ApiError && err.code === 'ACCOUNT_LOCKED') errBox.textContent = err.message;
-    else errBox.textContent = 'Wrong username or password.';
+    else if (err instanceof ApiError) errBox.textContent = err.message;
+    else errBox.textContent = 'Cannot reach the server. Check your connection.';
     errBox.hidden = false;
     $('#password').select();
   }

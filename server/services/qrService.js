@@ -4,7 +4,7 @@ import { config } from '../config/env.js';
 
 /** Full customer URL for a table QR token. */
 export function tableUrl(qrToken) {
-  return `${config.baseUrl}/menu?t=${qrToken}`;
+  return `${config.baseUrl}/customer/?t=${qrToken}`;
 }
 
 /** QR code PNG buffer for a table token.

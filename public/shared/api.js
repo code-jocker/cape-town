@@ -10,7 +10,6 @@ const META_API = document.querySelector('meta[name="api-base"]')?.content;
 const GLOBAL_API = window.__API_BASE_URL__;
 const BASE_URL = (META_API || GLOBAL_API || '').replace(/%.*%/, '').replace(/\/$/, '');
 if (!BASE_URL) console.warn('API base URL not configured — falling back to same-origin');
-if (!BASE_URL) console.warn('API base URL not configured — falling back to same-origin');
 
 export class ApiError extends Error {
   constructor(code, message, status) {
@@ -81,6 +80,13 @@ async function rawRequest(path, { method = 'GET', body, headers = {}, timeout = 
  */
 export async function api(path, opts = {}) {
   return rawRequest(path, opts);
+}
+
+/** Prefix relative /uploads paths with the backend URL so images work from a separate frontend host. */
+export function imgUrl(src) {
+  if (!src || src.startsWith('http') || src.startsWith('data:') || src.startsWith('/icons/')) return src;
+  if (src.startsWith('/uploads/')) return BASE_URL + src;
+  return src;
 }
 
 export async function apiRetryable(path, opts = {}) {

@@ -1,5 +1,5 @@
 import { $, el, delegate } from '../../shared/dom.js';
-import { api } from '../../shared/api.js';
+import { api, imgUrl } from '../../shared/api.js';
 import { money } from '../../shared/format.js';
 import { openModal, closeModal, field, toast, confirmAction } from '../ui.js';
 
@@ -122,7 +122,7 @@ function drawItems(list) {
       el(
         'tr',
         {},
-        el('td', {}, (i.image && i.image.thumbUrl) ? el('img', { class: 'thumb', src: i.image.thumbUrl, alt: '' }) : el('div', { class: 'thumb' })),
+        el('td', {}, (i.image && i.image.thumbUrl) ? el('img', { class: 'thumb', src: imgUrl(i.image.thumbUrl), alt: '' }) : el('div', { class: 'thumb' })),
         el('td', { text: (i.name && i.name.en) || '' }),
         el('td', { text: catName(i.category) }),
         el('td', { text: money(i.price, currency) }),
@@ -211,7 +211,7 @@ function itemEditor(item) {
 
   // image
   let image = (item && item.image) ? { ...item.image } : { url: '', thumbUrl: '' };
-  const preview = image.thumbUrl ? el('img', { class: 'thumb', src: image.thumbUrl, style: 'width:80px;height:80px', alt: '' }) : el('div', { class: 'thumb', style: 'width:80px;height:80px' });
+  const preview = image.thumbUrl ? el('img', { class: 'thumb', src: imgUrl(image.thumbUrl), style: 'width:80px;height:80px', alt: '' }) : el('div', { class: 'thumb', style: 'width:80px;height:80px' });
   const file = el('input', { type: 'file', accept: 'image/*' });
   file.addEventListener('change', async () => {
     if (!file.files[0]) return;
@@ -222,7 +222,7 @@ function itemEditor(item) {
       const json = await res.json();
       if (!json.ok) throw new Error((json.error && json.error.message) || 'Upload failed');
       image = json.data;
-      preview.src = image.thumbUrl;
+      preview.src = imgUrl(image.thumbUrl);
       toast('Image uploaded');
     } catch (err) {
       toast(err.message);

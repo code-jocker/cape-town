@@ -4,7 +4,7 @@
  * live tracker, all without any framework.
  */
 
-import { api, apiRetryable, ApiError, setDefaultHeader } from '../shared/api.js';
+import { api, apiRetryable, ApiError, setDefaultHeader, imgUrl } from '../shared/api.js';
 import { el, $, $$, delegate } from '../shared/dom.js';
 import { money } from '../shared/format.js';
 import { t, getLang, setLang, LANGUAGES } from '../shared/i18n.js';
@@ -228,7 +228,7 @@ function itemRow(item) {
   const row = el('div', { class: `item-row${soldOut ? ' soldout' : ''}`, 'data-item': item._id });
 
   const img = el('img', {
-    class: 'item-photo', src: (item.image && item.image.thumbUrl) || (item.image && item.image.url) || '/icons/logo.svg',
+     class: 'item-photo', src: imgUrl((item.image && item.image.thumbUrl) || (item.image && item.image.url)) || '/icons/logo.svg',
     alt: '', width: '64', height: '80', loading: 'lazy', decoding: 'async'
   });
 

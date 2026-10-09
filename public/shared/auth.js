@@ -63,5 +63,5 @@ export async function logout() {
   } catch (e) {
     /* ignore */
   }
-  location.href = '/login.html';
+  setTimeout(() => { location.href = '/login.html'; }, 150);
 }

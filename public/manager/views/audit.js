@@ -1,7 +1,7 @@
 import { el, $ } from '../../shared/dom.js';
 import { api } from '../../shared/api.js';
 import { dateTime } from '../../shared/format.js';
-import { toast, openModal, closeModal } from '../../ui.js';
+import { toast, openModal, closeModal } from '../ui.js';
 
 export const title = 'Audit log';
 

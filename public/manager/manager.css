@@ -148,6 +148,7 @@
   gap: 8px;
   font-size: 0.82rem;
   background: rgba(0,0,0,0.08);
+  padding-bottom: 48px;
 }
 .side-foot .muted {
   color: var(--color-header-label);
@@ -171,7 +172,7 @@
   height: 32px;
   border: 0;
   background: rgba(255,255,255,0.12);
-  color: #ffffff;
+  color: var(--color-on-primary);
   border-radius: 8px;
   cursor: pointer;
   display: flex;
@@ -180,10 +181,11 @@
   font-size: 1rem;
   box-shadow: 0 1px 4px rgba(0,0,0,0.15);
   transition: background 0.15s var(--ease), color 0.15s var(--ease);
+  z-index: 10;
 }
 .collapse-toggle:hover {
   background: rgba(255,255,255,0.22);
-  color: #ffffff;
+  color: var(--color-on-primary);
 }
 .sidebar.collapsed .collapse-toggle {
   right: 50%;

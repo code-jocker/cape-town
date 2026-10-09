@@ -11,7 +11,7 @@ export async function render(root) {
     'div',
     { class: 'toolbar' },
     el('button', { class: 'btn btn-primary btn-sm', id: 'new-table', text: '+ New table' }),
-    el('a', { class: 'btn btn-ghost btn-sm', href: '/api/tables/qr-sheet.pdf', target: '_blank', text: 'Download QR sheet (PDF)' })
+     el('a', { class: 'btn btn-ghost btn-sm', href: `${window.__API_BASE_URL__ || ''}/api/tables/qr-sheet.pdf`, target: '_blank', text: 'Download QR sheet (PDF)' })
   );
   const grid = el('div', { class: 'qr-grid', id: 'qr-grid' });
   root.append(toolbar, el('div', { class: 'panel' }, grid));
@@ -39,7 +39,7 @@ function draw(grid) {
       el(
         'div',
         { class: 'qr-card' },
-        el('img', { src: `/api/tables/${t._id}/qr.png`, alt: `QR for table ${t.number}` }),
+         el('img', { src: `${window.__API_BASE_URL__ || ''}/api/tables/${t._id}/qr.png`, alt: `QR for table ${t.number}` }),
         el('div', { class: 't', text: t.label || `Table ${t.number}` }),
         el('div', { class: 'muted', style: 'font-size:0.72rem;word-break:break-all', text: `${t.capacity || '—'} seats · ${t.isActive ? 'active' : 'inactive'}` }),
         el(

@@ -8,6 +8,7 @@
 
 const META_API = document.querySelector('meta[name="api-base"]')?.content;
 const BASE_URL = (META_API || '').replace(/\/$/, '');
+if (!BASE_URL) console.warn('API base URL not configured — falling back to same-origin');
 
 export class ApiError extends Error {
   constructor(code, message, status) {

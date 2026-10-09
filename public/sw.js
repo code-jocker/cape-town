@@ -7,7 +7,7 @@
  *   - everything else under /api: network only (never cache orders/requests)
  * Every handler ALWAYS resolves to a Response so respondWith never rejects.
  */
-const VERSION = 'ep-v5';
+const VERSION = 'ep-v6';
 const STATIC = `${VERSION}-static`;
 const RUNTIME = `${VERSION}-runtime`;
 
@@ -17,8 +17,9 @@ const PRECACHE = [
   '/waiter/index.html',
   '/manager/index.html',
   '/login.html',
-  '/offline.html',
-  '/shared/base.css',
+   '/offline.html',
+   '/config.js',
+   '/shared/base.css',
   '/shared/browser-check.js',
   '/shared/api.js',
   '/shared/audio.js',

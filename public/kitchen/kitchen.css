@@ -224,7 +224,7 @@
   flex-direction: column;
   gap: 12px;
   overflow-y: auto;
-  max-height: calc(100vh - 230px);
+  max-height: calc(100vh - 230px - var(--safe-bottom));
 }
 .col-empty {
   color: var(--color-text-muted);

@@ -33,7 +33,7 @@ function buildNav() {
   nav.innerHTML = '';
   for (const item of NAV) {
     nav.append(
-      el('a', { href: `#/${item.route}`, 'data-route': item.route }, el('span', { class: 'ico', text: item.ico }), el('span', { text: item.label }))
+      el('a', { href: `#/${item.route}`, 'data-route': item.route }, el('span', { class: 'ico', text: item.ico }), el('span', { class: 'label', text: item.label }))
     );
   }
 }

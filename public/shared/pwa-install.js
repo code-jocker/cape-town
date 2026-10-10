@@ -6,7 +6,7 @@
  * Usage:
  *   import { initInstallPrompt } from '../shared/pwa-install.js';
  *   initInstallPrompt({
- *     onShow: (dismiss) => { /* inject banner into DOM, call dismiss() on close */ },
+ *     onShow: ({ prompt, dismiss }) => { // inject banner into DOM; call dismiss() on close
  *     storageKey: 'pwa-install-dismissed'
  *   });
  */

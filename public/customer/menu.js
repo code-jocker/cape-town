@@ -228,8 +228,8 @@ function itemRow(item) {
   const row = el('div', { class: `item-row${soldOut ? ' soldout' : ''}`, 'data-item': item._id });
 
   const img = el('img', {
-     class: 'item-photo', src: imgUrl((item.image && item.image.thumbUrl) || (item.image && item.image.url)) || '/icons/logo.svg',
-    alt: '', width: '64', height: '80', loading: 'lazy', decoding: 'async'
+   class: 'item-photo', src: imgUrl((item.image && item.image.thumbUrl) || (item.image && item.image.url)) || '/icons/logo.svg',
+    alt: '', width: '64', height: '80', decoding: 'async'
   });
 
   const tags = el('div', { class: 'item-tags' });

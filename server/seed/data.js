@@ -1,6 +1,9 @@
 /**
- * Seed dataset for Cape Town K Hotel.
- * Names in EN/FR/RW; realistic prices.
+ * Seed dataset for Cape Town K Hotel — Bar & Kitchen menu.
+ * Menu items with categories: beers, soft-drinks, juices, smoothies,
+ * milk-shakes, spirits, vodka, gin, tequila, rum, liquor, wines-red, wines-white,
+ * wines-glass, soup, pasta, light-bites, grills, stews, platters, burgers,
+ * pizza, main-course.
  */
 export const USERS = [
   { name: 'Alice Uwase', username: 'manager', email: 'manager@capetownkhotel.com', role: 'manager', password: 'Paradize2026' },
@@ -9,241 +12,188 @@ export const USERS = [
 ];
 
 export const CATEGORIES = [
-  { key: 'starters', name: { en: 'Starters', fr: 'Entrées', rw: 'Imbabura' }, sortOrder: 1 },
-  { key: 'mains', name: { en: 'Mains', fr: 'Plats principaux', rw: 'Ifunguro Nyamukuru' }, sortOrder: 2 },
-  { key: 'grill', name: { en: 'Grill', fr: 'Grillades', rw: 'Ibirishijwe' }, sortOrder: 3 },
-  { key: 'soft-drinks', name: { en: 'Soft Drinks', fr: 'Boissons', rw: 'Ibinyobwa' }, sortOrder: 4 },
-  { key: 'beers', name: { en: 'Local Beers', fr: 'Bières locales', rw: 'Inzoga z’Ubweru' }, sortOrder: 5 },
-  { key: 'desserts', name: { en: 'Desserts', fr: 'Desserts', rw: 'Ibyumvyo' }, sortOrder: 6 }
+  { key: 'beers', name: { en: 'Beers', fr: 'Bières', rw: 'Inzoga' }, sortOrder: 1 },
+  { key: 'soft-drinks', name: { en: 'Soft Drinks', fr: 'Boissons', rw: 'Ibinyobwa' }, sortOrder: 2 },
+  { key: 'juices', name: { en: 'Fresh Juice', fr: 'Jus frais', rw: 'Uruju rwifuzuzwahe' }, sortOrder: 3 },
+  { key: 'smoothies', name: { en: 'Smoothies', fr: 'Smoothies', rw: 'Smoothies' }, sortOrder: 4 },
+  { key: 'milk-shakes', name: { en: 'Milk Shakes', fr: 'Milk Shakes', rw: 'Milk Shakes' }, sortOrder: 5 },
+  { key: 'spirits', name: { en: 'Spirits', fr: 'Spiritueux', rw: 'Spirits' }, sortOrder: 6 },
+  { key: 'vodka', name: { en: 'Vodka', fr: 'Vodka', rw: 'Vodka' }, sortOrder: 7 },
+  { key: 'gin', name: { en: 'Gin', fr: 'Gin', rw: 'Gin' }, sortOrder: 8 },
+  { key: 'tequila', name: { en: 'Tequila', fr: 'Tequila', rw: 'Tequila' }, sortOrder: 9 },
+  { key: 'rum', name: { en: 'Rum', fr: 'Rhum', rw: 'Rum' }, sortOrder: 10 },
+  { key: 'liquor', name: { en: 'Liqueurs', fr: 'Liqueurs', rw: 'Liqueurs' }, sortOrder: 11 },
+  { key: 'wines-red', name: { en: 'Red Wine (Bottle)', fr: 'Vin rouge (Bouteille)', rw: 'Vinyo runini (Ubusabwa)' }, sortOrder: 12 },
+  { key: 'wines-white', name: { en: 'White Wine (Bottle)', fr: 'Vin blanc (Bouteille)', rw: 'Vinyo umweru (Ubusabwa)' }, sortOrder: 13 },
+  { key: 'wines-glass', name: { en: 'Wine (Glass)', fr: 'Vin (Verre)', rw: 'Vinyo (Glas)' }, sortOrder: 14 },
+  { key: 'soup', name: { en: 'Soup', fr: 'Soupe', rw: 'Isoup' }, sortOrder: 15 },
+  { key: 'pasta', name: { en: 'Pasta', fr: 'Pâtes', rw: 'Pasta' }, sortOrder: 16 },
+  { key: 'light-bites', name: { en: 'Light Bites', fr: 'En-cas', rw: 'Ibizamini' }, sortOrder: 17 },
+  { key: 'grills', name: { en: 'Cape Town Grills', fr: 'Grillades Cape Town', rw: 'Ibirishijwe bya Cape Town' }, sortOrder: 18 },
+  { key: 'stews', name: { en: 'Stew Dishes', fr: 'Ragoûts', rw: 'Ibijumba' }, sortOrder: 19 },
+  { key: 'platters', name: { en: 'Capetown Plata''s', fr: 'Plats Cape Town', rw: 'Ibishoramari bya Cape Town' }, sortOrder: 20 },
+  { key: 'burgers', name: { en: 'Burgers', fr: 'Burgers', rw: 'Burgers' }, sortOrder: 21 },
+  { key: 'pizza', name: { en: 'Pizza', fr: 'Pizza', rw: 'Pizza' }, sortOrder: 22 },
+  { key: 'main-course', name: { en: 'Main Course', fr: 'Plat principal', rw: 'Ifunguro Nyamukuru' }, sortOrder: 23 }
 ];
 
-// imageKey maps to /public/uploads/src/<key>.jpg (converted to WebP at seed time)
+// imageKey maps to /public/uploads/src/<cat>.png (converted to WebP at seed time)
 export const ITEMS = [
-  // ---- Starters
-  {
-    cat: 'starters', key: 'beef-brochette', station: 'kitchen', price: 4000, prep: 12,
-    tags: ['popular'], allergens: [],
-    name: { en: 'Beef Skewers (Brochette)', fr: 'Brochettes de bœuf', rw: 'Inyama y’inka ku macumu' },
-    description: { en: 'Three grilled beef skewers with onion and house spice.', fr: 'Trois brochettes de bœuf grillées à l’oignon et épices maison.', rw: 'Inyama y’inka hirya y’imatama n’ipipiro ry’urugo.' },
-    options: [{ name: 'Spice level', required: false, multiple: false, choices: [{ label: 'Mild' }, { label: 'Hot', extraPrice: 0 }] }]
-  },
-  {
-    cat: 'starters', key: 'goat-brochette', station: 'kitchen', price: 4500, prep: 14,
-    tags: ['popular'], allergens: [],
-    name: { en: 'Goat Skewers', fr: 'Brochettes de chèvre', rw: 'Inyama y’ihene ku macumu' },
-    description: { en: 'Tender goat meat, grilled over charcoal.', fr: 'Viande de chèvre tendre grillée au charbon.', rw: 'Inyama y’ihene mikomeye irishwe mu makara.' }
-  },
-  {
-    cat: 'starters', key: 'samosa', station: 'kitchen', price: 3000, prep: 8,
-    tags: ['vegetarian'], allergens: ['gluten'],
-    name: { en: 'Samosas (3 pcs)', fr: 'Samosas (3 pièces)', rw: 'Samosa (3)' },
-    description: { en: 'Crispy vegetable samosas with dipping sauce.', fr: 'Samosas croustillants aux légumes, sauce d’accompagnement.', rw: 'Samosa z’imboga zizungu n’umukonde.' }
-  },
-  {
-    cat: 'starters', key: 'fries-basket', station: 'kitchen', price: 3500, prep: 10,
-    tags: ['vegetarian'], allergens: [],
-    name: { en: 'French Fries Basket', fr: 'Panier de frites', rw: 'Agatebo k’ifiriti' },
-    description: { en: 'Golden hand-cut fries with ketchup and mayonnaise.', fr: 'Frites maison dorées, ketchup et mayonnaise.', rw: 'Ifiriti zahindutse n’ukachupi n’amayonezi.' },
-    options: [{ name: 'Extras', required: false, multiple: true, choices: [{ label: 'Cheese sauce', extraPrice: 800 }, { label: 'Extra ketchup', extraPrice: 300 }] }]
-  },
-  {
-    cat: 'starters', key: 'mikate', station: 'kitchen', price: 2000, prep: 8,
-    tags: ['vegetarian', 'new'], allergens: ['gluten'],
-    name: { en: 'Mikate (Fried Dough)', fr: 'Beignets de farine (Mikate)', rw: 'Amateke' },
-    description: { en: 'Warm fluffy dough bites, dusted with sugar.', fr: 'Beignets tièdes et moelleux saupoudrés de sucre.', rw: 'Amateke ashyuwe asyuye isukari.' }
-  },
+  // ---- Beers
+  { cat: 'beers', key: 'guinness', station: 'bar', price: 2500, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Guinness', fr: 'Guinness', rw: 'Guinness' } },
+  { cat: 'beers', key: 'goldberg', station: 'bar', price: 2500, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Goldberg', fr: 'Goldberg', rw: 'Goldberg' } },
+  { cat: 'beers', key: 'tusker', station: 'bar', price: 2500, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Tusker', fr: 'Tusker', rw: 'Tusker' } },
+  { cat: 'beers', key: 'heineken', station: 'bar', price: 2500, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Heineken', fr: 'Heineken', rw: 'Heineken' } },
+  { cat: 'beers', key: 'amstel', station: 'bar', price: 2000, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Amstel', fr: 'Amstel', rw: 'Amstel' } },
+  { cat: 'beers', key: 'virunga-mist', station: 'bar', price: 2000, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Virunga Mist', fr: 'Virunga Mist', rw: 'Virunga Mist' } },
+  { cat: 'beers', key: 'skol', station: 'bar', price: 2000, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Skol', fr: 'Skol', rw: 'Skol' } },
+  { cat: 'beers', key: 'leffe', station: 'bar', price: 4000, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Leffe', fr: 'Leffe', rw: 'Leffe' } },
+  { cat: 'beers', key: 'smirnoff-ice', station: 'bar', price: 3000, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Smirnoff Ice', fr: 'Smirnoff Ice', rw: 'Smirnoff Ice' } },
+  { cat: 'beers', key: 'smirnoff', station: 'bar', price: 4000, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Smirnoff', fr: 'Smirnoff', rw: 'Smirnoff' } },
+  { cat: 'beers', key: 'milano-vodka', station: 'bar', price: 4000, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Milano Vodka', fr: 'Milano Vodka', rw: 'Milano Vodka' } },
+  { cat: 'beers', key: 'savanna', station: 'bar', price: 5000, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Savanna', fr: 'Savanna', rw: 'Savanna' } },
+  { cat: 'beers', key: 'redbull', station: 'bar', price: 4000, prep: 2, tags: [], allergens: [], name: { en: 'Red Bull', fr: 'Red Bull', rw: 'Red Bull' } },
 
-  // ---- Mains
-  {
-    cat: 'mains', key: 'rice-chicken', station: 'kitchen', price: 6500, prep: 20,
-    tags: ['popular'], allergens: [],
-    name: { en: 'Rice & Beans with Chicken', fr: 'Riz-haricots au poulet', rw: 'Umuceri n’ibishyimbo n’inkoko' },
-    description: { en: 'Classic Rwandan plate: rice, red beans and a grilled chicken leg.', fr: 'Plat rwandais classique : riz, haricots rouges et cuisse de poulet grillée.', rw: 'Ifunguro nyarwanda: umuceri, ibishyimbo n’ikigero cy’inkoko.' }
-  },
-  {
-    cat: 'mains', key: 'isombe', station: 'kitchen', price: 5000, prep: 18,
-    tags: ['vegetarian'], allergens: [],
-    name: { en: 'Isombe with Rice', fr: 'Isombe au riz', rw: 'Isombe n’umuceri' },
-    description: { en: 'Slow-cooked cassava leaves in peanut sauce, served with rice.', fr: 'Feuilles de manioc mijotées à la sauce d’arachide, avec riz.', rw: 'Isombe mu rwatsa rw’ubunyobwa, mu kanywacyuza n’umuceri.' },
-    options: [{ name: 'Extras', required: false, multiple: true, choices: [{ label: 'Boiled egg', extraPrice: 500 }, { label: 'Smoked fish (ndizi)', extraPrice: 1500 }] }]
-  },
-  {
-    cat: 'mains', key: 'ugali-beef', station: 'kitchen', price: 6000, prep: 22,
-    tags: [], allergens: [],
-    name: { en: 'Ugali & Beef Stew', fr: 'Ugali au bœuf mijoté', rw: 'Ubugali n’inyama y’inka' },
-    description: { en: 'Soft ugali with a rich tomato beef stew.', fr: 'Ugali moelleux et ragoût de bœuf à la tomate.', rw: 'Ubugali bwiza n’inyama y’inka mu rwatsa rw’inyanya.' },
-    options: [{ name: 'Spice level', required: false, multiple: false, choices: [{ label: 'Mild' }, { label: 'Medium' }, { label: 'Hot' }] }]
-  },
-  {
-    cat: 'mains', key: 'chapati-wrap', station: 'kitchen', price: 4500, prep: 12,
-    tags: ['new'], allergens: ['gluten'],
-    name: { en: 'Chapati Wrap with Beef', fr: 'Wrap chapati au bœuf', rw: 'Chapati yuzuye inyama' },
-    description: { en: 'Flaky chapati rolled with spiced beef and salad.', fr: 'Chapati feuilletée roulée au bœuf épicé et salade.', rw: 'Chapati yuzuye inyama yipipiye n’urumpya.' }
-  },
-  {
-    cat: 'mains', key: 'spaghetti', station: 'kitchen', price: 5500, prep: 16,
-    tags: [], allergens: ['gluten'],
-    name: { en: 'Spaghetti Bolognese', fr: 'Spaghetti bolognaise', rw: 'Espageti n’inyama' },
-    description: { en: 'Spaghetti in slow-simmered meat sauce with parmesan.', fr: 'Spaghetti à la sauce bolognaise, parmesan.', rw: 'Espageti mu rwatsa rw’inyama n’umulika.' }
-  },
-  {
-    cat: 'mains', key: 'veg-curry', station: 'kitchen', price: 5500, prep: 18,
-    tags: ['vegetarian', 'spicy'], allergens: [],
-    name: { en: 'Vegetable Curry with Rice', fr: 'Curry végétarien au riz', rw: 'Kari y’imboga n’umuceri' },
-    description: { en: 'Seasonal vegetables in coconut curry with steamed rice.', fr: 'Légumes de saison au curry de coco avec riz vapeur.', rw: 'Imboga z’igihe mu kari ya coco n’umuceri watevye.' },
-    options: [{ name: 'Spice level', required: false, multiple: false, choices: [{ label: 'Mild' }, { label: 'Hot' }] }]
-  },
+  // ---- Soft Drinks
+  { cat: 'soft-drinks', key: 'panache', station: 'bar', price: 1500, prep: 2, tags: [], allergens: [], name: { en: 'Panache', fr: 'Panache', rw: 'Panache' } },
+  { cat: 'soft-drinks', key: 'fanta', station: 'bar', price: 1500, prep: 2, tags: [], allergens: [], name: { en: 'Fanta', fr: 'Fanta', rw: 'Fanta' } },
+  { cat: 'soft-drinks', key: 'fanta-50cl', station: 'bar', price: 2000, prep: 2, tags: [], allergens: [], name: { en: 'Fanta 50cl', fr: 'Fanta 50cl', rw: 'Fanta 50cl' } },
+  { cat: 'soft-drinks', key: 'water', station: 'bar', price: 1000, prep: 2, tags: [], allergens: [], trackStock: true, stockQty: 100, lowStockThreshold: 20, name: { en: 'Mineral Water', fr: 'Eau minérale', rw: 'Amazi y''u Rwanda' } },
 
-  // ---- Grill
-  {
-    cat: 'grill', key: 'grill-chicken', station: 'kitchen', price: 8000, prep: 25,
-    tags: ['popular'], allergens: [],
-    name: { en: 'Grilled Chicken Quarter', fr: 'Quart de poulet grillé', rw: 'Ikigero cy’inkoko cyurishijwe' },
-    description: { en: 'Charcoal-grilled chicken quarter, marinaded overnight.', fr: 'Cuisse de poulet grillée au charbon, marinée une nuit.', rw: 'Ikigero cy’inkoko cyarishwe mu makara cyaruhijwe ijoro.' },
-    options: [
-      { name: 'Side', required: true, multiple: false, choices: [{ label: 'Fries' }, { label: 'Fried plantain', extraPrice: 500 }, { label: 'Rice' }] },
-      { name: 'Extras', required: false, multiple: true, choices: [{ label: 'Extra pili-pili sauce', extraPrice: 500 }] }
-    ]
-  },
-  {
-    cat: 'grill', key: 'grill-tilapia', station: 'kitchen', price: 12000, prep: 30,
-    tags: [], allergens: ['fish'],
-    name: { en: 'Grilled Tilapia (Whole)', fr: 'Tilapia grillée (entière)', rw: 'Ifi yurishijwe (yuzuye)' },
-    description: { en: 'Whole Kivu tilapia, grilled with lemon and herbs.', fr: 'Tilapia du Kivu entière, grillée au citron et aux herbes.', rw: 'Ifi ya Kivu yuzuye, yurishije n’indimu n’ibimyunyu.' },
-    options: [{ name: 'Side', required: true, multiple: false, choices: [{ label: 'Fries' }, { label: 'Fried plantain', extraPrice: 500 }, { label: 'Rice' }] }]
-  },
-  {
-    cat: 'grill', key: 'mixed-grill', station: 'kitchen', price: 15000, prep: 35,
-    tags: ['new'], allergens: [],
-    name: { en: 'Mixed Grill Platter', fr: 'Assiette mixte grill', rw: 'Emwe y’ibirishijwe byose' },
-    description: { en: 'Beef, goat and chicken skewers with fries and salad. For two.', fr: 'Brochettes de bœuf, chèvre et poulet avec frites et salade. Pour deux.', rw: 'Inyama zose ku macumu n’ifiriti n’urumpya. Ku bagabo babiri.' }
-  },
-  {
-    cat: 'grill', key: 'nyama-choma', station: 'kitchen', price: 12000, prep: 30,
-    tags: [], allergens: [],
-    name: { en: 'Nyama Choma Beef 500g', fr: 'Nyama choma de bœuf 500g', rw: 'Nyama choma y’inka 500g' },
-    description: { en: 'Half kilo of charcoal-roasted beef, salted simply.', fr: 'Demi-kilo de bœuf rôti au charbon, simplement salé.', rw: 'Igiro cy’inyama y’inka ryarishwe mu makara.' }
-  },
+  // ---- Fresh Juice
+  { cat: 'juices', key: 'mango-juice', station: 'bar', price: 5000, prep: 6, tags: [], allergens: [], name: { en: 'Mango Juice', fr: 'Jus mangue', rw: 'Uruju rwa Mango' } },
+  { cat: 'juices', key: 'passion-juice', station: 'bar', price: 5000, prep: 6, tags: [], allergens: [], name: { en: 'Passion Juice', fr: 'Jus de passion', rw: 'Uruju rw''ipashoni' } },
+  { cat: 'juices', key: 'pineapple-juice', station: 'bar', price: 5000, prep: 6, tags: [], allergens: [], name: { en: 'Pineapple Juice', fr: 'Jus ananas', rw: 'Uruju rw''inanasi' } },
+  { cat: 'juices', key: 'watermelon-juice', station: 'bar', price: 5000, prep: 6, tags: [], allergens: [], name: { en: 'Watermelon Juice', fr: 'Jus pastèque', rw: 'Uruju rw''indimu' } },
+  { cat: 'juices', key: 'orange-juice', station: 'bar', price: 5000, prep: 6, tags: [], allergens: [], name: { en: 'Orange Juice', fr: 'Jus d''orange', rw: 'Uruju rw''indimu' } },
+  { cat: 'juices', key: 'mocktail-juice', station: 'bar', price: 6000, prep: 6, tags: ['new'], allergens: [], name: { en: 'Mocktail Juice', fr: 'Jus mocktail', rw: 'Uruju mocktail' } },
+  { cat: 'juices', key: 'detox', station: 'bar', price: 6000, prep: 6, tags: [], allergens: [], name: { en: 'Detox', fr: 'Détox', rw: 'Detox' } },
 
-  // ---- Soft drinks
-  {
-    cat: 'soft-drinks', key: 'water-05', station: 'bar', price: 1500, prep: 2,
-    tags: [], allergens: [],
-    name: { en: 'Mineral Water 0.5L', fr: 'Eau minérale 0,5L', rw: 'Amazi 0.5L' },
-    description: { en: 'Chilled Rwandan mineral water.', fr: 'Eau minérale rwandaise fraîche.', rw: 'Amazi y’u Rwanda akuze.' }
-  },
-  {
-    cat: 'soft-drinks', key: 'water-1l', station: 'bar', price: 2000, prep: 2,
-    tags: [], allergens: [],
-    name: { en: 'Mineral Water 1L', fr: 'Eau minérale 1L', rw: 'Amazi 1L' },
-    description: { en: 'One-litre chilled mineral water.', fr: 'Eau minérale fraîche d’un litre.', rw: 'Amazi akuze arilitiri imwe.' }
-  },
-  {
-    cat: 'soft-drinks', key: 'fanta-small', station: 'bar', price: 1500, prep: 2,
-    tags: ['popular'], allergens: [],
-    name: { en: 'Fanta Small', fr: 'Fanta petit', rw: 'Fanta Nto' },
-    description: { en: 'Classic orange Fanta, served cold.', fr: 'Fanta orange classique, servi frais.', rw: 'Fanta y’indovu ikoraho, ikaze.' },
-    trackStock: true, stockQty: 48, lowStockThreshold: 10
-  },
-  {
-    cat: 'soft-drinks', key: 'coca-cola', station: 'bar', price: 1500, prep: 2,
-    tags: ['popular'], allergens: [],
-    name: { en: 'Coca-Cola 300ml', fr: 'Coca-Cola 300ml', rw: 'Koka-Kola 300ml' },
-    description: { en: 'Ice-cold Coca-Cola.', fr: 'Coca-Cola bien frais.', rw: 'Koka-Kola y’agace kanini.' },
-    trackStock: true, stockQty: 60, lowStockThreshold: 12
-  },
-  {
-    cat: 'soft-drinks', key: 'sprite', station: 'bar', price: 1500, prep: 2,
-    tags: [], allergens: [],
-    name: { en: 'Sprite 300ml', fr: 'Sprite 300ml', rw: 'Sprite 300ml' },
-    description: { en: 'Crisp lemon-lime soda.', fr: 'Soda citron-lime pétillant.', rw: 'Soda y’indimu n’ilemu.' }
-  },
-  {
-    cat: 'soft-drinks', key: 'passion-juice', station: 'bar', price: 3000, prep: 6,
-    tags: ['new'], allergens: [],
-    name: { en: 'Fresh Passion Juice', fr: 'Jus de passion frais', rw: 'Uruju rw’ipashoni' },
-    description: { en: 'Pressed passion fruit juice, lightly sweetened.', fr: 'Jus de fruit de la passion pressé, légèrement sucré.', rw: 'Uruju rw’imbuto z’ipashoni rushyizweho isukari rike.' },
-    options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Small (300ml)' }, { label: 'Large (500ml)', extraPrice: 1000 }] }]
-  },
-  {
-    cat: 'soft-drinks', key: 'ginger-lemonade', station: 'bar', price: 2500, prep: 6,
-    tags: [], allergens: [],
-    name: { en: 'Ginger Lemonade', fr: 'Limonade au gingembre', rw: 'Lemonade ya tangawizi' },
-    description: { en: 'House lemonade with fresh ginger and mint.', fr: 'Limonade maison au gingembre frais et menthe.', rw: 'Lemonade y’urugo ifite tangawizi n’inzabuni.' }
-  },
+  // ---- Smoothies
+  { cat: 'smoothies', key: 'passion-smoothie', station: 'bar', price: 6000, prep: 6, tags: [], allergens: [], name: { en: 'Passion Fruit Smoothie', fr: 'Smoothie passion', rw: 'Smoothie y''ipashoni' } },
+  { cat: 'smoothies', key: 'banana-smoothie', station: 'bar', price: 6000, prep: 6, tags: [], allergens: [], name: { en: 'Banana Smoothie', fr: 'Smoothie banane', rw: 'Smoothie y''ibitoki' } },
+  { cat: 'smoothies', key: 'mixed-fruit-smoothie', station: 'bar', price: 8000, prep: 6, tags: [], allergens: [], name: { en: 'Mixed Fruit Smoothie', fr: 'Smoothie fruits mélangés', rw: 'Smoothie y''imbuto nyinshi' } },
+  { cat: 'smoothies', key: 'mango-smoothie', station: 'bar', price: 6000, prep: 6, tags: [], allergens: [], name: { en: 'Mango Smoothie', fr: 'Smoothie mangue', rw: 'Smoothie y''mango' } },
 
-  // ---- Local beers
-  {
-    cat: 'beers', key: 'primus', station: 'bar', price: 2000, prep: 2,
-    tags: ['popular'], allergens: ['gluten'],
-    name: { en: 'Primus 500ml', fr: 'Primus 500ml', rw: 'Primus 500ml' },
-    description: { en: 'Rwanda’s favourite lager.', fr: 'La bière préférée du Rwanda.', rw: 'Inzoga y’Ubweru irakundwa cyane mu Rwanda.' },
-    trackStock: true, stockQty: 72, lowStockThreshold: 24
-  },
-  {
-    cat: 'beers', key: 'mutzig', station: 'bar', price: 2500, prep: 2,
-    tags: [], allergens: ['gluten'],
-    name: { en: 'Mützig 500ml', fr: 'Mützig 500ml', rw: 'Mützig 500ml' },
-    description: { en: 'Strong, smooth premium lager.', fr: 'Bière premium forte et douce.', rw: 'Inzoga ikomeye kandi yoroha.' }
-  },
-  {
-    cat: 'beers', key: 'skol', station: 'bar', price: 2000, prep: 2,
-    tags: [], allergens: ['gluten'],
-    name: { en: 'Skol 500ml', fr: 'Skol 500ml', rw: 'Skol 500ml' },
-    description: { en: 'Light and refreshing lager.', fr: 'Bière légère et rafraîchissante.', rw: 'Inzoga yoroha kandi ishyuza.' }
-  },
-  {
-    cat: 'beers', key: 'amstel', station: 'bar', price: 2500, prep: 2,
-    tags: [], allergens: ['gluten'],
-    name: { en: 'Amstel 330ml', fr: 'Amstel 330ml', rw: 'Amstel 330ml' },
-    description: { en: 'Premium bottle, served chilled.', fr: 'Bouteille premium, servie fraîche.', rw: 'Umupira mwiza, wuzuye akaze.' }
-  },
-  {
-    cat: 'beers', key: 'bavaria', station: 'bar', price: 4000, prep: 2,
-    tags: ['new'], allergens: [],
-    name: { en: 'Bavaria Non-Alcoholic', fr: 'Bavaria sans alcool', rw: 'Bavaria itagira urwagwa' },
-    description: { en: '0.0% malt drink — full taste, zero alcohol.', fr: 'Boisson maltée 0,0% — tout le goût, zéro alcool.', rw: 'Ikinyobwa cya Versele 0,0% — inyungu yose, urwagwa rubusa.' },
-    trackStock: true, stockQty: 24, lowStockThreshold: 6
-  },
-  {
-    cat: 'beers', key: 'turbo-king', station: 'bar', price: 3000, prep: 2,
-    tags: [], allergens: ['gluten'],
-    name: { en: 'Turbo King 500ml', fr: 'Turbo King 500ml', rw: 'Turbo King 500ml' },
-    description: { en: 'Bold dark beer for slow evenings.', fr: 'Bière brune généreuse pour les longues soirées.', rw: 'Inzoga yirabura nini ku mazina yo gupfa.' }
-  },
+  // ---- Milk Shakes
+  { cat: 'milk-shakes', key: 'vanilla-milk-shake', station: 'bar', price: 6000, prep: 8, tags: [], allergens: ['dairy'], name: { en: 'Vanilla Milk Shake', fr: 'Milk Shake vanille', rw: 'Milk Shake ya vanille' } },
+  { cat: 'milk-shakes', key: 'chocolate-milk-shake', station: 'bar', price: 6000, prep: 8, tags: [], allergens: ['dairy'], name: { en: 'Chocolate Milk Shake', fr: 'Milk Shake chocolat', rw: 'Milk Shake ya cokolade' } },
+  { cat: 'milk-shakes', key: 'strawberry-milk-shake', station: 'bar', price: 6000, prep: 8, tags: [], allergens: ['dairy'], name: { en: 'Strawberry Milk Shake', fr: 'Milk Shake fraise', rw: 'Milk Shake ya strawberi' } },
 
-  // ---- Desserts
-  {
-    cat: 'desserts', key: 'fruit-salad', station: 'dessert', price: 3000, prep: 8,
-    tags: ['vegetarian', 'popular'], allergens: [],
-    name: { en: 'Fresh Fruit Salad', fr: 'Salade de fruits frais', rw: 'Imbuto zvwagwa' },
-    description: { en: 'Pineapple, mango, banana and watermelon of the day.', fr: 'Ananas, mangue, banane et pastèque du jour.', rw: 'Inanasi, igikoma, ingobe n’indimu z’umunsi.' }
-  },
-  {
-    cat: 'desserts', key: 'brownie', station: 'dessert', price: 4500, prep: 10,
-    tags: ['new'], allergens: ['gluten', 'dairy', 'nuts'],
-    name: { en: 'Chocolate Brownie & Ice Cream', fr: 'Brownie au chocolat et glace', rw: 'Brownie ya cokolade n’ice cream' },
-    description: { en: 'Warm fudgy brownie with vanilla ice cream.', fr: 'Brownie tiède fondant avec glace vanille.', rw: 'Brownie bushyuhe n’ice cream ya vanille.' }
-  },
-  {
-    cat: 'desserts', key: 'banana-fritters', station: 'dessert', price: 2500, prep: 10,
-    tags: ['vegetarian'], allergens: ['gluten'],
-    name: { en: 'Banana Fritters', fr: 'Beignets de banane', rw: 'Amateke y’ibitoki' },
-    description: { en: 'Sweet banana fritters with honey drizzle.', fr: 'Beignets de banane sucrés au miel.', rw: 'Amateke y’ibitoki ashyizweho ubuki.' }
-  },
-  {
-    cat: 'desserts', key: 'ice-cream', station: 'dessert', price: 2500, prep: 4,
-    tags: [], allergens: ['dairy'],
-    name: { en: 'Vanilla Ice Cream (2 scoops)', fr: 'Glace vanille (2 boules)', rw: 'Ice cream ya vanille (2)' },
-    description: { en: 'Two scoops of creamy vanilla.', fr: 'Deux boules de vanille crémeuse.', rw: 'Ice cream ya vanille ihagaze.' },
-    options: [{ name: 'Topping', required: false, multiple: true, choices: [{ label: 'Chocolate sauce', extraPrice: 500 }, { label: 'Roasted peanuts', extraPrice: 400 }] }]
-  },
-  {
-    cat: 'desserts', key: 'passion-mousse', station: 'dessert', price: 3500, prep: 6,
-    tags: [], allergens: ['dairy', 'eggs'],
-    name: { en: 'Passion Mousse', fr: 'Mousse de passion', rw: 'Mousse y’ipashoni' },
-    description: { en: 'Airy passion-fruit mousse, chilled.', fr: 'Mousse légère au fruit de la passion, bien fraîche.', rw: 'Mousse y’ipashoni yorohewe, ikuze.' }
-  }
+  // ---- Spirits (Bottle / Shot)
+  { cat: 'spirits', key: 'chivas-regal-18', station: 'bar', price: 80000, prep: 2, tags: [], allergens: [], name: { en: 'Chivas Regal 18 Years', fr: 'Chivas Regal 18 Years', rw: 'Chivas Regal 18 Years' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -75000 }] }] },
+  { cat: 'spirits', key: 'black-label', station: 'bar', price: 90000, prep: 2, tags: [], allergens: [], name: { en: 'Black Label', fr: 'Black Label', rw: 'Black Label' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -86000 }] }] },
+  { cat: 'spirits', key: 'jameson-irish-whiskey', station: 'bar', price: 70000, prep: 2, tags: [], allergens: [], name: { en: 'Jameson Irish Whiskey', fr: 'Jameson Irish Whiskey', rw: 'Jameson Irish Whiskey' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -66000 }] }] },
+  { cat: 'spirits', key: 'jameson-black-barrel', station: 'bar', price: 100000, prep: 2, tags: [], allergens: [], name: { en: 'Jameson Black Barrel', fr: 'Jameson Black Barrel', rw: 'Jameson Black Barrel' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -95000 }] }] },
+
+  // ---- Vodka (Bottle / Shot)
+  { cat: 'vodka', key: 'absolute-vodka', station: 'bar', price: 60000, prep: 2, tags: [], allergens: [], name: { en: 'Absolute Vodka', fr: 'Absolute Vodka', rw: 'Absolute Vodka' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -57000 }] }] },
+
+  // ---- Gin (Bottle / Shot)
+  { cat: 'gin', key: 'blue-boner', station: 'bar', price: 35000, prep: 2, tags: [], allergens: [], name: { en: 'Blue Boner', fr: 'Blue Boner', rw: 'Blue Boner' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -32000 }] }] },
+  { cat: 'gin', key: 'beefeater', station: 'bar', price: 60000, prep: 2, tags: [], allergens: [], name: { en: 'Beefeater', fr: 'Beefeater', rw: 'Beefeater' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -57000 }] }] },
+  { cat: 'gin', key: 'gordons', station: 'bar', price: 60000, prep: 2, tags: [], allergens: [], name: { en: 'Gordon''s', fr: 'Gordon''s', rw: 'Gordon''s' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -57000 }] }] },
+  { cat: 'gin', key: 'gibson', station: 'bar', price: 50000, prep: 2, tags: [], allergens: [], name: { en: 'Gibson', fr: 'Gibson', rw: 'Gibson' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -47000 }] }] },
+
+  // ---- Tequila (Bottle / Shot)
+  { cat: 'tequila', key: 'camino', station: 'bar', price: 50000, prep: 2, tags: [], allergens: [], name: { en: 'Camino', fr: 'Camino', rw: 'Camino' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -47000 }] }] },
+  { cat: 'tequila', key: 'olmeca-silver', station: 'bar', price: 110000, prep: 2, tags: [], allergens: [], name: { en: 'Olmeca Silver', fr: 'Olmeca Silver', rw: 'Olmeca Silver' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -106000 }] }] },
+
+  // ---- Rum (Bottle / Shot)
+  { cat: 'rum', key: 'martini-rum', station: 'bar', price: 50000, prep: 2, tags: [], allergens: [], name: { en: 'Martini', fr: 'Martini', rw: 'Martini' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -47000 }] }] },
+
+  // ---- Liqueurs (Bottle / Shot)
+  { cat: 'liquor', key: 'malibu', station: 'bar', price: 50000, prep: 2, tags: [], allergens: [], name: { en: 'Malibu', fr: 'Malibu', rw: 'Malibu' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -45000 }] }] },
+  { cat: 'liquor', key: 'amarula', station: 'bar', price: 60000, prep: 2, tags: [], allergens: [], name: { en: 'Amarula', fr: 'Amarula', rw: 'Amarula' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -55000 }] }] },
+  { cat: 'liquor', key: 'espresso-bottega', station: 'bar', price: 60000, prep: 2, tags: [], allergens: [], name: { en: 'Espresso Bottega', fr: 'Espresso Bottega', rw: 'Espresso Bottega' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -55000 }] }] },
+
+  // ---- Wines - Red (Bottle)
+  { cat: 'wines-red', key: 'lamothe-parrot', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Lamothe Parrot', fr: 'Lamothe Parrot', rw: 'Lamothe Parrot' } },
+  { cat: 'wines-red', key: 'maison-j-grandet', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Maison j.grandet', fr: 'Maison j.grandet', rw: 'Maison j.grandet' } },
+  { cat: 'wines-red', key: 'ch-valac', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'CH Valac', fr: 'CH Valac', rw: 'CH Valac' } },
+  { cat: 'wines-red', key: 'monte-rosso', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Monte Rosso', fr: 'Monte Rosso', rw: 'Monte Rosso' } },
+  { cat: 'wines-red', key: 'cellar-cask-red', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Cellar Cask', fr: 'Cellar Cask', rw: 'Cellar Cask' } },
+  { cat: 'wines-red', key: 'pinta-negra-red', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Pinta Negra', fr: 'Pinta Negra', rw: 'Pinta Negra' } },
+
+  // ---- Wines - White (Bottle)
+  { cat: 'wines-white', key: 'four-cousins', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Four Cousins', fr: 'Four Cousins', rw: 'Four Cousins' } },
+  { cat: 'wines-white', key: 'pinta-negra-white', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Pinta Negra', fr: 'Pinta Negra', rw: 'Pinta Negra' } },
+
+  // ---- Wines - Glass
+  { cat: 'wines-glass', key: 'drostdy', station: 'bar', price: 5000, prep: 2, tags: [], allergens: [], name: { en: 'Drostdy', fr: 'Drostdy', rw: 'Drostdy' } },
+  { cat: 'wines-glass', key: 'cellar-cask-glass', station: 'bar', price: 5000, prep: 2, tags: [], allergens: [], name: { en: 'Cellar Cask', fr: 'Cellar Cask', rw: 'Cellar Cask' } },
+
+  // ---- Soup
+  { cat: 'soup', key: 'fish-soup', station: 'kitchen', price: 7000, prep: 15, tags: [], allergens: [], name: { en: 'Fish Soup (with toasted bread)', fr: 'Soupe de poisson (avec pain grillé)', rw: 'Isoup y''imi ugali (n''ubunyobwa bw''umuceri)' } },
+  { cat: 'soup', key: 'noodle-soup', station: 'kitchen', price: 4000, prep: 15, tags: [], allergens: ['gluten'], name: { en: 'Noodle Soup (with toasted bread)', fr: 'Soupe aux nouilles (avec pain grillé)', rw: 'Isoup y''imyumbati (n''ubunyobwa bw''umuceri)' } },
+  { cat: 'soup', key: 'chicken-soup', station: 'kitchen', price: 6000, prep: 15, tags: [], allergens: [], name: { en: 'Chicken Soup (with toasted bread)', fr: 'Soupe au poulet (avec pain grillé)', rw: 'Isoup y''inkoko (n''ubunyobwa bw''umuceri)' } },
+  { cat: 'soup', key: 'beef-soup', station: 'kitchen', price: 7000, prep: 15, tags: [], allergens: [], name: { en: 'Beef Soup (with toasted bread)', fr: 'Soupe de bœuf (avec pain grillé)', rw: 'Isoup y''inyama y''inka (n''ubunyobwa bw''umuceri)' } },
+  { cat: 'soup', key: 'mushroom-soup', station: 'kitchen', price: 5000, prep: 15, tags: ['vegetarian'], allergens: ['dairy'], name: { en: 'Cream of Mushroom Soup (with toasted bread)', fr: 'Soupe crème aux champignons (avec pain grillé)', rw: 'Isoup y''matsima y''ubunyobwa (n''ubunyobwa bw''umuceri)' } },
+  { cat: 'soup', key: 'matooke-broth-soup', station: 'kitchen', price: 7000, prep: 15, tags: [], allergens: [], name: { en: 'Chicken & Matooke Broth Soup (chicken cubes and green bananas garnished)', fr: 'Soupe au bouillon poulet et matooke ( cubes de poulet et bananes vertes)', rw: 'Isoup y''umuceri w''inkoko n''amatooke (inkoko mu bibujijuje n''ibihogo by''umubare)' } },
+
+  // ---- Pasta & Noodles
+  { cat: 'pasta', key: 'spaghetti-bolognese', station: 'kitchen', price: 8000, prep: 15, tags: [], allergens: ['gluten'], name: { en: 'Spaghetti Bolognese (chef''s secret recipe)', fr: 'Spaghetti bolognaise (recette secrète du chef)', rw: 'Espageti bolognese (ihandi r''umuryango)' } },
+  { cat: 'pasta', key: 'alfredo-pasta', station: 'kitchen', price: 9000, prep: 15, tags: [], allergens: ['gluten', 'dairy'], name: { en: 'Alfredo Pasta (chicken, white sauce, cream, parmesan, green pepper)', fr: 'Pâtes Alfredo (poulet, sauce blanche, crème, parmesan, poivron vert)', rw: 'Pasta Alfredo (inkoko, sauce y''umweru, krem, parmesan, pilipili y''umubisi)' } },
+  { cat: 'pasta', key: 'penne-pasta', station: 'kitchen', price: 9000, prep: 15, tags: [], allergens: ['gluten', 'dairy'], name: { en: 'Penne Pasta (chicken, white sauce, cream, parmesan, green pepper)', fr: 'Pâtes penne (poulet, sauce blanche, crème, parmesan, poivron vert)', rw: 'Pasta penne (inkoko, sauce y''umweru, krem, parmesan, pilipili y''umubisi)' } },
+  { cat: 'pasta', key: 'fried-noodles', station: 'kitchen', price: 7000, prep: 12, tags: [], allergens: ['gluten'], name: { en: 'Fried Noodles (stir-fried with chicken, carrot, cabbage, onion, garlic, soy sauce)', fr: 'Nouilles sautées (poulet, carotte, chou, oignon, ail, sauce soja)', rw: 'Imyumbati y''umuceri (y''umuceri, karoti, chou, sukuma, ajo, siriho y''soya)' } },
+  { cat: 'pasta', key: 'chicken-noodles', station: 'kitchen', price: 9000, prep: 15, tags: [], allergens: ['gluten'], name: { en: 'Chicken Noodles (chicken, noodles, carrot, green peas, green pepper)', fr: 'Nouilles au poulet (poulet, nouilles, carotte, pois chiches, poivron vert)', rw: 'Imyumbati y''inkoko (inkoko, imyumbati, karoti, ibigari by''umubisi, pilipili y''umubisi)' } },
+
+  // ---- Light Bites
+  { cat: 'light-bites', key: 'veg-samosa-fries', station: 'kitchen', price: 3000, prep: 10, tags: ['vegetarian'], allergens: ['gluten'], name: { en: 'Vegetable Samosa (3pcs) + French Fries', fr: 'Samosa aux légumes (3pcs) + frites', rw: 'Samosa y''imboga (3) + ifiriti' } },
+  { cat: 'light-bites', key: 'chicken-spring-roll', station: 'kitchen', price: 8000, prep: 12, tags: [], allergens: ['gluten'], name: { en: 'Chicken Spring Roll (3pcs) + French Fries', fr: 'Rouleeau poulet (3pcs) + frites', rw: 'Spring roll y''inkoko (3) + ifiriti' } },
+  { cat: 'light-bites', key: 'fish-finger', station: 'kitchen', price: 8000, prep: 12, tags: [], allergens: ['gluten', 'fish'], name: { en: 'Fish Finger (4pcs) + French Fries', fr: 'Doigts de poisson (4pcs) + frites', rw: 'Ibigo by''imi (4) + ifiriti' } },
+  { cat: 'light-bites', key: 'meatballs-fries', station: 'kitchen', price: 3000, prep: 10, tags: [], allergens: ['gluten'], name: { en: 'Meatballs (3pcs) + French Fries', fr: 'Boulettes de viande (3pcs) + frites', rw: 'Amagati y''inyama (3) + ifiriti' } },
+  { cat: 'light-bites', key: 'chicken-wings', station: 'kitchen', price: 8000, prep: 15, tags: ['spicy'], allergens: [], name: { en: 'Spicy Chicken Wings (marinated, with kachumbari)', fr: 'Ailes de poulet épicées (marinées, avec kachumbari)', rw: 'Umubiri w''inkoko w''ipipiye (wihariye, n''akachumbari)' } },
+  { cat: 'light-bites', key: 'chicken-lollipop', station: 'kitchen', price: 7000, prep: 12, tags: [], allergens: ['gluten'], name: { en: 'Chicken Lollipop (ground chicken + fries)', fr: 'Lollipop poulet (poulet haché + frites)', rw: 'Lollipop y''inkoko (inkoko y''umuceri + ifiriti)' } },
+
+  // ---- Cape Town Grills
+  { cat: 'grills', key: 'goat-brochette', station: 'kitchen', price: 3000, prep: 12, tags: ['popular'], allergens: [], name: { en: 'Goat Brochette', fr: 'Brochette de chèvre', rw: 'Inyama y''ihene ku macumu' } },
+  { cat: 'grills', key: 'beef-brochette', station: 'kitchen', price: 3000, prep: 12, tags: ['popular'], allergens: [], name: { en: 'Beef Brochette', fr: 'Brochette de bœuf', rw: 'Inyama y''inka ku macumu' } },
+  { cat: 'grills', key: 'fish-brochette', station: 'kitchen', price: 5000, prep: 12, tags: [], allergens: ['fish'], name: { en: 'Fish Brochette', fr: 'Brochette de poisson', rw: 'Ifi ku macumu' } },
+  { cat: 'grills', key: 'chicken-brochette', station: 'kitchen', price: 4000, prep: 12, tags: [], allergens: [], name: { en: 'Chicken Brochette', fr: 'Brochette de poulet', rw: 'Inkoko ku macumu' } },
+  { cat: 'grills', key: 'zingaro-brochette', station: 'kitchen', price: 3500, prep: 12, tags: ['new'], allergens: [], name: { en: 'Zingaro Brochette', fr: 'Brochette Zingaro', rw: 'Zingaro ku macumu' } },
+  { cat: 'grills', key: 'nyamacoma-leg', station: 'kitchen', price: 20000, prep: 25, tags: ['new'], allergens: [], name: { en: 'Nyamacoma Leg (with veggie/kachumbari + banana/potato/fries/wedges/kawunga)', fr: 'Cuisses Nyamacoma (légumes/kachumbari + banane/potato/frites)', rw: 'Ikigero cy''Nyamacoma (imboga/akachumbari + igofigo/ibikomere/ifiriti)' } },
+  { cat: 'grills', key: 'akabenzi', station: 'kitchen', price: 6000, prep: 18, tags: [], allergens: ['fish'], name: { en: 'Akabenzi (Cape Town ocean fish)', fr: 'Akabenzi (poisson de mer Cape Town)', rw: 'Akabenzi (imi moji ya bahuzi)' } },
+  { cat: 'grills', key: 'bbq-grilled-combo', station: 'kitchen', price: 30000, prep: 35, tags: ['popular'], allergens: [], name: { en: 'BBQ Grilled Combo (goat, beef, chicken leg, kebab + potato wedges)', fr: 'Combo grill BBQ (chèvre, bœuf, cuisse de poulet, kebab + frites)', rw: 'Ikomubo BBQ (inyama y''ihene, inyama y''inka, ikigero cy''inkoko, kebab + ibikomere)' } },
+  { cat: 'grills', key: 'grilled-chicken', station: 'kitchen', price: 15000, prep: 25, tags: ['popular'], allergens: [], name: { en: 'Grilled Chicken (chips/rice/veggies)', fr: 'Poulet grillé (frites/riz/légumes)', rw: 'Inkoko yurishijwe (ifiriti/umuceri/imboga)' } },
+
+  // ---- Stew Dishes
+  { cat: 'stews', key: 'chicken-stew', station: 'kitchen', price: 10000, prep: 20, tags: [], allergens: [], name: { en: 'Chicken Stew (tenderloin cubes in authentic Italian sauce)', fr: 'Ragoût de poulet (cube de filet dans sauce italienne)', rw: 'Ibijumba by''inkoko (ibyuma by''inkoko mu rwatsa rwaswa)' } },
+  { cat: 'stews', key: 'beef-stew', station: 'kitchen', price: 10000, prep: 20, tags: [], allergens: [], name: { en: 'Beef Stew (tenderloin cubes in authentic Italian sauce)', fr: 'Ragoût de bœuf (cube de bœuf dans sauce italienne)', rw: 'Ibijumba y''inyama y''inka (ibyuma by''inka mu rwatsa rwaswa)' } },
+  { cat: 'stews', key: 'fish-stew', station: 'kitchen', price: 10000, prep: 20, tags: [], allergens: ['fish'], name: { en: 'Fish Stew (tenderloin cubes in authentic Italian sauce)', fr: 'Ragoût de poisson (cube de poisson dans sauce italienne)', rw: 'Ibijumba by''imi (ibyuma by''imi mu rwatsa rwaswa)' } },
+
+  // ---- Capetown Plata's
+  { cat: 'platters', key: 'beef-half-rice-pompsote', station: 'kitchen', price: 15000, prep: 20, tags: [], allergens: [], name: { en: 'Beef with ½ Rice and Pompsote', fr: 'Bœuf avec ½ riz et pompsote', rw: 'Inyama y''inka n''imuceri n''pompsote' } },
+  { cat: 'platters', key: 'beef-full-rice-pompsote', station: 'kitchen', price: 25000, prep: 25, tags: ['popular'], allergens: [], name: { en: 'Beef with Rice and Pompsote', fr: 'Bœuf avec riz et pompsote', rw: 'Inyama y''inka n''umuceri n''pompsote' } },
+  { cat: 'platters', key: 'fish-half-rice-pompsote', station: 'kitchen', price: 15000, prep: 20, tags: [], allergens: ['fish'], name: { en: 'Fish with ½ Rice and Pompsote', fr: 'Poison avec ½ riz et pompsote', rw: 'Ifi n''imuceri n''pompsote' } },
+  { cat: 'platters', key: 'fish-full-rice-pompsote', station: 'kitchen', price: 25000, prep: 25, tags: ['popular'], allergens: ['fish'], name: { en: 'Fish with Rice and Pompsote', fr: 'Poison avec riz et pompsote', rw: 'Ifi n''umuceri n''pompsote' } },
+  { cat: 'platters', key: 'chicken-half-rice-pompsote', station: 'kitchen', price: 15000, prep: 20, tags: [], allergens: [], name: { en: 'Chicken with ½ Rice and Pompsote', fr: 'Poulet avec ½ riz et pompsote', rw: 'Inkoko n''imuceri n''pompsote' } },
+  { cat: 'platters', key: 'chicken-full-rice-pompsote', station: 'kitchen', price: 25000, prep: 25, tags: ['popular'], allergens: [], name: { en: 'Chicken with Rice and Pompsote', fr: 'Poulet avec riz et pompsote', rw: 'Inkoko n''umuceri n''pompsote' } },
+
+  // ---- Burgers
+  { cat: 'burgers', key: 'beef-burger', station: 'kitchen', price: 8000, prep: 15, tags: ['popular'], allergens: ['gluten'], name: { en: 'Beef Burger', fr: 'Burger bœuf', rw: 'Burger y''inyama y''inka' } },
+  { cat: 'burgers', key: 'chicken-burger', station: 'kitchen', price: 7000, prep: 15, tags: [], allergens: ['gluten'], name: { en: 'Chicken Burger', fr: 'Burger poulet', rw: 'Burger y''inkoko' } },
+  { cat: 'burgers', key: 'veg-burger', station: 'kitchen', price: 5000, prep: 15, tags: ['vegetarian'], allergens: ['gluten'], name: { en: 'Vegetable Burger', fr: 'Burger végétarien', rw: 'Burger y''imboga' } },
+  { cat: 'burgers', key: 'cheese-burger', station: 'kitchen', price: 8000, prep: 15, tags: [], allergens: ['gluten', 'dairy'], name: { en: 'Cheese Burger', fr: 'Burger au fromage', rw: 'Burger y''isukali' } },
+
+  // ---- Pizza
+  { cat: 'pizza', key: 'margherita', station: 'kitchen', price: 10000, prep: 15, tags: ['popular'], allergens: ['gluten', 'dairy'], name: { en: 'Margherita (mozzarella, tomato, fresh basil, olive oil)', fr: 'Margherita (mozzarella, tomate, basilic, huile d''olive)', rw: 'Margherita (mozzarella, tomate, basil, amashoyi)' } },
+  { cat: 'pizza', key: 'hawaiian', station: 'kitchen', price: 10000, prep: 15, tags: [], allergens: ['gluten', 'dairy'], name: { en: 'Hawaiian (pineapple, tomato sauce, mozzarella, ham or bacon)', fr: 'Hawaiienne (ananas, sauce tomate, mozzarella, jambon)', rw: 'Hawaiian (inanasi, siriho, mozzarella, jam)' } },
+  { cat: 'pizza', key: 'four-season', station: 'kitchen', price: 12000, prep: 18, tags: ['new'], allergens: ['gluten', 'dairy'], name: { en: '4 Season (mozzarella, tomato, sausages, chicken, fresh chillies, onion)', fr: '4 Saisons (mozzarella, tomate, saucisses, poulet, piments, oignon)', rw: 'Sezon 4 (mozzarella, tomate, isawuga, inkoko, pilipili, sukuma)' } },
+  { cat: 'pizza', key: 'chicken-pizza', station: 'kitchen', price: 10000, prep: 15, tags: [], allergens: ['gluten', 'dairy'], name: { en: 'Chicken Pizza', fr: 'Pizza poulet', rw: 'Pizza y''inkoko' } },
+
+  // ---- Main Course
+  { cat: 'main-course', key: 'beef-stroganoff', station: 'kitchen', price: 10000, prep: 20, tags: ['popular'], allergens: ['dairy'], name: { en: 'Beef Stroganoff (tenderloin strips, mushrooms, green pepper in creamy sauce)', fr: 'Bœuf Stroganoff (cube bœuf, champignons, poivron vert, sauce crémeuse)', rw: 'Beef Stroganoff (ibyuma, matsima, pilipili y''umubisi, sauce y''amata)' } },
+  { cat: 'main-course', key: 'beef-steak', station: 'kitchen', price: 12000, prep: 22, tags: ['popular'], allergens: [], name: { en: 'Beef Steak (marinated, fried veg OR plain mushroom sauce + rice/mashed/chips)', fr: 'Steak de bœuf (mariné, légumes ou sauce champignon + riz/purée/frites)', rw: 'Steak y''inyama y''inka (yihariye, imboga cyangwa sauce y''matsima + umuceri/imperme/imifirisiti)' } },
+  { cat: 'main-course', key: 'grilled-chicken-leg', station: 'kitchen', price: 9000, prep: 20, tags: ['popular'], allergens: [], name: { en: 'Grilled Chicken Leg (herbs & spices + rice/mashed/chips)', fr: 'Cuisse de poulet grillée (herbes & épices + riz/purée/frites)', rw: 'Ikigero cy''inkoko cyurishijwe (ibimyunyu & ipipiro + umuceri/imperme/imifirisiti)' } },
+  { cat: 'main-course', key: 'grilled-chicken-breast', station: 'kitchen', price: 13000, prep: 22, tags: ['popular'], allergens: [], name: { en: 'Grilled Chicken Breast (herbs & spices + rice/mashed/chips)', fr: 'Poitrine de poulet grillée (herbes & épices + riz/purée/frites)', rw: 'Umufuu w''inkoko w''urishijwe (ibimyunyu & ipipiro + umuceri/imperme/imifirisiti)' } },
+  { cat: 'main-course', key: 'fish-stroganoff', station: 'kitchen', price: 12000, prep: 20, tags: [], allergens: ['fish', 'dairy'], name: { en: 'Fish Stroganoff (marinated fish, onion, mushroom, cream, white sauce + rice)', fr: 'Poisson Stroganoff (poisson mariné, oignon, champignon, crème, sauce blanche + riz)', rw: 'Fish Stroganoff (imi yihariye, sukuma, matsima, krem, sauce y''umweru + umuceri)' } },
+  { cat: 'main-course', key: 'grilled-tilapia', station: 'kitchen', price: 25000, prep: 30, tags: ['popular'], allergens: ['fish'], name: { en: 'Grilled Tilapia (whole, lemon & onion + rice/chips)', fr: 'Tilapia grillée (entière, citron & oignon + riz/frites)', rw: 'Ifi yurishijwe (yuzuye, indimu & sukuma + umuceri/imifirisiti)' } },
+  { cat: 'main-course', key: 'fish-fillet', station: 'kitchen', price: 8000, prep: 18, tags: [], allergens: ['fish'], name: { en: 'Fish Fillet (herbs & lemon sauce + rice/chips)', fr: 'Filet de poisson (herbes & citron + riz/frites)', rw: 'Filayi y''imi (ibimyunyu & sauce y''indimu + umuceri/imifirisiti)' } },
+  { cat: 'main-course', key: 'chicken-curry', station: 'kitchen', price: 10000, prep: 18, tags: ['spicy'], allergens: ['dairy'], name: { en: 'Chicken Curry (rich curry sauce + rice/chips)', fr: 'Curry au poulet (sauce au curry + riz/frites)', rw: 'Kari y''inkoko (sauce y''kari + umuceri/imifirisiti)' } },
+  { cat: 'main-course', key: 'chicken-sauce-ugali', station: 'kitchen', price: 7000, prep: 18, tags: [], allergens: ['gluten'], name: { en: 'Chicken Sauce & Ugali', fr: 'Sauce poulet & Ugali', rw: 'Sauce y''inkoko n''ubugali' } },
+  { cat: 'main-course', key: 'beef-sauce-ugali', station: 'kitchen', price: 7000, prep: 18, tags: [], allergens: ['gluten'], name: { en: 'Beef Sauce & Ugali', fr: 'Sauce bœuf & Ugali', rw: 'Sauce y''inyana y''inka n''ubugali' } },
+  { cat: 'main-course', key: 'chicken-pilau', station: 'kitchen', price: 5000, prep: 18, tags: [], allergens: ['gluten'], name: { en: 'Chicken Pilau (spiced chicken with rice & aromatic herbs)', fr: 'Poulet pilau (poulet épicé avec riz & herbes aromatiques)', rw: 'Pilau y''inkoko (inkoko y''ipipiye n''umuceri & ibimyunyu by''umumaro)' } }
 ];
 
 export const PROMOS = [
@@ -252,7 +202,7 @@ export const PROMOS = [
 ];
 
 export const SETTINGS = {
-  announcement: 'Every Thursday at Cape Town K Hotel! Bring your friends — grill platter + Primus combo',
+  announcement: 'Welcome to Cape Town K Hotel — AI Digital Menu',
   taxRate: 0,
   serviceCharge: 0
 };

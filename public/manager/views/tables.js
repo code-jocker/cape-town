@@ -11,7 +11,8 @@ export async function render(root) {
     'div',
     { class: 'toolbar' },
     el('button', { class: 'btn btn-primary btn-sm', id: 'new-table', text: '+ New table' }),
-     el('a', { class: 'btn btn-ghost btn-sm', href: `${window.__API_BASE_URL__ || ''}/api/tables/qr-sheet.pdf`, target: '_blank', text: 'Download QR sheet (PDF)' })
+    el('a', { class: 'btn btn-ghost btn-sm', href: `${window.__API_BASE_URL__ || ''}/api/tables/qr-sheet.pdf`, target: '_blank', text: 'Download QR sheet (PDF)' }),
+    el('a', { class: 'btn btn-ghost btn-sm', href: `${window.__API_BASE_URL__ || ''}/api/tables/qr-table-tents.pdf`, target: '_blank', text: 'Download table-tents (PDF)' })
   );
   const grid = el('div', { class: 'qr-grid', id: 'qr-grid' });
   root.append(toolbar, el('div', { class: 'panel' }, grid));

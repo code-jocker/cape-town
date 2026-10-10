@@ -43,7 +43,18 @@ async function processImage(name) {
 
 async function ensureImages() {
   try {
-    const items = await MenuItem.find({}).populate('category', 'key').lean();
+    const catKeyByEn = {};
+    for (const c of CATEGORIES) {
+      catKeyByEn[c.name.en] = c.key;
+    }
+    const catDocs = await Category.find().select('name').lean();
+    const catIdToKey = {};
+    for (const c of catDocs) {
+      const en = c.name?.en;
+      if (en && catKeyByEn[en]) catIdToKey[c._id.toString()] = catKeyByEn[en];
+    }
+
+    const items = await MenuItem.find({}).lean();
     let generated = 0;
     for (const it of items) {
       const filename = (it.image?.url || '').replace('/uploads/items/', '');
@@ -55,8 +66,6 @@ async function ensureImages() {
         } catch {
           /* file missing — will regenerate */
         }
-      } else {
-        /* empty image.url — will generate */
       }
       generated++;
     }
@@ -74,7 +83,7 @@ async function ensureImages() {
           }
         }
         const name = filename ? filename.replace('.webp', '').replace('-thumb', '') : null;
-        const catKey = it.category?.key;
+        const catKey = catIdToKey[it.category?.toString()];
         const image = (name ? await processImage(name) : null) || (catKey ? await processImage(catKey) : null);
         if (image) {
           await MenuItem.updateOne({ _id: it._id }, { $set: { image } });

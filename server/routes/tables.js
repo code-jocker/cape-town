@@ -18,6 +18,7 @@ router.use(requireAuth, requireRole('manager'));
 router.get('/', tables.listTables);
 router.post('/', validate(tableSchema), tables.createTable);
 router.get('/qr-sheet.pdf', tables.qrSheet);
+router.get('/qr-table-tents.pdf', tables.qrTableTents);
 router.get('/:id/qr.png', tables.qrPngRoute);
 router.post('/:id/regenerate-token', tables.regenerateToken);
 router.patch('/:id', validate(tableSchema.partial()), tables.updateTable);

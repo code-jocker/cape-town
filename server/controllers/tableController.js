@@ -1,6 +1,6 @@
 import { Table } from '../models/Table.js';
 import { signTableToken } from '../utils/token.js';
-import { qrPng, qrSheetPdf, tableUrl } from '../services/qrService.js';
+import { qrPng, qrSheetPdf, qrTableTentPdf, tableUrl } from '../services/qrService.js';
 import { audit } from '../models/AuditLog.js';
 import { AppError } from '../utils/AppError.js';
 import { asyncWrap } from '../utils/asyncWrap.js';
@@ -85,5 +85,23 @@ export const qrSheet = asyncWrap(async (req, res) => {
   const buf = await qrSheetPdf(tables);
   res.set('Content-Type', 'application/pdf');
   res.set('Content-Disposition', 'attachment; filename="cape-town-k-hotel-qr-sheets.pdf"');
+  res.send(buf);
+});
+
+/** GET /api/tables/qr-table-tents.pdf?ids=1,2,3 (optional; default all active) */
+export const qrTableTents = asyncWrap(async (req, res) => {
+  const filter = { isActive: true };
+  if (req.query.ids) {
+    const numbers = String(req.query.ids)
+      .split(',')
+      .map((s) => parseInt(s.trim(), 10))
+      .filter(Number.isFinite);
+    if (numbers.length) filter.number = { $in: numbers };
+  }
+  const tables = await Table.find(filter).sort({ number: 1 }).lean();
+  if (!tables.length) throw new AppError('NO_TABLES', 'No tables match the selection', 404);
+  const buf = await qrTableTentPdf(tables);
+  res.set('Content-Type', 'application/pdf');
+  res.set('Content-Disposition', 'attachment; filename="cape-town-k-hotel-table-tents.pdf"');
   res.send(buf);
 });

@@ -43,33 +43,42 @@ async function processImage(name) {
 
 async function ensureImages() {
   try {
-    const items = await MenuItem.find({ 'image.url': { $ne: '' } }).lean();
+    const items = await MenuItem.find({}).populate('category', 'key').lean();
     let generated = 0;
     for (const it of items) {
-      const filename = (it.image.url || '').replace('/uploads/items/', '');
-      if (!filename) continue;
-      const filepath = path.join(ITEMS_DIR, filename);
-      try {
-        await fs.access(filepath);
-      } catch {
-        generated++;
-      }
-    }
-    if (generated > 0) {
-      logger.info(`Found ${generated} missing image files — regenerating from source`);
-      for (const it of items) {
-        const filename = (it.image.url || '').replace('/uploads/items/', '');
-        if (!filename) continue;
-        const filepath = path.join(ITEMS_DIR, filename);
+      const filename = (it.image?.url || '').replace('/uploads/items/', '');
+      const filepath = filename ? path.join(ITEMS_DIR, filename) : null;
+      if (filepath) {
         try {
           await fs.access(filepath);
+          continue;
         } catch {
-          const name = filename.replace('.webp', '').replace('-thumb', '');
-          const image = (await processImage(name)) || (await processImage(it.category?.toString().slice(-4)));
-          if (image) {
-            await MenuItem.updateOne({ _id: it._id }, { $set: { image } });
-            logger.info(`  Regenerated image for "${it.name}"`);
+          /* file missing — will regenerate */
+        }
+      } else {
+        /* empty image.url — will generate */
+      }
+      generated++;
+    }
+    if (generated > 0) {
+      logger.info(`Found ${generated} items needing images — regenerating from source`);
+      for (const it of items) {
+        const filename = (it.image?.url || '').replace('/uploads/items/', '');
+        const filepath = filename ? path.join(ITEMS_DIR, filename) : null;
+        if (filepath) {
+          try {
+            await fs.access(filepath);
+            continue;
+          } catch {
+            /* file missing — regenerate */
           }
+        }
+        const name = filename ? filename.replace('.webp', '').replace('-thumb', '') : null;
+        const catKey = it.category?.key;
+        const image = (name ? await processImage(name) : null) || (catKey ? await processImage(catKey) : null);
+        if (image) {
+          await MenuItem.updateOne({ _id: it._id }, { $set: { image } });
+          logger.info(`  Regenerated image for "${it.name.en || it.name}"`);
         }
       }
     }

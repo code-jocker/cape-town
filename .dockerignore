@@ -11,6 +11,5 @@ coverage
 .kilo
 .DS_Store
 public/uploads/items
-public/uploads/src
 Dockerfile
 docker-compose.yml

@@ -34,7 +34,7 @@ export function createApp() {
           upgradeInsecureRequests: config.isProd ? [] : null
         }
       },
-      crossOriginResourcePolicy: { policy: 'same-origin' }
+       crossOriginResourcePolicy: { policy: 'cross-origin' }
     })
   );
   app.use(cors({ origin: config.corsOrigin.includes('*') ? true : config.corsOrigin, credentials: true }));

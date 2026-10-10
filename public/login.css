@@ -92,6 +92,38 @@
   font-weight: 500;
 }
 
+.theme-toggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--color-on-primary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.15s var(--ease), transform 0.1s var(--ease);
+}
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-on-primary);
+  outline-offset: 2px;
+}
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+[data-theme='dark'] .theme-toggle .icon-sun { display: block; }
+[data-theme='dark'] .theme-toggle .icon-moon { display: none; }
+[data-theme='dark'] .theme-toggle {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 .guard-message {
   max-width: 420px;
   margin: 20vh auto;

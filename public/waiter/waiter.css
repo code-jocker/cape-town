@@ -127,7 +127,7 @@
 }
 .tab.active .pill {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 .w-main {
@@ -414,7 +414,7 @@ body.printing #print-area {
     position: fixed;
     inset: 0;
     width: 72mm;
-    color: #000;
+    color: var(--color-text);
     font-family: 'Courier New', monospace;
     font-size: 11px;
     padding: 2mm;
@@ -429,7 +429,7 @@ body.printing #print-area {
   }
   #print-area hr {
     border: 0;
-    border-top: 1px dashed #000;
+    border-top: 1px dashed var(--color-text);
     margin: 4px 0;
   }
 }

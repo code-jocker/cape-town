@@ -609,8 +609,8 @@ delegate(document, 'click', '[data-add]', (e, target) => {
   const item = state.items.find((i) => i._id === target.dataset.add);
   if (!item) return;
   Haptic.addToCart();
-  const hasRequired = (item.options || []).some((o) => o.required && o.choices.length);
-  if (hasRequired) { openItemSheet(item); return; }
+  const hasOptions = (item.options || []).some((o) => o.choices && o.choices.length > 0);
+  if (hasOptions) { openItemSheet(item); return; }
   cart.addToCart(state.tableId, { itemId: item._id, name: locName(item.name), price: item.price, quantity: 1, selectedOptions: [], note: '' });
   updateRowActions();
 });

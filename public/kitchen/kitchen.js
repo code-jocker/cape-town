@@ -9,6 +9,7 @@ import { api } from '../shared/api.js';
 import { connectSocket, on, setOnReconnect } from '../shared/socket.js';
 import { money, timeHM } from '../shared/format.js';
 import { requireStaff, logout } from '../shared/auth.js';
+import { initInstallPrompt } from '../shared/pwa-install.js';
 import { unlockAudio, disableAudio, audioEnabled, playNewOrder, vibrate, notify, requestNotificationPermission } from '../shared/audio.js';
 
 const state = {
@@ -356,6 +357,17 @@ async function boot() {
   state.me = await requireStaff(['chef', 'manager']);
   $('#whoami').textContent = `${state.me.name} (${state.me.role})`;
   $('#logout-kitchen').addEventListener('click', logout);
+
+  initInstallPrompt({
+    onShow: ({ prompt, dismiss }) => {
+      const banner = $('#install-banner');
+      if (!banner) return;
+      $('#install-btn').onclick = () => prompt();
+      $('#install-dismiss').onclick = dismiss;
+      banner.hidden = false;
+    }
+  });
+
   await loadSettings();
   await refresh();
   tick();

@@ -5,6 +5,7 @@
 import { $, $$, el } from '../shared/dom.js';
 import { connectSocket, on, setOnReconnect } from '../shared/socket.js';
 import { requireStaff, logout } from '../shared/auth.js';
+import { initInstallPrompt } from '../shared/pwa-install.js';
 import { initModal, toast } from './ui.js';
 
 const NAV = [
@@ -73,6 +74,17 @@ async function boot() {
   setInterval(clock, 30000);
 
   $('#logout').addEventListener('click', logout);
+
+  initInstallPrompt({
+    onShow: ({ prompt, dismiss }) => {
+      const banner = $('#install-banner');
+      if (!banner) return;
+      $('#install-btn').onclick = () => prompt();
+      $('#install-dismiss').onclick = dismiss;
+      banner.hidden = false;
+    }
+  });
+
   const sidebar = $('#sidebar');
   const backdrop = $('#side-backdrop');
   const setSidebar = (open) => {

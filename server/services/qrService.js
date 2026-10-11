@@ -199,11 +199,10 @@ function drawTableTentPanel(doc, ox, oy, panelW, panelH, tableNumber, qrBuf, lab
 }
 
 /**
- * Branded QR table-tent cards — one landscape page per table.
- * Each landscape page is split in half to print matching front and back faces.
+ * Branded QR table-tent cards — one portrait page and one QR code per table.
  */
 export async function qrTableTentPdf(tables) {
-  const doc = new PDFDocument({ layout: 'landscape', margin: 0, autoFirstPage: true });
+  const doc = new PDFDocument({ size: 'A5', margin: 0, autoFirstPage: true });
   const chunks = [];
   doc.on('data', (chunk) => chunks.push(chunk));
   const done = new Promise((resolve, reject) => {
@@ -211,14 +210,13 @@ export async function qrTableTentPdf(tables) {
     doc.once('error', reject);
   });
 
-  const pw = doc.page.width;
-  const ph = doc.page.height;
+  const pageW = doc.page.width;
+  const pageH = doc.page.height;
 
   for (let i = 0; i < tables.length; i++) {
     const t = tables[i];
     const qrBuf = await qrPng(t.qrToken, 512);
-    drawTableTentPanel(doc, 0, 0, pw / 2, ph, t.number, qrBuf, t.label);
-    drawTableTentPanel(doc, pw / 2, 0, pw / 2, ph, t.number, qrBuf, t.label);
+    drawTableTentPanel(doc, 0, 0, pageW, pageH, t.number, qrBuf, t.label);
     if (i < tables.length - 1) doc.addPage();
   }
 

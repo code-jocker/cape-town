@@ -51,20 +51,24 @@
 
     <div id="closed-banner" class="closed-banner hidden" role="alert"></div>
 
-    <!-- 3. Sticky category bar -->
-    <nav class="cat-bar" aria-label="Categories">
-      <div id="chips" class="chips" role="tablist"></div>
-      <button id="search-btn" class="search-btn" aria-label="Search">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      </button>
-    </nav>
-    <div id="search-row" class="search-row hidden">
-      <input id="search-input" class="input" type="search" placeholder="Search the menu…" />
-    </div>
-
     <!-- Views: menu / tracker -->
-    <main id="view-menu">
-      <div id="menu-list"></div>
+    <main id="view-menu" class="menu-layout">
+      <nav class="cat-bar" aria-label="Menu categories">
+        <div class="category-heading" aria-hidden="true">
+          <span class="category-overline" data-i18n="menu.title">Menu</span>
+          <span class="category-title" data-i18n="menu.categories">Categories</span>
+        </div>
+        <div id="chips" class="chips" role="tablist"></div>
+        <button id="search-btn" class="search-btn" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </button>
+      </nav>
+      <div class="menu-content">
+        <div id="search-row" class="search-row hidden">
+          <input id="search-input" class="input" type="search" placeholder="Search the menu…" />
+        </div>
+        <div id="menu-list"></div>
+      </div>
     </main>
 
     <main id="view-tracker" class="hidden">

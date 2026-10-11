@@ -253,6 +253,136 @@ body {
   background: var(--color-bg);
 }
 
+.category-heading {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  #view-menu.menu-layout {
+    display: grid;
+    grid-template-columns: minmax(210px, 248px) minmax(0, 1fr);
+    align-items: start;
+    gap: 28px;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 24px clamp(20px, 3vw, 48px) 36px;
+  }
+
+  #view-menu .cat-bar {
+    position: sticky;
+    top: 18px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    max-height: calc(100vh - 36px);
+    overflow-y: auto;
+    padding: 14px 10px;
+    border: 1px solid var(--color-divider);
+    border-radius: 8px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .category-heading {
+    display: grid;
+    gap: 3px;
+    margin: 0 8px 4px;
+    padding: 2px 4px 12px;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .category-overline {
+    color: var(--color-primary);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+  }
+
+  .category-title {
+    color: var(--color-text);
+    font-size: 18px;
+    font-weight: 750;
+  }
+
+  #view-menu .chips {
+    flex: none;
+    flex-direction: column;
+    gap: 4px;
+    overflow: visible;
+  }
+
+  #view-menu .chip {
+    width: 100%;
+    min-height: 44px;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 6px;
+    text-align: left;
+    text-transform: none;
+    letter-spacing: 0;
+    white-space: normal;
+  }
+
+  #view-menu .chip.active {
+    background: var(--color-primary-soft);
+    color: var(--color-text);
+    box-shadow: inset 3px 0 0 var(--color-primary);
+  }
+
+  #view-menu .chip.active::after {
+    display: none;
+  }
+
+  #view-menu .chip.active .chip-icon {
+    animation: none;
+  }
+
+  #view-menu .chip-icon {
+    display: inline-grid;
+    width: 22px;
+    flex: none;
+    place-items: center;
+    font-size: 16px;
+  }
+
+  #view-menu .chip-label {
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  #view-menu .search-btn {
+    align-self: flex-start;
+    margin: 4px 0 0 4px;
+    background: transparent;
+    color: var(--color-text-muted);
+    box-shadow: none;
+    border: 1px solid var(--color-divider);
+  }
+
+  #view-menu .search-btn:hover {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    transform: none;
+    box-shadow: none;
+  }
+
+  #view-menu .menu-content {
+    min-width: 0;
+  }
+
+  #view-menu .search-row {
+    top: 18px;
+    padding: 0 0 10px;
+  }
+
+  #view-menu #menu-list {
+    padding: 0 0 30px;
+  }
+}
+
 /* ---------- Menu sections ---------- */
 #menu-list {
   padding: 4px 16px 30px;

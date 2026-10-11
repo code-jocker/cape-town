@@ -127,6 +127,8 @@ function closedText() {
 
 function setupChips() {
   const chips = $('#chips');
+  const vertical = window.matchMedia('(min-width: 900px)').matches;
+  chips.setAttribute('aria-orientation', vertical ? 'vertical' : 'horizontal');
   chips.replaceChildren();
   const all = chip('all', t('common.all'));
   chips.append(all);
@@ -145,11 +147,13 @@ function setupChips() {
     if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
   chips.addEventListener('keydown', (e) => {
-    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const forwardKey = vertical ? 'ArrowDown' : 'ArrowRight';
+    const backwardKey = vertical ? 'ArrowUp' : 'ArrowLeft';
+    if (e.key !== forwardKey && e.key !== backwardKey) return;
     const list = $$('.chip', chips);
     const idx = list.indexOf(document.activeElement);
     if (idx === -1) return;
-    const next = list[(idx + (e.key === 'ArrowRight' ? 1 : list.length - 1)) % list.length];
+    const next = list[(idx + (e.key === forwardKey ? 1 : list.length - 1)) % list.length];
     next.focus();
     next.click();
     e.preventDefault();

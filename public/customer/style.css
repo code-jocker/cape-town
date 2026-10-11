@@ -353,6 +353,26 @@ body {
     line-height: 1.25;
   }
 
+  #view-menu .chip-count {
+    display: inline-flex;
+    min-width: 24px;
+    min-height: 24px;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    border-radius: 12px;
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #view-menu .chip.active .chip-count {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
   #view-menu .search-btn {
     align-self: flex-start;
     margin: 4px 0 0 4px;

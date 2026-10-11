@@ -127,13 +127,23 @@ function closedText() {
 
 function setupChips() {
   const chips = $('#chips');
-  const vertical = window.matchMedia('(min-width: 900px)').matches;
-  chips.setAttribute('aria-orientation', vertical ? 'vertical' : 'horizontal');
+  const orientationQuery = window.matchMedia('(min-width: 900px)');
+  const syncOrientation = () => chips.setAttribute('aria-orientation', orientationQuery.matches ? 'vertical' : 'horizontal');
+  if (!chips._orientationQuery) {
+    chips._orientationQuery = orientationQuery;
+    orientationQuery.addEventListener('change', syncOrientation);
+  }
+  syncOrientation();
   chips.replaceChildren();
   const all = chip('all', t('common.all'));
   chips.append(all);
+  const itemCounts = new Map();
+  for (const item of state.items) {
+    const categoryId = String(item.category);
+    itemCounts.set(categoryId, (itemCounts.get(categoryId) || 0) + 1);
+  }
   for (const c of state.categories) {
-    chips.append(chip(c._id, locName(c.name)));
+    chips.append(chip(c._id, locName(c.name), itemCounts.get(String(c._id)) || 0));
   }
   delegate(chips, 'click', '.chip', (e, target) => {
     Haptic.selection();
@@ -147,6 +157,7 @@ function setupChips() {
     if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
   chips.addEventListener('keydown', (e) => {
+    const vertical = chips._orientationQuery.matches;
     const forwardKey = vertical ? 'ArrowDown' : 'ArrowRight';
     const backwardKey = vertical ? 'ArrowUp' : 'ArrowLeft';
     if (e.key !== forwardKey && e.key !== backwardKey) return;
@@ -162,11 +173,17 @@ function setupChips() {
 }
 
 const CATEGORY_ICONS = [
-  [/starter/, '🥗'],
+  [/soup/, '🍲'],
+  [/pasta|noodle/, '🍝'],
+  [/bite|starter|snack/, '🥗'],
   [/main|grill|brochette|meat|beef|chicken|goat/, '🍖'],
+  [/stew|platter|plate/, '🍛'],
+  [/burger/, '🍔'],
+  [/pizza/, '🍕'],
   [/dessert|sweet|cake|mikate/, '🍰'],
-  [/beer|alcohol|wine|inzoga/, '🍺'],
-  [/soft|drink|juice|soda|beverage/, '🥤'],
+  [/beer|inzoga/, '🍺'],
+  [/milk shake|smoothie|juice|soft|drink|soda|beverage/, '🥤'],
+  [/alcohol|wine|spirit|vodka|gin|tequila|rum|liquor/, '🍷'],
   [/coffee|tea|espresso/, '☕'],
   [/special/, '⭐']
 ];
@@ -176,10 +193,10 @@ function categoryIcon(name) {
   for (const [re, icon] of CATEGORY_ICONS) {
     if (re.test(slug)) return icon;
   }
-  return '';
+  return '🍽️';
 }
 
-function chip(catId, label) {
+function chip(catId, label, count = null) {
   const icon = catId === 'all' ? '☰' : categoryIcon(label);
   const btn = el('button', {
     class: `chip${catId === state.activeCat ? ' active' : ''}`,
@@ -187,14 +204,11 @@ function chip(catId, label) {
     'data-cat': catId,
     'aria-selected': catId === state.activeCat ? 'true' : 'false'
   });
-  if (icon) {
-    btn.append(
-      el('span', { class: 'chip-icon', 'aria-hidden': 'true', text: icon }),
-      el('span', { class: 'chip-label', text: label })
-    );
-  } else {
-    btn.textContent = label;
-  }
+  btn.append(
+    el('span', { class: 'chip-icon', 'aria-hidden': 'true', text: icon }),
+    el('span', { class: 'chip-label', text: label })
+  );
+  if (count !== null) btn.append(el('span', { class: 'chip-count', 'aria-hidden': 'true', text: String(count) }));
   return btn;
 }
 
@@ -286,8 +300,12 @@ function setupScrollSpy() {
       const chipEl = $(`#chips .chip[data-cat="${cat}"]`);
       if (chipEl && state.activeCat !== cat) {
         state.activeCat = cat;
-        $$('#chips .chip').forEach((c) => c.classList.toggle('active', c === chipEl));
-        chipEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        $$('#chips .chip').forEach((c) => {
+          const active = c === chipEl;
+          c.classList.toggle('active', active);
+          c.setAttribute('aria-selected', String(active));
+        });
+        chipEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
       }
     },
     { rootMargin: '-70px 0px -70% 0px', threshold: 0 }

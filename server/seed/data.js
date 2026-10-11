@@ -31,7 +31,7 @@ export const CATEGORIES = [
   { key: 'light-bites', name: { en: 'Light Bites', fr: 'En-cas', rw: 'Ibizamini' }, sortOrder: 17 },
   { key: 'grills', name: { en: 'Cape Town Grills', fr: 'Grillades Cape Town', rw: 'Ibirishijwe bya Cape Town' }, sortOrder: 18 },
   { key: 'stews', name: { en: 'Stew Dishes', fr: 'Ragoûts', rw: 'Ibijumba' }, sortOrder: 19 },
-  { key: 'platters', name: { en: 'Capetown Plata''s', fr: 'Plats Cape Town', rw: 'Ibishoramari bya Cape Town' }, sortOrder: 20 },
+  { key: 'platters', name: { en: 'Capetown Plata\'s', fr: 'Plats Cape Town', rw: 'Ibishoramari bya Cape Town' }, sortOrder: 20 },
   { key: 'burgers', name: { en: 'Burgers', fr: 'Burgers', rw: 'Burgers' }, sortOrder: 21 },
   { key: 'pizza', name: { en: 'Pizza', fr: 'Pizza', rw: 'Pizza' }, sortOrder: 22 },
   { key: 'main-course', name: { en: 'Main Course', fr: 'Plat principal', rw: 'Ifunguro Nyamukuru' }, sortOrder: 23 }

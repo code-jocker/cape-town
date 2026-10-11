@@ -3,7 +3,7 @@
  * settings, staff users, 10 tables with signed QR tokens, menu, promos and
  * 14 days of sample orders (so reports have data on day one).
  *
- * Run: npm run seed
+ * Run: npm run seed:demo -- --allow-destructive (local development only).
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -186,6 +186,11 @@ async function seedHistory(ordersRnd, tables, items, managerId, waiterId, settin
 }
 
 async function main() {
+  if (config.isProd) throw new Error('The destructive demo seed is disabled in production.');
+  if (!process.argv.includes('--allow-destructive')) {
+    throw new Error('This demo seed deletes the database. Re-run with --allow-destructive to confirm.');
+  }
+
   console.log('Seeding Cape Town K Hotel…');
   await connectDB();
   await ensureDirs();

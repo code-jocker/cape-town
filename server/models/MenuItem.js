@@ -23,6 +23,7 @@ const optionSchema = new Schema(
 
 const menuItemSchema = new Schema(
   {
+    seedKey: { type: String, trim: true, unique: true, sparse: true },
     name: { type: localizedSchema, required: true },
     description: {
       en: { type: String, trim: true, maxlength: 500, default: '' },

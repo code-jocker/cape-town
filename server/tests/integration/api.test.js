@@ -32,6 +32,7 @@ const { createApp } = await import('../../app.js');
 const { signTableToken } = await import('../../utils/token.js');
 const { User } = await import('../../models/User.js');
 const { Table } = await import('../../models/Table.js');
+const { Order } = await import('../../models/Order.js');
 const { Category } = await import('../../models/Category.js');
 const { MenuItem } = await import('../../models/MenuItem.js');
 const { Settings } = await import('../../models/Settings.js');
@@ -109,10 +110,16 @@ test('integration: API contract end to end', async (t) => {
   });
 
   await t.test('health check reports db connected', async () => {
-    const res = await request(app).get('/health');
+    const requestId = 'health-check-request-id';
+    const res = await request(app).get('/health').set('x-request-id', requestId);
     assert.equal(res.status, 200);
     assert.equal(res.body.ok, true);
     assert.equal(res.body.data.db, 'connected');
+    assert.equal(res.headers['x-request-id'], requestId);
+
+    const ready = await request(app).get('/ready');
+    assert.equal(ready.status, 200);
+    assert.equal(ready.body.data.status, 'ready');
   });
 
   await t.test('staff logins issue cookies; bad password is 401', async () => {
@@ -177,6 +184,13 @@ test('integration: API contract end to end', async (t) => {
     assert.equal(dup.status, 200);
     assert.equal(dup.body.data.duplicate, true);
     assert.equal(dup.body.data.order.id, orderId);
+
+    const crossTableKey = await request(app)
+      .post('/api/public/orders')
+      .set('x-table-token', tokenB)
+      .send(body);
+    assert.equal(crossTableKey.status, 409);
+    assert.equal(crossTableKey.body.error.code, 'IDEMPOTENCY_KEY_CONFLICT');
   });
 
   await t.test('order missing a required option is rejected', async () => {
@@ -267,5 +281,22 @@ test('integration: API contract end to end', async (t) => {
     assert.equal(pdf.status, 200);
     assert.match(pdf.headers['content-type'], /application\/pdf/);
     assert.equal(pdf.body.subarray(0, 5).toString(), '%PDF-');
+  });
+
+  await t.test('official menu sync preserves operational records', async () => {
+    const { syncMenu } = await import('../../seed/menu.js');
+    const before = {
+      users: await User.countDocuments(),
+      tables: await Table.countDocuments(),
+      orders: await Order.countDocuments()
+    };
+
+    await syncMenu();
+
+    assert.equal(await MenuItem.countDocuments({ isAvailable: true }), 110);
+    assert.equal(await User.countDocuments(), before.users);
+    assert.equal(await Table.countDocuments(), before.tables);
+    assert.equal(await Order.countDocuments(), before.orders);
+    assert.equal((await MenuItem.findById(simpleItem._id)).isAvailable, false);
   });
 });

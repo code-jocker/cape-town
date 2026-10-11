@@ -40,7 +40,18 @@ export function errorHandler(err, req, res, _next) {
   }
 
   const log = status >= 500 ? 'error' : 'warn';
-  logger[log]({ reqId: req.id, err: err.message, stack: err.stack, code, status, path: req.originalUrl }, 'request error');
+  logger[log](
+    {
+      reqId: req.id,
+      method: req.method,
+      route: req.route?.path || '<unmatched>',
+      err: err.message,
+      stack: err.stack,
+      code,
+      status
+    },
+    'request error'
+  );
 
   res.status(status).json({
     ok: false,

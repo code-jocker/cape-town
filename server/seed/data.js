@@ -52,13 +52,13 @@ export const ITEMS = [
   { cat: 'beers', key: 'smirnoff', station: 'bar', price: 4000, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Smirnoff', fr: 'Smirnoff', rw: 'Smirnoff' } },
   { cat: 'beers', key: 'milano-vodka', station: 'bar', price: 4000, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Milano Vodka', fr: 'Milano Vodka', rw: 'Milano Vodka' } },
   { cat: 'beers', key: 'savanna', station: 'bar', price: 5000, prep: 2, tags: [], allergens: ['gluten'], name: { en: 'Savanna', fr: 'Savanna', rw: 'Savanna' } },
-  { cat: 'beers', key: 'redbull', station: 'bar', price: 4000, prep: 2, tags: [], allergens: [], name: { en: 'Red Bull', fr: 'Red Bull', rw: 'Red Bull' } },
+  { cat: 'beers', key: 'redbull', station: 'bar', price: 4000, prep: 2, tags: [], allergens: [], name: { en: 'Redbull', fr: 'Redbull', rw: 'Redbull' } },
 
   // ---- Soft Drinks
   { cat: 'soft-drinks', key: 'panache', station: 'bar', price: 1500, prep: 2, tags: [], allergens: [], name: { en: 'Panache', fr: 'Panache', rw: 'Panache' } },
   { cat: 'soft-drinks', key: 'fanta', station: 'bar', price: 1500, prep: 2, tags: [], allergens: [], name: { en: 'Fanta', fr: 'Fanta', rw: 'Fanta' } },
   { cat: 'soft-drinks', key: 'fanta-50cl', station: 'bar', price: 2000, prep: 2, tags: [], allergens: [], name: { en: 'Fanta 50cl', fr: 'Fanta 50cl', rw: 'Fanta 50cl' } },
-  { cat: 'soft-drinks', key: 'water', station: 'bar', price: 1000, prep: 2, tags: [], allergens: [], trackStock: true, stockQty: 100, lowStockThreshold: 20, name: { en: 'Mineral Water', fr: 'Eau minérale', rw: 'Amazi y\'u Rwanda' } },
+  { cat: 'soft-drinks', key: 'water', station: 'bar', price: 1000, prep: 2, tags: [], allergens: [], trackStock: true, stockQty: 100, lowStockThreshold: 20, name: { en: 'Water', fr: 'Eau', rw: 'Amazi' } },
 
   // ---- Fresh Juice
   { cat: 'juices', key: 'mango-juice', station: 'bar', price: 5000, prep: 6, tags: [], allergens: [], name: { en: 'Mango Juice', fr: 'Jus mangue', rw: 'Uruju rwa Mango' } },
@@ -81,38 +81,38 @@ export const ITEMS = [
   { cat: 'milk-shakes', key: 'strawberry-milk-shake', station: 'bar', price: 6000, prep: 8, tags: [], allergens: ['dairy'], name: { en: 'Strawberry Milk Shake', fr: 'Milk Shake fraise', rw: 'Milk Shake ya strawberi' } },
 
   // ---- Spirits (Bottle / Shot)
-  { cat: 'spirits', key: 'chivas-regal-18', station: 'bar', price: 80000, prep: 2, tags: [], allergens: [], name: { en: 'Chivas Regal 18 Years', fr: 'Chivas Regal 18 Years', rw: 'Chivas Regal 18 Years' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -75000 }] }] },
-  { cat: 'spirits', key: 'black-label', station: 'bar', price: 90000, prep: 2, tags: [], allergens: [], name: { en: 'Black Label', fr: 'Black Label', rw: 'Black Label' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -86000 }] }] },
-  { cat: 'spirits', key: 'jameson-irish-whiskey', station: 'bar', price: 70000, prep: 2, tags: [], allergens: [], name: { en: 'Jameson Irish Whiskey', fr: 'Jameson Irish Whiskey', rw: 'Jameson Irish Whiskey' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -66000 }] }] },
-  { cat: 'spirits', key: 'jameson-black-barrel', station: 'bar', price: 100000, prep: 2, tags: [], allergens: [], name: { en: 'Jameson Black Barrel', fr: 'Jameson Black Barrel', rw: 'Jameson Black Barrel' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -95000 }] }] },
+  { cat: 'spirits', key: 'chivas-regal-18', station: 'bar', price: 5000, prep: 2, tags: [], allergens: [], name: { en: 'Chivas Regal 18 Years', fr: 'Chivas Regal 18 Years', rw: 'Chivas Regal 18 Years' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 75000 }, { label: 'Shot' }] }] },
+  { cat: 'spirits', key: 'black-label', station: 'bar', price: 4000, prep: 2, tags: [], allergens: [], name: { en: 'Black Label', fr: 'Black Label', rw: 'Black Label' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 86000 }, { label: 'Shot' }] }] },
+  { cat: 'spirits', key: 'jameson-irish-whiskey', station: 'bar', price: 4000, prep: 2, tags: [], allergens: [], name: { en: 'Jameson Irish Whiskey', fr: 'Jameson Irish Whiskey', rw: 'Jameson Irish Whiskey' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 66000 }, { label: 'Shot' }] }] },
+  { cat: 'spirits', key: 'jameson-black-barrel', station: 'bar', price: 5000, prep: 2, tags: [], allergens: [], name: { en: 'Jameson Black Barrel', fr: 'Jameson Black Barrel', rw: 'Jameson Black Barrel' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 95000 }, { label: 'Shot' }] }] },
 
   // ---- Vodka (Bottle / Shot)
-  { cat: 'vodka', key: 'absolute-vodka', station: 'bar', price: 60000, prep: 2, tags: [], allergens: [], name: { en: 'Absolute Vodka', fr: 'Absolute Vodka', rw: 'Absolute Vodka' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -57000 }] }] },
+  { cat: 'vodka', key: 'absolute-vodka', station: 'bar', price: 3000, prep: 2, tags: [], allergens: [], name: { en: 'Absolute Vodka', fr: 'Absolute Vodka', rw: 'Absolute Vodka' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 57000 }, { label: 'Shot' }] }] },
 
   // ---- Gin (Bottle / Shot)
-  { cat: 'gin', key: 'blue-boner', station: 'bar', price: 35000, prep: 2, tags: [], allergens: [], name: { en: 'Blue Boner', fr: 'Blue Boner', rw: 'Blue Boner' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -32000 }] }] },
-  { cat: 'gin', key: 'beefeater', station: 'bar', price: 60000, prep: 2, tags: [], allergens: [], name: { en: 'Beefeater', fr: 'Beefeater', rw: 'Beefeater' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -57000 }] }] },
-  { cat: 'gin', key: 'gordons', station: 'bar', price: 60000, prep: 2, tags: [], allergens: [], name: { en: 'Gordon\'s', fr: 'Gordon\'s', rw: 'Gordon\'s' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -57000 }] }] },
-  { cat: 'gin', key: 'gibson', station: 'bar', price: 50000, prep: 2, tags: [], allergens: [], name: { en: 'Gibson', fr: 'Gibson', rw: 'Gibson' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -47000 }] }] },
+  { cat: 'gin', key: 'blue-boner', station: 'bar', price: 3000, prep: 2, tags: [], allergens: [], name: { en: 'Blue Boner', fr: 'Blue Boner', rw: 'Blue Boner' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 32000 }, { label: 'Shot' }] }] },
+  { cat: 'gin', key: 'beefeater', station: 'bar', price: 3000, prep: 2, tags: [], allergens: [], name: { en: 'Beefeater', fr: 'Beefeater', rw: 'Beefeater' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 57000 }, { label: 'Shot' }] }] },
+  { cat: 'gin', key: 'gordons', station: 'bar', price: 3000, prep: 2, tags: [], allergens: [], name: { en: 'Gordon\'s', fr: 'Gordon\'s', rw: 'Gordon\'s' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 57000 }, { label: 'Shot' }] }] },
+  { cat: 'gin', key: 'gibson', station: 'bar', price: 3000, prep: 2, tags: [], allergens: [], name: { en: 'Gibson', fr: 'Gibson', rw: 'Gibson' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 47000 }, { label: 'Shot' }] }] },
 
   // ---- Tequila (Bottle / Shot)
-  { cat: 'tequila', key: 'camino', station: 'bar', price: 50000, prep: 2, tags: [], allergens: [], name: { en: 'Camino', fr: 'Camino', rw: 'Camino' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -47000 }] }] },
-  { cat: 'tequila', key: 'olmeca-silver', station: 'bar', price: 110000, prep: 2, tags: [], allergens: [], name: { en: 'Olmeca Silver', fr: 'Olmeca Silver', rw: 'Olmeca Silver' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -106000 }] }] },
+  { cat: 'tequila', key: 'camino', station: 'bar', price: 3000, prep: 2, tags: [], allergens: [], name: { en: 'Camino', fr: 'Camino', rw: 'Camino' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 47000 }, { label: 'Shot' }] }] },
+  { cat: 'tequila', key: 'olmeca-silver', station: 'bar', price: 4000, prep: 2, tags: [], allergens: [], name: { en: 'Olmeca Silver', fr: 'Olmeca Silver', rw: 'Olmeca Silver' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 106000 }, { label: 'Shot' }] }] },
 
   // ---- Rum (Bottle / Shot)
-  { cat: 'rum', key: 'martini-rum', station: 'bar', price: 50000, prep: 2, tags: [], allergens: [], name: { en: 'Martini', fr: 'Martini', rw: 'Martini' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -47000 }] }] },
+  { cat: 'rum', key: 'martini-rum', station: 'bar', price: 3000, prep: 2, tags: [], allergens: [], name: { en: 'Martini', fr: 'Martini', rw: 'Martini' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 47000 }, { label: 'Shot' }] }] },
 
   // ---- Liqueurs (Bottle / Shot)
-  { cat: 'liquor', key: 'malibu', station: 'bar', price: 50000, prep: 2, tags: [], allergens: [], name: { en: 'Malibu', fr: 'Malibu', rw: 'Malibu' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -45000 }] }] },
-  { cat: 'liquor', key: 'amarula', station: 'bar', price: 60000, prep: 2, tags: [], allergens: [], name: { en: 'Amarula', fr: 'Amarula', rw: 'Amarula' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -55000 }] }] },
-  { cat: 'liquor', key: 'espresso-bottega', station: 'bar', price: 60000, prep: 2, tags: [], allergens: [], name: { en: 'Espresso Bottega', fr: 'Espresso Bottega', rw: 'Espresso Bottega' }, options: [{ name: 'Size', required: false, multiple: false, choices: [{ label: 'Bottle' }, { label: 'Shot', extraPrice: -55000 }] }] },
+  { cat: 'liquor', key: 'malibu', station: 'bar', price: 5000, prep: 2, tags: [], allergens: [], name: { en: 'Malibu', fr: 'Malibu', rw: 'Malibu' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 45000 }, { label: 'Shot' }] }] },
+  { cat: 'liquor', key: 'amarula', station: 'bar', price: 5000, prep: 2, tags: [], allergens: [], name: { en: 'Amarula', fr: 'Amarula', rw: 'Amarula' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 55000 }, { label: 'Shot' }] }] },
+  { cat: 'liquor', key: 'espresso-bottega', station: 'bar', price: 5000, prep: 2, tags: [], allergens: [], name: { en: 'Espresso Bottega', fr: 'Espresso Bottega', rw: 'Espresso Bottega' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Bottle', extraPrice: 55000 }, { label: 'Shot' }] }] },
 
   // ---- Wines - Red (Bottle)
   { cat: 'wines-red', key: 'lamothe-parrot', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Lamothe Parrot', fr: 'Lamothe Parrot', rw: 'Lamothe Parrot' } },
   { cat: 'wines-red', key: 'maison-j-grandet', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Maison j.grandet', fr: 'Maison j.grandet', rw: 'Maison j.grandet' } },
   { cat: 'wines-red', key: 'ch-valac', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'CH Valac', fr: 'CH Valac', rw: 'CH Valac' } },
-  { cat: 'wines-red', key: 'monte-rosso', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Monte Rosso', fr: 'Monte Rosso', rw: 'Monte Rosso' } },
-  { cat: 'wines-red', key: 'cellar-cask-red', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Cellar Cask', fr: 'Cellar Cask', rw: 'Cellar Cask' } },
+  { cat: 'wines-red', key: 'monte-rosso', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Monte rosso', fr: 'Monte rosso', rw: 'Monte rosso' } },
+  { cat: 'wines-red', key: 'cellar-cask-red', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Cellar cask', fr: 'Cellar cask', rw: 'Cellar cask' } },
   { cat: 'wines-red', key: 'pinta-negra-red', station: 'bar', price: 25000, prep: 2, tags: [], allergens: [], name: { en: 'Pinta Negra', fr: 'Pinta Negra', rw: 'Pinta Negra' } },
 
   // ---- Wines - White (Bottle)
@@ -121,7 +121,7 @@ export const ITEMS = [
 
   // ---- Wines - Glass
   { cat: 'wines-glass', key: 'drostdy', station: 'bar', price: 5000, prep: 2, tags: [], allergens: [], name: { en: 'Drostdy', fr: 'Drostdy', rw: 'Drostdy' } },
-  { cat: 'wines-glass', key: 'cellar-cask-glass', station: 'bar', price: 5000, prep: 2, tags: [], allergens: [], name: { en: 'Cellar Cask', fr: 'Cellar Cask', rw: 'Cellar Cask' } },
+  { cat: 'wines-glass', key: 'cellar-cask-glass', station: 'bar', price: 5000, prep: 2, tags: [], allergens: [], name: { en: 'Cellar cask', fr: 'Cellar cask', rw: 'Cellar cask' } },
 
   // ---- Soup
   { cat: 'soup', key: 'fish-soup', station: 'kitchen', price: 7000, prep: 15, tags: [], allergens: [], name: { en: 'Fish Soup (with toasted bread)', fr: 'Soupe de poisson (avec pain grillé)', rw: 'Isoup y\'imi ugali (n\'ubunyobwa bw\'umuceri)' } },
@@ -177,10 +177,10 @@ export const ITEMS = [
   { cat: 'burgers', key: 'cheese-burger', station: 'kitchen', price: 8000, prep: 15, tags: [], allergens: ['gluten', 'dairy'], name: { en: 'Cheese Burger', fr: 'Burger au fromage', rw: 'Burger y\'isukali' } },
 
   // ---- Pizza
-  { cat: 'pizza', key: 'margherita', station: 'kitchen', price: 10000, prep: 15, tags: ['popular'], allergens: ['gluten', 'dairy'], name: { en: 'Margherita (mozzarella, tomato, fresh basil, olive oil)', fr: 'Margherita (mozzarella, tomate, basilic, huile d\'olive)', rw: 'Margherita (mozzarella, tomate, basil, amashoyi)' } },
-  { cat: 'pizza', key: 'hawaiian', station: 'kitchen', price: 10000, prep: 15, tags: [], allergens: ['gluten', 'dairy'], name: { en: 'Hawaiian (pineapple, tomato sauce, mozzarella, ham or bacon)', fr: 'Hawaiienne (ananas, sauce tomate, mozzarella, jambon)', rw: 'Hawaiian (inanasi, siriho, mozzarella, jam)' } },
-  { cat: 'pizza', key: 'four-season', station: 'kitchen', price: 12000, prep: 18, tags: ['new'], allergens: ['gluten', 'dairy'], name: { en: '4 Season (mozzarella, tomato, sausages, chicken, fresh chillies, onion)', fr: '4 Saisons (mozzarella, tomate, saucisses, poulet, piments, oignon)', rw: 'Sezon 4 (mozzarella, tomate, isawuga, inkoko, pilipili, sukuma)' } },
-  { cat: 'pizza', key: 'chicken-pizza', station: 'kitchen', price: 10000, prep: 15, tags: [], allergens: ['gluten', 'dairy'], name: { en: 'Chicken Pizza', fr: 'Pizza poulet', rw: 'Pizza y\'inkoko' } },
+  { cat: 'pizza', key: 'margherita', station: 'kitchen', price: 10000, prep: 15, tags: ['popular'], allergens: ['gluten', 'dairy'], name: { en: 'Margherita (mozzarella, tomato, fresh basil, olive oil)', fr: 'Margherita (mozzarella, tomate, basilic, huile d\'olive)', rw: 'Margherita (mozzarella, tomate, basil, amashoyi)' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Medium' }, { label: 'Large', extraPrice: 2000 }] }] },
+  { cat: 'pizza', key: 'hawaiian', station: 'kitchen', price: 10000, prep: 15, tags: [], allergens: ['gluten', 'dairy'], name: { en: 'Hawaiian (pineapple, tomato sauce, mozzarella, ham or bacon)', fr: 'Hawaiienne (ananas, sauce tomate, mozzarella, jambon)', rw: 'Hawaiian (inanasi, siriho, mozzarella, jam)' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Medium' }, { label: 'Large', extraPrice: 2000 }] }] },
+  { cat: 'pizza', key: 'four-season', station: 'kitchen', price: 12000, prep: 18, tags: ['new'], allergens: ['gluten', 'dairy'], name: { en: '4season (mozzarella, tomato, sausages, chicken, fresh chillies, onion)', fr: '4 Saisons (mozzarella, tomate, saucisses, poulet, piments, oignon)', rw: 'Sezon 4 (mozzarella, tomate, isawuga, inkoko, pilipili, sukuma)' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Medium' }, { label: 'Large', extraPrice: 3000 }] }] },
+  { cat: 'pizza', key: 'chicken-pizza', station: 'kitchen', price: 10000, prep: 15, tags: [], allergens: ['gluten', 'dairy'], name: { en: 'Chicken Pizza', fr: 'Pizza poulet', rw: 'Pizza y\'inkoko' }, options: [{ name: 'Size', required: true, multiple: false, choices: [{ label: 'Medium' }, { label: 'Large', extraPrice: 2000 }] }] },
 
   // ---- Main Course
   { cat: 'main-course', key: 'beef-stroganoff', station: 'kitchen', price: 10000, prep: 20, tags: ['popular'], allergens: ['dairy'], name: { en: 'Beef Stroganoff (tenderloin strips, mushrooms, green pepper in creamy sauce)', fr: 'Bœuf Stroganoff (cube bœuf, champignons, poivron vert, sauce crémeuse)', rw: 'Beef Stroganoff (ibyuma, matsima, pilipili y\'umubisi, sauce y\'amata)' } },

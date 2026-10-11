@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "node --watch server/server.js",
     "start": "node server/server.js",
-    "seed": "node server/seed/seed.js",
+    "seed": "node server/seed/menu.js",
+    "seed:demo": "node server/seed/seed.js",
     "demo": "node server/seed/demo.js",
     "test": "node --test",
     "lint": "eslint .",

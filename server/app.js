@@ -19,6 +19,26 @@ export function createApp() {
   app.set('trust proxy', 1);
 
   app.use(requestId);
+  app.use((req, res, next) => {
+    const shouldLog = req.path.startsWith('/api/') || req.path === '/health' || req.path === '/ready';
+    if (!shouldLog) return next();
+
+    const startedAt = process.hrtime.bigint();
+    res.on('finish', () => {
+      const durationMs = Number(process.hrtime.bigint() - startedAt) / 1_000_000;
+      logger.info(
+        {
+          reqId: req.id,
+          method: req.method,
+          route: req.route?.path || (req.path === '/health' || req.path === '/ready' ? req.path : '<unmatched>'),
+          status: res.statusCode,
+          durationMs: Math.round(durationMs * 10) / 10
+        },
+        'request completed'
+      );
+    });
+    next();
+  });
   app.use(
     helmet({
       contentSecurityPolicy: {
@@ -74,6 +94,14 @@ export function createApp() {
         db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
         time: new Date().toISOString()
       }
+    });
+  });
+
+  app.get('/ready', (_req, res) => {
+    const dbConnected = mongoose.connection.readyState === 1;
+    res.status(dbConnected ? 200 : 503).json({
+      ok: dbConnected,
+      data: { status: dbConnected ? 'ready' : 'not_ready', db: dbConnected ? 'connected' : 'disconnected' }
     });
   });
 

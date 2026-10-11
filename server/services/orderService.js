@@ -127,7 +127,12 @@ export async function createOrder({ table, payload }) {
   } catch (err) {
     if (err.code === 11000 && err.keyPattern?.idempotencyKey) {
       const existing = await Order.findOne({ idempotencyKey: doc.idempotencyKey }).lean();
-      if (existing) return { order: existing, duplicate: true, sessionId: session.sessionId };
+      if (existing && String(existing.table) === String(table._id)) {
+        return { order: existing, duplicate: true, sessionId: session.sessionId };
+      }
+      if (existing) {
+        throw new AppError('IDEMPOTENCY_KEY_CONFLICT', 'This order key has already been used for another table', 409);
+      }
     }
     throw err;
   }

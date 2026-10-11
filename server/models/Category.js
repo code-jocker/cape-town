@@ -10,6 +10,7 @@ const localized = {
 
 const categorySchema = new Schema(
   {
+    key: { type: String, trim: true, unique: true, sparse: true },
     name: { type: localized, required: true },
     sortOrder: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true }

@@ -4,6 +4,36 @@ import { qrPng, qrSheetPdf, qrTableTentPdf, tableUrl } from '../services/qrServi
 import { audit } from '../models/AuditLog.js';
 import { AppError } from '../utils/AppError.js';
 import { asyncWrap } from '../utils/asyncWrap.js';
+import { logger } from '../utils/logger.js';
+
+/** Active tables, optionally filtered by ?ids=1,2,3 (table numbers). */
+async function findTables(req) {
+  const filter = { isActive: true };
+  if (req.query.ids) {
+    const numbers = String(req.query.ids)
+      .split(',')
+      .map((s) => parseInt(s.trim(), 10))
+      .filter(Number.isFinite);
+    if (numbers.length) filter.number = { $in: numbers };
+  }
+  const tables = await Table.find(filter).sort({ number: 1 }).lean();
+  if (!tables.length) throw new AppError('NO_TABLES', 'No tables match the selection', 404);
+  return tables;
+}
+
+/** Run PDF generation, translating crashes into a clear client error + server log. */
+async function generatePdf(build, label, count, reqId) {
+  try {
+    return await build();
+  } catch (err) {
+    logger.error({ reqId, err: err.message, stack: err.stack, tables: count }, `${label} PDF generation failed`);
+    throw new AppError(
+      'PDF_GENERATION_FAILED',
+      `Could not generate the ${label} PDF. Please try again. If the problem continues, contact support with request ID ${reqId}.`,
+      500
+    );
+  }
+}
 
 /** GET /api/tables */
 export const listTables = asyncWrap(async (req, res) => {
@@ -72,17 +102,8 @@ export const qrPngRoute = asyncWrap(async (req, res) => {
 
 /** GET /api/tables/qr-sheet.pdf?ids=1,2,3 (optional; default all active) */
 export const qrSheet = asyncWrap(async (req, res) => {
-  const filter = { isActive: true };
-  if (req.query.ids) {
-    const numbers = String(req.query.ids)
-      .split(',')
-      .map((s) => parseInt(s.trim(), 10))
-      .filter(Number.isFinite);
-    if (numbers.length) filter.number = { $in: numbers };
-  }
-  const tables = await Table.find(filter).sort({ number: 1 }).lean();
-  if (!tables.length) throw new AppError('NO_TABLES', 'No tables match the selection', 404);
-  const buf = await qrSheetPdf(tables);
+  const tables = await findTables(req);
+  const buf = await generatePdf(() => qrSheetPdf(tables), 'QR sheet', tables.length, req.id);
   res.set('Content-Type', 'application/pdf');
   res.set('Content-Disposition', 'attachment; filename="cape-town-k-hotel-qr-sheets.pdf"');
   res.send(buf);
@@ -90,17 +111,8 @@ export const qrSheet = asyncWrap(async (req, res) => {
 
 /** GET /api/tables/qr-table-tents.pdf?ids=1,2,3 (optional; default all active) */
 export const qrTableTents = asyncWrap(async (req, res) => {
-  const filter = { isActive: true };
-  if (req.query.ids) {
-    const numbers = String(req.query.ids)
-      .split(',')
-      .map((s) => parseInt(s.trim(), 10))
-      .filter(Number.isFinite);
-    if (numbers.length) filter.number = { $in: numbers };
-  }
-  const tables = await Table.find(filter).sort({ number: 1 }).lean();
-  if (!tables.length) throw new AppError('NO_TABLES', 'No tables match the selection', 404);
-  const buf = await qrTableTentPdf(tables);
+  const tables = await findTables(req);
+  const buf = await generatePdf(() => qrTableTentPdf(tables), 'table tents', tables.length, req.id);
   res.set('Content-Type', 'application/pdf');
   res.set('Content-Disposition', 'attachment; filename="cape-town-k-hotel-table-tents.pdf"');
   res.send(buf);

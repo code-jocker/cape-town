@@ -30,8 +30,11 @@ export async function qrPng(qrToken, size = 1024) {
 export async function qrSheetPdf(tables) {
   const doc = new PDFDocument({ size: 'A4', margin: 36, autoFirstPage: true });
   const chunks = [];
-  doc.on('data', (c) => chunks.push(c));
-  const done = new Promise((resolve) => doc.on('end', resolve));
+  doc.on('data', (chunk) => chunks.push(chunk));
+  const done = new Promise((resolve, reject) => {
+    doc.once('end', resolve);
+    doc.once('error', reject);
+  });
 
   const colW = (doc.page.width - 72) / 2;
   const rowH = (doc.page.height - 72) / 4;
@@ -101,52 +104,95 @@ function drawTableTentPanel(doc, ox, oy, panelW, panelH, tableNumber, qrBuf, lab
   doc.rect(ox, oy, panelW, panelH).clip();
 
   const bgGrad = doc.linearGradient(ox, oy, ox, oy + panelH);
-  bgGrad.stop(0, DARK_BG).stop(1, '#1a2a40');
+  bgGrad.stop(0, '#07121F').stop(0.58, '#172A40').stop(1, '#392A31');
   doc.rect(ox, oy, panelW, panelH).fill(bgGrad);
 
-  // Table Mountain silhouette — 3 peaks at bottom
-  const mtnY = oy + panelH - 50;
-  doc.beginPath();
-  doc.moveTo(ox + 10, oy + panelH - 6);
-  doc.lineTo(ox + 50, mtnY);
-  doc.lineTo(ox + 110, oy + panelH - 6);
-  doc.lineTo(ox + 150, mtnY - 6);
-  doc.lineTo(ox + 200, oy + panelH - 6);
-  doc.lineTo(ox + panelW - 10, oy + panelH - 6);
-  doc.fill(DARK_BG);
+  const centerX = ox + panelW / 2;
+  const scale = Math.min(panelW / 420, panelH / 595);
+  const s = (value) => value * scale;
 
-  // gold accent stripe + CK monogram
-  doc.rect(ox, oy, panelW, 28).fill(GOLD);
-  doc.fill('#FFFFFF').font('Helvetica-Bold').fontSize(20).text('CK', ox + 16, oy + 4, { align: 'center' });
+  const horizon = doc.linearGradient(ox, oy + s(300), ox, oy + s(500));
+  horizon.stop(0, '#C66B48').stop(1, '#172A40');
+  doc.rect(ox, oy + s(300), panelW, s(200)).fill(horizon);
+  doc.moveTo(ox, oy + s(456)).lineTo(ox + s(58), oy + s(421)).lineTo(ox + s(128), oy + s(430))
+    .lineTo(ox + s(211), oy + s(365)).lineTo(ox + s(296), oy + s(429))
+    .lineTo(ox + panelW, oy + s(399)).lineTo(ox + panelW, oy + panelH).lineTo(ox, oy + panelH)
+    .closePath().fillColor('#101E2D').fill();
+  doc.moveTo(ox, oy + s(488)).lineTo(ox + s(94), oy + s(454)).lineTo(ox + s(170), oy + s(467))
+    .lineTo(ox + s(274), oy + s(424)).lineTo(ox + panelW, oy + s(466))
+    .lineTo(ox + panelW, oy + panelH).lineTo(ox, oy + panelH)
+    .closePath().fillColor('#081522').fill();
 
-  // table number badge
-  const badgeW = 76;
-  const bx = ox + (panelW - badgeW) / 2;
-  const by = oy + 42;
-  doc.roundedRect(bx, by, badgeW, 26, 13).fill('#FFFFFF');
-  doc.fill('#0A1929').font('Helvetica-Bold').fontSize(13).text(`Table ${tableNumber}`, bx, by + 5, { width: badgeW, align: 'center' });
+  const buildings = [[12, 476, 22, 52], [39, 462, 18, 66], [65, 482, 24, 46], [95, 469, 17, 59], [310, 474, 18, 54], [333, 459, 25, 69], [364, 480, 20, 48], [389, 468, 22, 60]];
+  for (const [x, y, width, height] of buildings) {
+    doc.rect(ox + s(x), oy + s(y), s(width), s(height)).fillColor('#0C1926').fill();
+    for (let row = 0; row < 3; row++) {
+      doc.rect(ox + s(x + 5), oy + s(y + 8 + row * 12), s(3), s(4)).fillColor('#E0AD62').fill();
+      doc.rect(ox + s(x + 13), oy + s(y + 8 + row * 12), s(3), s(4)).fillColor('#E0AD62').fill();
+    }
+  }
 
-  // "SCAN HERE FOR MENU" button
-  const btnText = 'SCAN HERE FOR MENU';
-  const btnW = 170;
-  const btnH = 36;
-  const btnX = ox + panelW - 180;
-  const btnY = oy + panelH / 2 - 50;
-  doc.roundedRect(btnX, btnY, btnW, btnH, 18).fill(GOLD);
-  doc.fill('#0A1929').font('Helvetica-Bold').fontSize(11).text(btnText, btnX, btnY + 10, { width: btnW, align: 'center' });
+  for (const [x, y] of [[30, 88], [388, 117]]) {
+    doc.moveTo(ox + s(x), oy).lineTo(ox + s(x), oy + s(y - 16)).lineWidth(s(1)).strokeColor('#B98D4A').stroke();
+    doc.roundedRect(ox + s(x - 10), oy + s(y - 16), s(20), s(28), s(5)).lineWidth(s(1)).strokeColor(GOLD).stroke();
+    doc.ellipse(ox + s(x), oy + s(y - 2), s(4), s(9)).fillColor('#F3B46D').fill();
+  }
+  for (const [x, y, color] of [[22, 154, '#B23B6B'], [43, 176, '#D15A7C'], [18, 204, '#8F315C'], [47, 225, '#C64E70'], [25, 252, '#A43C68']]) {
+    doc.circle(ox + s(x), oy + s(y), s(7)).fillColor(color).fill();
+    doc.ellipse(ox + s(x + 10), oy + s(y + 5), s(7), s(3)).fillColor('#356A53').fill();
+  }
 
-  // gold-accented QR code on the right
-  const qrSize = Math.min(110, panelW / 3);
-  const qrX = ox + panelW - qrSize - 22;
-  const qrY = btnY + btnH + 20;
-  doc.roundedRect(qrX - 8, qrY - 8, qrSize + 16, qrSize + 16, 6).lineWidth(3).strokeColor(GOLD).stroke();
+  const logoY = oy + s(34);
+  doc.circle(centerX, logoY + s(29), s(29)).fillColor('#F8F6EF').fill();
+  doc.circle(centerX, logoY + s(29), s(26)).lineWidth(s(1.5)).strokeColor(GOLD).stroke();
+  doc.moveTo(centerX - s(14), logoY + s(36)).lineTo(centerX, logoY + s(20)).lineTo(centerX + s(14), logoY + s(36))
+    .lineWidth(s(1.2)).strokeColor(GOLD).stroke();
+  doc.font('Times-Bold').fontSize(s(17)).fillColor('#102134').text('CK', centerX - s(20), logoY + s(27), { width: s(40), align: 'center', lineBreak: false });
+  doc.font('Helvetica-Bold').fontSize(s(15)).fillColor('#FFFFFF').text('CAPE TOWN HOTEL', ox + s(50), oy + s(102), { width: panelW - s(100), align: 'center', lineBreak: false });
+  doc.font('Times-Italic').fontSize(s(10)).fillColor('#E9C77A').text('Good Food  |  Great Vibes  |  Unforgettable Moments', ox + s(35), oy + s(124), {
+    width: panelW - s(70), align: 'center', lineBreak: false
+  });
+  doc.font('Helvetica-Bold').fontSize(s(8)).fillColor(GOLD).text('*', centerX - s(5), oy + s(142), { width: s(10), align: 'center' });
+
+  const badgeW = s(104);
+  const badgeX = centerX - badgeW / 2;
+  const badgeY = oy + s(165);
+  doc.roundedRect(badgeX, badgeY, badgeW, s(22), s(11)).fillColor('#F8F6EF').fill();
+  doc.font('Helvetica-Bold').fontSize(s(10)).fillColor(DARK_BG).text(`TABLE ${tableNumber}`, badgeX, badgeY + s(6), {
+    width: badgeW, align: 'center', lineBreak: false
+  });
+
+  const qrSize = s(174);
+  const qrX = centerX - qrSize / 2;
+  const qrY = oy + s(206);
+  doc.roundedRect(qrX - s(12), qrY - s(12), qrSize + s(24), qrSize + s(24), s(7)).fillColor('#FFFFFF').fill();
+  doc.roundedRect(qrX - s(12), qrY - s(12), qrSize + s(24), qrSize + s(24), s(7))
+    .lineWidth(s(1.5)).strokeColor(GOLD).stroke();
   doc.image(qrBuf, qrX, qrY, { width: qrSize, height: qrSize });
+  doc.circle(centerX, qrY + qrSize / 2, s(17)).fillColor('#FFFFFF').fill();
+  doc.circle(centerX, qrY + qrSize / 2, s(15)).lineWidth(s(1)).strokeColor(GOLD).stroke();
+  doc.font('Times-Bold').fontSize(s(10)).fillColor(DARK_BG).text('CK', centerX - s(12), qrY + qrSize / 2 - s(5), {
+    width: s(24), align: 'center', lineBreak: false
+  });
 
-  // tagline
-  doc.fill(GOLD).font('Helvetica-Bold').fontSize(12).text('AI DIGITAL MENU', ox, oy + panelH - 50, { width: panelW, align: 'center' });
+  const btnW = s(218);
+  const btnH = s(36);
+  const btnX = centerX - btnW / 2;
+  const btnY = qrY + qrSize + s(25);
+  doc.roundedRect(btnX, btnY, btnW, btnH, s(18)).lineWidth(s(1.5)).strokeColor(GOLD).stroke();
+  doc.roundedRect(btnX + s(15), btnY + s(8), s(13), s(20), s(2)).lineWidth(s(1)).strokeColor(GOLD).stroke();
+  doc.moveTo(btnX + s(19), btnY + s(24)).lineTo(btnX + s(24), btnY + s(24)).lineWidth(s(1)).strokeColor(GOLD).stroke();
+  doc.font('Helvetica-Bold').fontSize(s(10)).fillColor('#FFFFFF').text('SCAN HERE FOR MENU', btnX + s(36), btnY + s(13), {
+    width: btnW - s(44), align: 'center', lineBreak: false
+  });
 
+  doc.font('Helvetica-Bold').fontSize(s(12)).fillColor(GOLD).text('AI DIGITAL MENU', ox, oy + s(525), {
+    width: panelW, align: 'center', lineBreak: false
+  });
   if (label) {
-    doc.fill('#B0B8CC').font('Helvetica').fontSize(9).text(label, ox + 10, oy + panelH - 68, { width: panelW - 20, align: 'center' });
+    doc.font('Helvetica').fontSize(s(8)).fillColor('#D7DCE4').text(label, ox + s(20), oy + s(548), {
+      width: panelW - s(40), align: 'center', lineBreak: false
+    });
   }
 
   doc.restore();
@@ -154,16 +200,16 @@ function drawTableTentPanel(doc, ox, oy, panelW, panelH, tableNumber, qrBuf, lab
 
 /**
  * Branded QR table-tent cards — one landscape page per table.
- * Each page is split in half: left = front panel, right = back panel.
- * Features: Table Mountain night-silhouette, gold CK monogram,
- * gold-accented QR on the right, "SCAN HERE FOR MENU" button,
- * "AI DIGITAL MENU" at bottom.
+ * Each landscape page is split in half to print matching front and back faces.
  */
 export async function qrTableTentPdf(tables) {
   const doc = new PDFDocument({ layout: 'landscape', margin: 0, autoFirstPage: true });
   const chunks = [];
-  doc.on('data', (c) => chunks.push(c));
-  const done = new Promise((resolve) => doc.on('end', resolve));
+  doc.on('data', (chunk) => chunks.push(chunk));
+  const done = new Promise((resolve, reject) => {
+    doc.once('end', resolve);
+    doc.once('error', reject);
+  });
 
   const pw = doc.page.width;
   const ph = doc.page.height;

@@ -47,6 +47,7 @@ export function errorHandler(err, req, res, _next) {
     error: {
       code,
       message,
+      ...(status >= 500 && req.id ? { requestId: req.id } : {}),
       ...(config.isProd ? {} : { detail: err.message })
     }
   });

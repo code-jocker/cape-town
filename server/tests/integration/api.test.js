@@ -261,4 +261,11 @@ test('integration: API contract end to end', async (t) => {
     assert.equal(png.status, 200);
     assert.match(png.headers['content-type'], /image\/png/);
   });
+
+  await t.test('table-tent PDF renders for a manager', async () => {
+    const pdf = await request(app).get('/api/tables/qr-table-tents.pdf').set('Cookie', cookies.manager);
+    assert.equal(pdf.status, 200);
+    assert.match(pdf.headers['content-type'], /application\/pdf/);
+    assert.equal(pdf.body.subarray(0, 5).toString(), '%PDF-');
+  });
 });

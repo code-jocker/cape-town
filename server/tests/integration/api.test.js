@@ -299,4 +299,19 @@ test('integration: API contract end to end', async (t) => {
     assert.equal(await Order.countDocuments(), before.orders);
     assert.equal((await MenuItem.findById(simpleItem._id)).isAvailable, false);
   });
+
+  await t.test('official menu auto-seed runs once per seed version', async () => {
+    const { ensureOfficialMenuSeeded, OFFICIAL_MENU_SEED_VERSION } = await import('../../services/menuSeedService.js');
+    await Settings.updateOne({ key: 'main' }, { $unset: { menuSeedVersion: '' } });
+
+    assert.equal(await ensureOfficialMenuSeeded(), true);
+    assert.equal((await Settings.findOne({ key: 'main' }).lean()).menuSeedVersion, OFFICIAL_MENU_SEED_VERSION);
+
+    const guinness = await MenuItem.findOne({ seedKey: 'guinness' });
+    guinness.price = 2600;
+    await guinness.save();
+
+    assert.equal(await ensureOfficialMenuSeeded(), false);
+    assert.equal((await MenuItem.findOne({ seedKey: 'guinness' }).lean()).price, 2600);
+  });
 });

@@ -84,6 +84,12 @@ export async function syncMenu() {
   console.log(
     `Menu sync complete: ${CATEGORIES.length} categories, ${ITEMS.length} items; archived ${archivedItems.modifiedCount} items and ${archivedCategories.modifiedCount} categories.`
   );
+  return {
+    categories: CATEGORIES.length,
+    items: ITEMS.length,
+    archivedItems: archivedItems.modifiedCount,
+    archivedCategories: archivedCategories.modifiedCount
+  };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

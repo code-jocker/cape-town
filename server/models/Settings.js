@@ -17,6 +17,7 @@ const hoursSchema = new Schema(
 
 const settingsSchema = new Schema({
   key: { type: String, unique: true, default: 'main' },
+  menuSeedVersion: { type: String, default: '' },
   name: { type: String, default: 'Cape Town K Hotel' },
   tagline: { type: String, default: 'RESTAURANT' },
   location: { type: String, default: 'Kigali-Kimironko' },

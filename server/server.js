@@ -17,6 +17,7 @@ import { MenuItem } from './models/MenuItem.js';
 import { Table } from './models/Table.js';
 import { signTableToken } from './utils/token.js';
 import { USERS, CATEGORIES, ITEMS, SETTINGS } from './seed/data.js';
+import { ensureOfficialMenuSeeded } from './services/menuSeedService.js';
 
 const ROOT = process.cwd();
 const SRC_DIR = path.join(ROOT, 'public', 'uploads', 'src');
@@ -152,6 +153,7 @@ async function main() {
   startCron();
 
   await autoSeed();
+  await ensureOfficialMenuSeeded();
   await ensureImages();
 
   server.listen(config.port, () => {

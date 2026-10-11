@@ -32,9 +32,8 @@ export function initInstallPrompt(opts = {}) {
 
   window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
-    localStorage.removeItem(storageKey);
+    localStorage.setItem(storageKey, 'true');
     localStorage.removeItem(SHOWN_KEY);
-    onUninstall?.();
   });
 
   function maybeShowBanner() {

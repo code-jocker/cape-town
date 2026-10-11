@@ -165,8 +165,8 @@ function drawTableTentPanel(doc, ox, oy, panelW, panelH, tableNumber, qrBuf, lab
   const qrSize = s(174);
   const qrX = centerX - qrSize / 2;
   const qrY = oy + s(206);
-  doc.roundedRect(qrX - s(12), qrY - s(12), qrSize + s(24), qrSize + s(24), s(7)).fillColor('#FFFFFF').fill();
-  doc.roundedRect(qrX - s(12), qrY - s(12), qrSize + s(24), qrSize + s(24), s(7))
+  doc.rect(qrX - s(12), qrY - s(12), qrSize + s(24), qrSize + s(24)).fillColor('#FFFFFF').fill();
+  doc.rect(qrX - s(12), qrY - s(12), qrSize + s(24), qrSize + s(24))
     .lineWidth(s(1.5)).strokeColor(GOLD).stroke();
   doc.image(qrBuf, qrX, qrY, { width: qrSize, height: qrSize });
   doc.circle(centerX, qrY + qrSize / 2, s(17)).fillColor('#FFFFFF').fill();
@@ -194,6 +194,9 @@ function drawTableTentPanel(doc, ox, oy, panelW, panelH, tableNumber, qrBuf, lab
       width: panelW - s(40), align: 'center', lineBreak: false
     });
   }
+
+  doc.rect(ox + s(8), oy + s(8), panelW - s(16), panelH - s(16))
+    .lineWidth(s(1.5)).strokeColor(GOLD).stroke();
 
   doc.restore();
 }

@@ -11,7 +11,7 @@ export const config = {
   env,
   isProd: env === 'production',
   port: int(process.env.PORT, 3000),
-  baseUrl: process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`,
+  baseUrl: process.env.BASE_URL || process.env.RENDER_EXTERNAL_URL || (isProd ? '' : `http://localhost:${process.env.PORT || 3000}`),
   mongoUri: process.env.MONGODB_URI || '',
   jwtSecret: process.env.JWT_SECRET || 'dev-jwt-secret',
   jwtExpires: process.env.JWT_EXPIRES || '7d',

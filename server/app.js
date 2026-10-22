@@ -79,6 +79,8 @@ export function createApp() {
   app.use('/uploads', express.static(path.resolve(process.cwd(), config.uploadDir), { maxAge: '7d', immutable: true }));
 
   app.get('/menu', (req, res) => res.sendFile(path.join(pubDir, 'customer', 'index.html')));
+  app.get('/customer', (req, res) => res.redirect(302, `/menu${req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''}`));
+  app.get('/customer/', (req, res) => res.redirect(302, `/menu${req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''}`));
   app.get('/sw.js', (req, res) => {
     res.set('Service-Worker-Allowed', '/');
     res.sendFile(path.join(pubDir, 'sw.js'));

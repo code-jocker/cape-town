@@ -53,6 +53,44 @@ export function playStatus() {
   beep(660, 120, 0, 'triangle', 0.08);
 }
 
+/** Rising tone — order accepted by the kitchen. */
+export function playOrderAccepted() {
+  beep(660, 120, 0, 'triangle', 0.09);
+  beep(880, 140, 110, 'triangle', 0.09);
+}
+
+/** Urgent double beep — order moved to preparing. */
+export function playOrderPreparing() {
+  beep(740, 100, 0, 'square', 0.1);
+  beep(932, 140, 90, 'square', 0.1);
+}
+
+/** Clear three-note chime — order ready for pickup. */
+export function playOrderReady() {
+  beep(659, 150, 0, 'sine', 0.1);
+  beep(784, 150, 130, 'sine', 0.1);
+  beep(1047, 220, 260, 'sine', 0.1);
+}
+
+/** Gentle descending tone — order served. */
+export function playOrderServed() {
+  beep(880, 130, 0, 'sine', 0.09);
+  beep(659, 180, 100, 'sine', 0.09);
+}
+
+/** Sharp attention tone for a new waiter request. */
+export function playNewRequest() {
+  beep(988, 110, 0, 'square', 0.11);
+  beep(784, 140, 90, 'square', 0.11);
+  vibrate([180, 80, 180]);
+}
+
+/** Confirmation tone — request marked handled. */
+export function playRequestHandled() {
+  beep(880, 100, 0, 'sine', 0.08);
+  beep(1175, 130, 80, 'sine', 0.08);
+}
+
 export function vibrate(pattern) {
   if (navigator.vibrate) navigator.vibrate(pattern);
 }

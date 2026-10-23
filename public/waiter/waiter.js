@@ -7,9 +7,9 @@ import { api } from '../shared/api.js';
 import { connectSocket, on, setOnReconnect } from '../shared/socket.js';
 import { money, timeHM, elapsed } from '../shared/format.js';
 import { requireStaff, logout } from '../shared/auth.js';
-import { playStatus, unlockAudio, vibrate, notify, requestNotificationPermission } from '../shared/audio.js';
+import { playStatus, unlockAudio, vibrate, notify, requestNotificationPermission, playNewRequest, playRequestHandled } from '../shared/audio.js';
 
-const state = { ready: [], requests: [], sessions: [], currency: 'RWF', me: null, billSession: null };
+const state = { ready: [], requests: [], sessions: [], currency: 'RWF', me: null, billSession: null, currentTab: 'ready' };
 
 /* ---------------- loading ---------------- */
 async function loadAll() {
@@ -109,7 +109,7 @@ function renderRequests() {
           el('span', { class: 'tbl', text: `Table ${(r.table && r.table.number != null ? r.table.number : '?')}` })
         ),
         el('div', { class: 'w-meta', text: `${elapsed(r.createdAt)} ago` }),
-        el('div', { class: 'w-actions' }, el('button', { class: 'btn btn-primary', 'data-handle': String(r._id), text: 'Mark handled' }))
+        el('div', { class: 'w-actions' }, el('button', { class: 'btn btn-primary btn-lg', 'data-handle': String(r._id), text: '✓ Handled' }))
       )
     );
   }
@@ -343,6 +343,7 @@ delegate($('.w-main'), 'click', '[data-handle]', async (e, b) => {
   b.disabled = true;
   try {
     await api(`/api/requests/${b.dataset.handle}/handle`, { method: 'PATCH' });
+    playRequestHandled();
     await loadRequests();
   } catch (err) {
     toast(err.message || 'Failed');
@@ -365,6 +366,7 @@ $('#bill-foot').addEventListener('click', (e) => {
 
 /* tabs */
 function activateTab(tab) {
+  state.currentTab = tab.dataset.tab;
   $$('.tab').forEach((t) => t.classList.remove('active'));
   tab.classList.add('active');
   $$('.view').forEach((v) => v.classList.remove('active'));
@@ -392,7 +394,7 @@ function toast(msg) {
 
 /* ---------------- socket ---------------- */
 function wireSocket() {
-on('order:ready', (p) => {
+  on('order:ready', (p) => {
     playStatus();
     vibrate([150, 80, 150]);
     notify(`Order ${p.no || ''} ready`, `Table ${p.table ?? ''}`);
@@ -404,11 +406,20 @@ on('order:ready', (p) => {
     loadSessions();
   });
   on('request:new', (p) => {
+    playNewRequest();
     vibrate([150, 80, 150]);
     notify('New request', `Table ${(p.table != null ? p.table : '')} · ${p.type || ''}`);
     loadRequests();
+    // Auto-switch to the requests tab so the waiter can act on it immediately.
+    if (state.currentTab !== 'requests') {
+      const tab = $('.tab[data-tab="requests"]');
+      if (tab) activateTab(tab);
+    }
   });
-  on('request:handled', () => loadRequests());
+  on('request:handled', () => {
+    playRequestHandled();
+    loadRequests();
+  });
   on('session:closed', () => loadSessions());
   setOnReconnect(loadAll);
 }

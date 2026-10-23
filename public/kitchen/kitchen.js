@@ -10,7 +10,7 @@ import { connectSocket, on, setOnReconnect } from '../shared/socket.js';
 import { money, timeHM } from '../shared/format.js';
 import { requireStaff, logout } from '../shared/auth.js';
 import { initInstallPrompt } from '../shared/pwa-install.js';
-import { unlockAudio, disableAudio, audioEnabled, playNewOrder, vibrate, notify, requestNotificationPermission } from '../shared/audio.js';
+import { unlockAudio, disableAudio, audioEnabled, playNewOrder, playOrderPreparing, playOrderReady, vibrate, notify, requestNotificationPermission } from '../shared/audio.js';
 
 const state = {
   orders: new Map(),
@@ -396,8 +396,15 @@ async function boot() {
     alertNewOrder(p);
     scheduleRefresh();
   });
-  on('order:updated', () => scheduleRefresh());
-  on('order:ready', () => scheduleRefresh());
+  on('order:updated', (p) => {
+    if (p.status === 'preparing') playOrderPreparing();
+    else if (p.status === 'ready') playOrderReady();
+    scheduleRefresh();
+  });
+  on('order:ready', (_p) => {
+    playOrderReady();
+    scheduleRefresh();
+  });
   setOnReconnect(refresh);
 
   await connectSocket({ mode: 'staff', onReady: refresh });

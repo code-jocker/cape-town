@@ -11,7 +11,7 @@ import { money } from '../shared/format.js';
 import { t } from '../shared/i18n.js';
 import { el, $ } from '../shared/dom.js';
 import { on } from '../shared/socket.js';
-import { playStatus, notify } from '../shared/audio.js';
+import { playOrderAccepted, playOrderPreparing, playOrderReady, playOrderServed, notify } from '../shared/audio.js';
 import { addOrder, getOrders, setOrders } from './cart.js';
 
 const STEP_KEYS = ['pending', 'accepted', 'preparing', 'ready', 'served'];
@@ -42,9 +42,8 @@ export function initTracker({ tableId: tid, sessionId: sid, currency: cur, eta, 
   etaMinutes = eta || 15;
   onFeedback = feedbackHandler;
 
-  on('order:updated', (p) => updateLocalOrder(p.id, p.status));
-  on('order:ready', (p) => updateLocalOrder(p.id, 'ready'));
-
+on('order:updated', (p) => updateLocalOrder(p.id, p.status));
+on('order:ready', (p) => updateLocalOrder(p.id, 'ready'));
   startPolling();
 }
 
@@ -81,10 +80,19 @@ function updateLocalOrder(id, status) {
     const was = local.status;
     local.status = status;
     addOrder(tableId, local);
-    if (status !== was && (status === 'ready' || status === 'served')) {
-      playStatus();
-      flashToast(t(status === 'ready' ? 'order.readyToast' : 'order.servedToast', { no: local.orderNumber }));
-      notify(t('order.tracking'), `${local.orderNumber} — ${t(`status.${status}`)}`);
+    if (status !== was) {
+      const soundByStatus = {
+        accepted: playOrderAccepted,
+        preparing: playOrderPreparing,
+        ready: playOrderReady,
+        served: playOrderServed
+      };
+      const playSound = soundByStatus[status];
+      if (playSound) playSound();
+      if (status === 'ready' || status === 'served') {
+        flashToast(t(status === 'ready' ? 'order.readyToast' : 'order.servedToast', { no: local.orderNumber }));
+        notify(t('order.tracking'), `${local.orderNumber} — ${t(`status.${status}`)}`);
+      }
     }
   }
   const card = $(`[data-order-card="${id}"]`);

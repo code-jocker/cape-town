@@ -17,7 +17,8 @@ const NAV = [
   { route: 'promos', label: 'Promos', ico: '🏷️', load: () => import('./views/promos.js') },
   { route: 'reports', label: 'Reports', ico: '📈', load: () => import('./views/reports.js') },
   { route: 'settings', label: 'Settings', ico: '⚙️', load: () => import('./views/settings.js') },
-  { route: 'audit', label: 'Audit log', ico: '📜', load: () => import('./views/audit.js') }
+  { route: 'audit', label: 'Audit log', ico: '📜', load: () => import('./views/audit.js') },
+  { route: 'feedback', label: 'Feedback', ico: '⭐', load: () => import('./views/feedback.js') }
 ];
 
 const liveListeners = new Set();

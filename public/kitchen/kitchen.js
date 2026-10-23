@@ -124,12 +124,29 @@ function buildTicket(order) {
   );
 }
 
+function sortKey(order) {
+  const items = order.items || [];
+  const hasBar = items.some((i) => i.station === 'bar');
+  const prepTimes = items.map((i) => i.prepTimeMinutes || 0).filter((t) => t > 0);
+  const minPrep = prepTimes.length ? Math.min(...prepTimes) : 0;
+  // Bar/drink items first (quickest), then lowest prep time, then oldest first.
+  return [(hasBar ? 0 : 1), minPrep, new Date(order.createdAt).getTime()];
+}
+
 function render() {
   for (const col of ['new', 'preparing', 'ready']) {
     const body = $(`[data-body="${col}"]`);
     const list = [...state.orders.values()]
       .filter((o) => columnOf(o.status) === col && stationMatch(o))
-      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      .sort((a, b) => {
+        const ka = sortKey(a);
+        const kb = sortKey(b);
+        for (let i = 0; i < ka.length; i++) {
+          if (ka[i] < kb[i]) return -1;
+          if (ka[i] > kb[i]) return 1;
+        }
+        return 0;
+      });
     body.innerHTML = '';
     if (!list.length) {
       body.append(el('div', { class: 'col-empty', text: '—' }));

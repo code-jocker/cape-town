@@ -11,7 +11,6 @@ import { money, timeHM } from '../shared/format.js';
 import { requireStaff } from '../shared/auth.js';
 import { unlockAudio, disableAudio, audioEnabled, playNewOrder, vibrate, notify, requestNotificationPermission } from '../shared/audio.js';
 
-const ACTIVE = new Set(['pending', 'accepted', 'preparing', 'ready']);
 const state = {
   orders: new Map(),
   warnMin: 10,

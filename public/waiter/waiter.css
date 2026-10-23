@@ -15,8 +15,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 14px 18px;
+  padding-top: calc(14px + var(--safe-top));
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: #fff;
+  color: var(--color-on-primary);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -32,6 +33,7 @@
   font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: 0.3px;
+  color: var(--color-on-primary);
 }
 .w-head-right {
   display: flex;
@@ -40,17 +42,17 @@
   font-size: 0.85rem;
 }
 .w-head-right .muted {
-  color: #ffe8d1;
+  color: var(--color-header-label);
   font-weight: 500;
 }
 .w-head-right .btn-ghost {
-  color: #fff;
+  color: var(--color-on-primary);
   border-color: rgba(255, 255, 255, 0.4);
   background: rgba(255,255,255,0.08);
 }
 .w-head-right .btn-ghost:hover {
   background: rgba(255,255,255,0.18);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 /* Desktop: top tabs */
@@ -58,10 +60,10 @@
   display: flex;
   gap: 4px;
   padding: 10px 12px 0;
-  background: #fff;
+  background: var(--color-surface);
   border-bottom: 1px solid var(--color-divider);
   position: sticky;
-  top: 64px;
+  top: calc(64px + var(--safe-top));
   z-index: 19;
 }
 .tab {

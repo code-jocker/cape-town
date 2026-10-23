@@ -24,6 +24,16 @@ let etaMinutes = 15;
 let pollTimer = null;
 let renderedIds = new Set();
 let onFeedback = null; // callback(order) when an order reaches served
+let flashTimer = null;
+
+function flashToast(msg) {
+  const node = $('#toast');
+  if (!node) return;
+  node.textContent = msg;
+  node.classList.remove('hidden');
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(() => node.classList.add('hidden'), 3200);
+}
 
 export function initTracker({ tableId: tid, sessionId: sid, currency: cur, eta, feedbackHandler }) {
   tableId = tid;
@@ -73,6 +83,7 @@ function updateLocalOrder(id, status) {
     addOrder(tableId, local);
     if (status !== was && (status === 'ready' || status === 'served')) {
       playStatus();
+      flashToast(t(status === 'ready' ? 'order.readyToast' : 'order.servedToast', { no: local.orderNumber }));
       notify(t('order.tracking'), `${local.orderNumber} — ${t(`status.${status}`)}`);
     }
   }

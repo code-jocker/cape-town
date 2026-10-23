@@ -7,7 +7,7 @@ import { api } from '../shared/api.js';
 import { connectSocket, on, setOnReconnect } from '../shared/socket.js';
 import { money, timeHM, elapsed } from '../shared/format.js';
 import { requireStaff, logout } from '../shared/auth.js';
-import { playStatus, vibrate, notify } from '../shared/audio.js';
+import { playStatus, unlockAudio, vibrate, notify, requestNotificationPermission } from '../shared/audio.js';
 
 const state = { ready: [], requests: [], sessions: [], currency: 'RWF', me: null, billSession: null };
 
@@ -387,9 +387,10 @@ function toast(msg) {
 
 /* ---------------- socket ---------------- */
 function wireSocket() {
-  on('order:ready', (p) => {
-    vibrate(120);
-    notify(`Order ${p.no || ''} ready`, `Table ${(p.table != null ? p.table : '')}`);
+on('order:ready', (p) => {
+    playStatus();
+    vibrate([150, 80, 150]);
+    notify(`Order ${p.no || ''} ready`, `Table ${p.table ?? ''}`);
     loadReady();
     loadSessions();
   });
@@ -411,6 +412,12 @@ function wireSocket() {
 async function boot() {
   state.me = await requireStaff(['waiter', 'manager']);
   $('#whoami').textContent = state.me.name;
+  // Arm sound + browser notifications on the first user gesture
+  // (browsers block audio/notification permission without one).
+  document.addEventListener('pointerdown', () => {
+    unlockAudio();
+    requestNotificationPermission();
+  }, { once: true });
   try {
     const s = await api('/api/settings');
     state.currency = s.currency || 'RWF';

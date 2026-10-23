@@ -145,6 +145,47 @@ function setupChips() {
   for (const c of state.categories) {
     chips.append(chip(c._id, locName(c.name), itemCounts.get(String(c._id)) || 0));
   }
+
+  // Horizontal scroll buttons for long category lists on mobile.
+  const wrap = chips.parentElement;
+  let scrollLeftBtn = $('#cat-scroll-left');
+  let scrollRightBtn = $('#cat-scroll-right');
+  if (!scrollLeftBtn) {
+    scrollLeftBtn = el('button', {
+      class: 'cat-scroll-btn cat-scroll-left',
+      'aria-label': 'Scroll categories left',
+      text: '‹',
+      hidden: true
+    });
+    scrollRightBtn = el('button', {
+      class: 'cat-scroll-btn cat-scroll-right',
+      'aria-label': 'Scroll categories right',
+      text: '›',
+      hidden: false
+    });
+    wrap.insertBefore(scrollLeftBtn, chips);
+    wrap.appendChild(scrollRightBtn);
+  }
+
+  function updateScrollButtons() {
+    const atStart = chips.scrollLeft <= 2;
+    const atEnd = chips.scrollLeft + chips.clientWidth >= chips.scrollWidth - 2;
+    scrollLeftBtn.hidden = atStart;
+    scrollRightBtn.hidden = atEnd;
+  }
+
+  const SCROLL_STEP = 150;
+  scrollLeftBtn.addEventListener('click', () => {
+    chips.scrollBy({ left: -SCROLL_STEP, behavior: 'smooth' });
+    setTimeout(updateScrollButtons, 150);
+  });
+  scrollRightBtn.addEventListener('click', () => {
+    chips.scrollBy({ left: SCROLL_STEP, behavior: 'smooth' });
+    setTimeout(updateScrollButtons, 150);
+  });
+  chips.addEventListener('scroll', updateScrollButtons);
+  updateScrollButtons();
+
   delegate(chips, 'click', '.chip', (e, target) => {
     Haptic.selection();
     state.activeCat = target.dataset.cat;

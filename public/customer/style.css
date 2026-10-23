@@ -1068,3 +1068,15 @@ body {
     display: none !important;
   }
 }
+
+/* ---------- Phone polish ---------- */
+@media (max-width: 420px) {
+  .cat-bar { padding: 8px 10px; gap: 6px; }
+  .chips { gap: 6px; }
+  .chip { padding: 6px 10px; }
+  .chip-label { font-size: 12px; }
+  .search-btn { width: 40px; height: 40px; }
+  .item-photo { width: 56px; height: 72px; }
+  .item-name { font-size: 15px; }
+  .add-btn, .item-action { min-width: 76px; }
+}

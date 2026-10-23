@@ -90,3 +90,29 @@ export const pay = asyncWrap(async (req, res) => {
 export const liveStats = asyncWrap(async (req, res) => {
   res.json({ ok: true, data: await getStats() });
 });
+
+/** GET /api/orders/feedback — all orders with customer feedback (manager). */
+export const listFeedback = asyncWrap(async (req, res) => {
+  const limit = Math.min(PAGE_MAX, Math.max(1, parseInt(req.query.limit, 10) || 50));
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+
+  const [orders, total] = await Promise.all([
+    Order.find({ 'feedback.rating': { $ne: null } })
+      .sort({ 'feedback.createdAt': -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .populate('table', 'number label')
+      .lean(),
+    Order.countDocuments({ 'feedback.rating': { $ne: null } })
+  ]);
+
+  res.json({
+    ok: true,
+    data: {
+      orders,
+      page,
+      pages: Math.max(1, Math.ceil(total / limit)),
+      total
+    }
+  });
+});

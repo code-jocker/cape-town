@@ -47,7 +47,8 @@ const itemSnapshotSchema = new Schema(
       }
     ],
     note: { type: String, maxlength: 200, default: '' },
-    station: { type: String, enum: ['kitchen', 'bar', 'dessert'], default: 'kitchen' }
+    station: { type: String, enum: ['kitchen', 'bar', 'dessert'], default: 'kitchen' },
+    prepTimeMinutes: { type: Number, min: 0 }
   },
   { _id: false }
 );

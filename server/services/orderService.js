@@ -72,7 +72,8 @@ async function buildItemSnapshots(rawItems) {
       quantity: raw.quantity,
       selectedOptions,
       note: (raw.note || '').slice(0, 200),
-      station: item.station
+      station: item.station,
+      prepTimeMinutes: item.prepTimeMinutes
     });
   }
   return snapshots;

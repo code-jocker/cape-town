@@ -18,6 +18,7 @@ const editSchema = z.object({ notes: z.string().max(300) });
 
 router.get('/', orders.listOrders);
 router.get('/stats/live', orders.liveStats);
+router.get('/feedback', requireRole('manager'), orders.listFeedback);
 router.get('/:id', orders.getOrder);
 router.patch('/:id/status', validate(statusSchema), orders.patchStatus);
 router.patch('/:id', requireRole('manager'), validate(editSchema), orders.patchOrder);

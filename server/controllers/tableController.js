@@ -5,6 +5,7 @@ import { audit } from '../models/AuditLog.js';
 import { AppError } from '../utils/AppError.js';
 import { asyncWrap } from '../utils/asyncWrap.js';
 import { logger } from '../utils/logger.js';
+import { TableSession } from '../models/TableSession.js';
 
 /** Active tables, optionally filtered by ?ids=1,2,3 (table numbers). */
 async function findTables(req) {
@@ -71,12 +72,28 @@ export const updateTable = asyncWrap(async (req, res) => {
   res.json({ ok: true, data: { ...table.toObject(), url: tableUrl(table.qrToken) } });
 });
 
-/** DELETE /api/tables/:id */
+/** DELETE /api/tables/:id — deactivate a table (soft delete).
+ *  Refuses when the table has an open session. */
 export const deleteTable = asyncWrap(async (req, res) => {
-  const table = await Table.findByIdAndDelete(req.params.id);
+  const table = await Table.findById(req.params.id).lean();
   if (!table) throw new AppError('TABLE_NOT_FOUND', 'Table not found', 404);
-  await audit(req.staff, 'table.delete', 'Table', req.params.id, { number: table.number }, null);
-  res.json({ ok: true, data: null });
+
+  const openSession = await TableSession.findOne({ table: table._id, status: 'open' }).lean();
+  if (openSession) {
+    throw new AppError(
+      'TABLE_HAS_OPEN_SESSION',
+      `Cannot deactivate table ${table.number} — it has an open session. Close the session first.`,
+      409
+    );
+  }
+
+  const updated = await Table.findByIdAndUpdate(
+    req.params.id,
+    { $set: { isActive: false } },
+    { new: true }
+  );
+  await audit(req.staff, 'table.deactivate', 'Table', table._id, { number: table.number, isActive: true }, { number: table.number, isActive: false });
+  res.json({ ok: true, data: { ...updated.toObject(), url: tableUrl(updated.qrToken) } });
 });
 
 /** POST /api/tables/:id/regenerate-token — revoke all printed QRs for the table. */

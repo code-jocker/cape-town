@@ -28,7 +28,7 @@ export async function connectSocket({ mode = 'staff', tableToken = null, orderId
 
   const ioUrl = (() => {
     const meta = document.querySelector('meta[name="api-base"]')?.content;
-    return meta ? meta.replace(/\/$/, '') : '';
+    return (meta || window.__API_BASE_URL__ || '').replace(/\/$/, '');
   })();
 
   socket = window.io(ioUrl || undefined, {
@@ -94,7 +94,7 @@ export function is_connected() {
 function loadIoScript() {
   if (window.io) return Promise.resolve();
   const meta = document.querySelector('meta[name="api-base"]')?.content;
-  const base = (meta || '').replace(/\/$/, '');
+  const base = (meta || window.__API_BASE_URL__ || '').replace(/\/$/, '');
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = base + '/socket.io/socket.io.js';

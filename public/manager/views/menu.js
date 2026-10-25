@@ -223,10 +223,20 @@ function itemEditor(item) {
       if (!json.ok) throw new Error((json.error && json.error.message) || 'Upload failed');
       image = json.data;
       preview.src = imgUrl(image.thumbUrl);
+      imageUrlInput.value = image.url || '';
       toast('Image uploaded');
     } catch (err) {
       toast(err.message);
     }
+  });
+
+  // paste an image address directly
+  const imageUrlInput = el('input', { class: 'input', placeholder: 'Paste image URL…', value: image.url || '' });
+  imageUrlInput.addEventListener('change', () => {
+    const v = imageUrlInput.value.trim();
+    if (!v) return;
+    image = { url: v, thumbUrl: v };
+    preview.src = imgUrl(v);
   });
 
   // options editor
@@ -282,7 +292,7 @@ function itemEditor(item) {
     field('Available from', f.from),
     field('Available to', f.to),
     field('Tags (comma sep)', f.tags, { full: true }),
-    el('div', { class: 'full', style: 'display:flex;gap:16px;align-items:center' }, preview, file),
+    el('div', { class: 'full', style: 'display:flex;gap:16px;align-items:center' }, preview, file, el('div', { class: 'full', style: 'flex:1;min-width:0' }, el('label', { text: 'Image URL (paste)', style: 'font-size:0.8rem;display:block;margin-bottom:4px' }), imageUrlInput)),
     el('label', { class: 'form-field' }, el('span', { text: 'Is available' }), f.available),
     el('label', { class: 'form-field' }, el('span', { text: 'Track stock' }), f.trackStock),
     field('Stock qty', f.stockQty),

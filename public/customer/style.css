@@ -178,6 +178,10 @@ body {
   min-width: 0;
 }
 
+/* Positioned wrapper so category scroll buttons overlay the chips area only
+   and never collide with the search button at the end of the cat-bar. */
+.chips-wrap { position: relative; flex: 1; min-width: 0; }
+
 .chips::-webkit-scrollbar {
   display: none;
 }

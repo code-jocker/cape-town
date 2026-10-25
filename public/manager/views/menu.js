@@ -245,8 +245,43 @@ function itemEditor(item) {
 
   function openImageSearch() {
     const query = el('input', { class: 'input', placeholder: 'Search images (e.g. pizza, burger, sushi)…' });
-    const results = el('div', { class: 'full', style: 'display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;max-height:420px;overflow-y:auto;border:1px solid #ddd;padding:8px;background:#fff' });
+    const suggestions = el('div', { class: 'image-suggestions' });
+    const results = el('div', { class: 'image-results' });
     let busy = false;
+
+    function renderSuggestions(q) {
+      suggestions.textContent = '';
+      const term = (q || '').trim().toLowerCase();
+      if (!term) return;
+      const seen = new Set();
+      const add = (label, catLabel) => {
+        const key = label + '|' + (catLabel || '');
+        if (seen.has(key)) return;
+        seen.add(key);
+        const chip = el('button', {
+          class: 'image-suggest-chip',
+          text: label + (catLabel ? ` · ${catLabel}` : ''),
+          title: 'Search for ' + label
+        });
+        chip.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          query.value = label;
+          doSearch();
+        });
+        suggestions.append(chip);
+      };
+      for (const it of items) {
+        const name = (it.name && it.name.en) || '';
+        const tags = it.tags || [];
+        if (name.toLowerCase().includes(term)) add(name, null);
+        for (const t of tags) { if (t.toLowerCase().includes(term)) add(t, null); }
+      }
+      for (const c of categories) {
+        const cname = (c.name && c.name.en) || '';
+        if (cname.toLowerCase().includes(term)) add(cname, 'category');
+      }
+    }
+
     async function doSearch() {
       if (busy) return;
       busy = true;
@@ -260,9 +295,9 @@ function itemEditor(item) {
           return;
         }
         for (const h of data.hits) {
-          const wrap = el('div', { style: 'border:1px solid #ddd;border-radius:6px;overflow:hidden;cursor:pointer;background:#fff' });
-          const img = el('img', { src: h.webformatURL, style: 'width:100%;height:90px;object-fit:cover;display:block', alt: h.tags || '' });
-          const pick = el('button', { class: 'btn btn-primary btn-sm', style: 'width:100%;padding:4px;font-size:0.75rem', text: 'Use this image' });
+          const wrap = el('div', { class: 'image-result-card' });
+          const img = el('img', { src: h.webformatURL, style: 'width:100%;height:86px;object-fit:cover;display:block', alt: h.tags || '' });
+          const pick = el('button', { class: 'btn btn-primary btn-sm', text: 'Use this image' });
           pick.addEventListener('click', (ev) => {
             ev.stopPropagation();
             image = { url: h.webformatURL, thumbUrl: h.webformatURL };
@@ -276,22 +311,30 @@ function itemEditor(item) {
         }
       } catch (err) {
         results.textContent = '';
-        results.append(el('div', { class: 'muted', style: 'color:#c00' }, { text: err.message || 'Search failed' }));
+        results.append(el('div', { class: 'muted', style: 'color:var(--color-danger)' }, { text: err.message || 'Search failed' }));
       } finally {
         busy = false;
       }
     }
+
     query.addEventListener('input', () => {
+      renderSuggestions(query.value);
       clearTimeout(window.__pixabayDebounce);
       window.__pixabayDebounce = setTimeout(doSearch, 300);
     });
     openModal({
-      title: 'Search Pixabay images',
-      body: el('div', { class: 'form-grid' }, field('Search', query), results),
+      title: 'Search images',
+      body: el('div', { class: 'form-grid', style: 'grid-template-columns:1fr;gap:12px' },
+        field('Search', query),
+        suggestions,
+        el('label', { style: 'font-size:0.78rem;font-weight:700;color:var(--color-text-muted)' }, 'Results'),
+        results
+      ),
       footer: [
         el('button', { class: 'btn btn-ghost', onclick: closeModal, text: 'Cancel' })
       ]
     });
+    renderSuggestions('');
     doSearch();
   }
 
@@ -334,26 +377,43 @@ function itemEditor(item) {
 
   const body = el(
     'div',
-    { class: 'form-grid' },
-    field('Name (EN)', f.en),
-    field('Name (FR)', f.fr),
-    field('Name (RW)', f.rw),
-    field('Description (EN)', f.descEn, { full: true }),
-    field('Description (FR)', f.descFr),
-    field('Description (RW)', f.descRw),
-    field('Price', f.price),
-    field('Category', f.category),
-    field('Station', f.station),
-    field('Prep minutes', f.prep),
-    field('Available from', f.from),
-    field('Available to', f.to),
-    field('Tags (comma sep)', f.tags, { full: true }),
-    el('div', { class: 'full', style: 'display:flex;gap:16px;align-items:center' }, preview, file, searchBtn, el('div', { class: 'full', style: 'flex:1;min-width:0' }, el('label', { text: 'Image URL (paste)', style: 'font-size:0.8rem;display:block;margin-bottom:4px' }), imageUrlInput)),
-    el('label', { class: 'form-field' }, el('span', { text: 'Is available' }), f.available),
-    el('label', { class: 'form-field' }, el('span', { text: 'Track stock' }), f.trackStock),
-    field('Stock qty', f.stockQty),
-    field('Low-stock threshold', f.lowStock),
-    optWrap
+    { class: 'item-editor' },
+    el('div', { class: 'editor-section' },
+      el('h4', { class: 'editor-section-title', text: 'Basic info' }),
+      field('Name (EN)', f.en),
+      field('Name (FR)', f.fr),
+      field('Name (RW)', f.rw),
+      field('Description (EN)', f.descEn, { full: true }),
+      field('Price', f.price),
+      field('Category', f.category),
+      field('Station', f.station)
+    ),
+    el('div', { class: 'editor-section editor-section--image' },
+      el('h4', { class: 'editor-section-title', text: 'Image' }),
+      el('div', { class: 'image-card' },
+        el('div', { class: 'image-preview-wrap' }, preview),
+        el('div', { class: 'image-controls' }, file, searchBtn),
+        el('div', { class: 'image-url-wrap', style: 'flex:1;min-width:0' }, el('label', { text: 'Image URL (paste)', style: 'font-size:0.78rem;font-weight:700;color:var(--color-text-muted)' }), imageUrlInput)
+      )
+    ),
+    el('div', { class: 'editor-section' },
+      el('h4', { class: 'editor-section-title', text: 'Availability & timing' }),
+      field('Prep minutes', f.prep),
+      field('Available from', f.from),
+      field('Available to', f.to),
+      el('label', { class: 'form-field' }, el('span', { text: 'Is available' }), f.available),
+      field('Tags (comma sep)', f.tags, { full: true })
+    ),
+    el('div', { class: 'editor-section editor-section--compact' },
+      el('h4', { class: 'editor-section-title', text: 'Stock (optional)' }),
+      el('label', { class: 'form-field' }, el('span', { text: 'Track stock' }), f.trackStock),
+      field('Stock qty', f.stockQty),
+      field('Low-stock threshold', f.lowStock)
+    ),
+    el('div', { class: 'editor-section' },
+      el('h4', { class: 'editor-section-title', text: 'Option groups' }),
+      optWrap
+    )
   );
 
   openModal({

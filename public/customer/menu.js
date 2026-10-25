@@ -147,7 +147,15 @@ function setupChips() {
   }
 
   // Horizontal scroll buttons for long category lists on mobile.
-  const wrap = chips.parentElement;
+  // Wrap chips in a positioned container so scroll buttons overlay the chips
+  // area only and never collide with the search button at the end of the bar.
+  const wrap = chips.parentElement; // cat-bar
+  let chipsWrap = $('#chips-wrap');
+  if (!chipsWrap) {
+    chipsWrap = el('div', { id: 'chips-wrap', class: 'chips-wrap' });
+    wrap.insertBefore(chipsWrap, chips);
+    chipsWrap.appendChild(chips);
+  }
   let scrollLeftBtn = $('#cat-scroll-left');
   let scrollRightBtn = $('#cat-scroll-right');
   if (!scrollLeftBtn) {
@@ -163,8 +171,8 @@ function setupChips() {
       text: '›',
       hidden: false
     });
-    wrap.insertBefore(scrollLeftBtn, chips);
-    wrap.appendChild(scrollRightBtn);
+    chipsWrap.appendChild(scrollLeftBtn);
+    chipsWrap.appendChild(scrollRightBtn);
   }
 
   function updateScrollButtons() {

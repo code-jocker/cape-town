@@ -15,6 +15,7 @@ export const config = {
   mongoUri: process.env.MONGODB_URI || '',
   jwtSecret: process.env.JWT_SECRET || 'dev-jwt-secret',
   jwtExpires: process.env.JWT_EXPIRES || '7d',
+  pixabayApiKey: process.env.PIXABAY_API_KEY || '',
   tableTokenSecret: process.env.TABLE_TOKEN_SECRET || 'dev-table-token-secret',
   corsOrigin: (process.env.CORS_ORIGIN || '*').split(',').map((s) => s.trim()),
   uploadDir: process.env.UPLOAD_DIR || 'public/uploads',

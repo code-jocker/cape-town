@@ -941,8 +941,24 @@
 .image-result-card { border: 1px solid var(--color-divider); border-radius: 8px; overflow: hidden; cursor: pointer; background: var(--color-surface); display: flex; flex-direction: column; transition: border-color 0.15s var(--ease), transform 0.1s var(--ease); }
 .image-result-card:hover { border-color: var(--color-primary); transform: translateY(-2px); }
 .image-result-card img { width: 100%; height: 86px; object-fit: cover; display: block; }
-.image-result-card button { width: 100%; padding: 5px; font-size: 0.75rem; border-top: 1px solid var(--color-divider); background: var(--color-surface); color: var(--color-text); cursor: pointer; }
-.image-result-card button:hover { background: var(--color-primary-soft); color: var(--color-primary); }
+.image-result-card.selected { border-color: var(--color-primary); background: var(--color-primary-soft); box-shadow: 0 0 0 3px rgba(199, 91, 42, 0.15); }
+.image-result-card.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 800;
+  font-size: 12px;
+  display: grid; place-items: center;
+  z-index: 5;
+}
+.image-result-card button { width: 100%; padding: 5px; font-size: 0.75rem; border-top: 1px solid var(--color-divider); background: var(--color-surface); color: var(--color-text-muted); cursor: not-allowed; opacity: 0.6; }
+.image-result-card.selected button { color: var(--color-primary); cursor: pointer; opacity: 1; font-weight: 700; }
+.image-result-card.selected button:hover { background: var(--color-primary); color: var(--color-on-primary); }
+.use-selected-btn { width: 100%; }
 
 @media (max-width: 560px) {
   .image-card { flex-direction: column; align-items: stretch; }

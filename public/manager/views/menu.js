@@ -295,17 +295,26 @@ function itemEditor(item) {
           return;
         }
         for (const h of data.hits) {
-          const wrap = el('div', { class: 'image-result-card' });
+          const wrap = el('div', { class: 'image-result-card', role: 'button', tabindex: '0', 'aria-label': 'Use image ' + (h.tags || '') });
           const img = el('img', { src: h.webformatURL, style: 'width:100%;height:86px;object-fit:cover;display:block', alt: h.tags || '' });
           const pick = el('button', { class: 'btn btn-primary btn-sm', text: 'Use this image' });
-          pick.addEventListener('click', (ev) => {
-            ev.stopPropagation();
+          const apply = () => {
             image = { url: h.webformatURL, thumbUrl: h.webformatURL };
             preview.src = imgUrl(h.webformatURL);
             imageUrlInput.value = h.webformatURL;
             closeModal();
             toast('Image selected');
+          };
+          pick.addEventListener('click', (ev) => { ev.stopPropagation(); apply(); });
+          // Clicking the photo/card selects it and activates its "Use this image" button.
+          wrap.addEventListener('click', (ev) => {
+            if (ev.target === pick) return;
+            // deselect others
+            for (const c of results.querySelectorAll('.image-result-card')) c.classList.remove('selected');
+            wrap.classList.add('selected');
+            apply();
           });
+          wrap.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); apply(); } });
           wrap.append(img, pick);
           results.append(wrap);
         }

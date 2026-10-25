@@ -211,7 +211,13 @@ function itemEditor(item) {
 
   // image
   let image = (item && item.image) ? { ...item.image } : { url: '', thumbUrl: '' };
-  const preview = image.thumbUrl ? el('img', { class: 'thumb', src: imgUrl(image.thumbUrl), style: 'width:80px;height:80px', alt: '' }) : el('div', { class: 'thumb', style: 'width:80px;height:80px' });
+  const previewWrap = el('div', { class: 'image-preview-wrap' });
+  const setPreview = (src) => {
+    previewWrap.replaceChildren();
+    previewWrap.append(el('img', { class: 'thumb', src: imgUrl(src), style: 'width:80px;height:80px', alt: '' }));
+  };
+  if (image.thumbUrl) setPreview(image.thumbUrl);
+  else previewWrap.append(el('div', { class: 'thumb', style: 'width:80px;height:80px' }));
   const file = el('input', { type: 'file', accept: 'image/*' });
   file.addEventListener('change', async () => {
     if (!file.files[0]) return;
@@ -222,7 +228,7 @@ function itemEditor(item) {
       const json = await res.json();
       if (!json.ok) throw new Error((json.error && json.error.message) || 'Upload failed');
       image = json.data;
-      preview.src = imgUrl(image.thumbUrl);
+      if (image.thumbUrl) setPreview(image.thumbUrl);
       imageUrlInput.value = image.url || '';
       toast('Image uploaded');
     } catch (err) {
@@ -236,7 +242,7 @@ function itemEditor(item) {
     const v = imageUrlInput.value.trim();
     if (!v) return;
     image = { url: v, thumbUrl: v };
-    preview.src = imgUrl(v);
+    setPreview(v);
   });
 
   // search Pixabay for a free image
@@ -300,7 +306,7 @@ function itemEditor(item) {
           const pick = el('button', { class: 'btn btn-primary btn-sm', text: 'Use this image' });
           const apply = () => {
             image = { url: h.webformatURL, thumbUrl: h.webformatURL };
-            preview.src = imgUrl(h.webformatURL);
+            setPreview(h.webformatURL);
             imageUrlInput.value = h.webformatURL;
             closeModal();
             toast('Image selected');
@@ -400,7 +406,7 @@ function itemEditor(item) {
     el('div', { class: 'editor-section editor-section--image' },
       el('h4', { class: 'editor-section-title', text: 'Image' }),
       el('div', { class: 'image-card' },
-        el('div', { class: 'image-preview-wrap' }, preview),
+        previewWrap,
         el('div', { class: 'image-controls' }, file, searchBtn),
         el('div', { class: 'image-url-wrap', style: 'flex:1;min-width:0' }, el('label', { text: 'Image URL (paste)', style: 'font-size:0.78rem;font-weight:700;color:var(--color-text-muted)' }), imageUrlInput)
       )

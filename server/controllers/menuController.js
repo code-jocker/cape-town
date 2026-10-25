@@ -5,6 +5,7 @@ import { AppError } from '../utils/AppError.js';
 import { asyncWrap } from '../utils/asyncWrap.js';
 import { invalidateMenuCache } from '../middleware/cache.js';
 import { setItemAvailability } from '../services/stockService.js';
+import { config } from '../config/env.js';
 
 /** GET /api/menu/items — staff view (includes unavailable + stock). */
 export const listItems = asyncWrap(async (req, res) => {
@@ -101,4 +102,40 @@ export const reorder = asyncWrap(async (req, res) => {
   touchMenu();
   await audit(req.staff, `${type}.reorder`, type === 'categories' ? 'Category' : 'MenuItem', null, null, ids);
   res.json({ ok: true, data: null });
+});
+
+/** GET /api/menu/images/search — proxy Pixabay image search (manager). */
+export const searchImages = asyncWrap(async (req, res) => {
+  if (!config.pixabayApiKey) {
+    throw new AppError('PIXABAY_NOT_CONFIGURED', 'Pixabay API key not configured on the server. Set PIXABAY_API_KEY.', 503);
+  }
+  const { q, page = 1, per_page = 20 } = req.query;
+  const url = new URL('https://pixabay.com/api/');
+  url.searchParams.set('key', config.pixabayApiKey);
+  if (q) url.searchParams.set('q', q);
+  url.searchParams.set('image_type', 'photo');
+  url.searchParams.set('safesearch', 'true');
+  url.searchParams.set('page', String(page));
+  url.searchParams.set('per_page', String(per_page));
+  const resp = await fetch(url.toString());
+  if (!resp.ok) {
+    throw new AppError('PIXABAY_ERROR', `Pixabay API returned ${resp.status}`, resp.status);
+  }
+  const data = await resp.json();
+  res.json({
+    ok: true,
+    data: {
+      total: data.total,
+      totalHits: data.totalHits,
+      hits: (data.hits || []).map((h) => ({
+        id: String(h.id),
+        pageURL: h.pageURL,
+        webformatURL: h.webformatURL,
+        webformatWidth: h.webformatWidth,
+        webformatHeight: h.webformatHeight,
+        largeImageURL: h.largeImageURL,
+        tags: h.tags
+      }))
+    }
+  });
 });

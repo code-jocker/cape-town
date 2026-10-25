@@ -46,7 +46,7 @@ export function createApp() {
           defaultSrc: ["'self'"],
           scriptSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", 'data:', 'blob:'],
+          imgSrc: ["'self'", 'data:', 'blob:', 'https://cdn.pixabay.com', 'https://pixabay.com'],
           connectSrc: ["'self'", 'ws:', 'wss:'],
           fontSrc: ["'self'"],
           objectSrc: ["'none'"],

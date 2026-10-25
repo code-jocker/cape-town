@@ -67,9 +67,18 @@ const reorderSchema = z.object({
   ids: z.array(z.string().min(1)).min(1).max(200)
 });
 
+const imageSearchSchema = z.object({
+  q: z.string().min(1).max(100).optional(),
+  page: z.coerce.number().int().min(1).max(100).optional().default(1),
+  per_page: z.coerce.number().int().min(3).max(200).optional().default(20)
+});
+
 // Staff-visible menu data
 router.get('/items', requireAuth, menu.listItems);
 router.get('/categories', requireAuth, menu.listCategories);
+
+// Image search proxy (manager)
+router.get('/images/search', requireAuth, requireRole('manager'), validate(imageSearchSchema, 'query'), menu.searchImages);
 
 // Manager CRUD
 router.post('/categories', requireAuth, requireRole('manager'), validate(categorySchema), menu.createCategory);

@@ -444,6 +444,19 @@ function itemEditor(item) {
         onclick: async () => {
           if (!f.en.value.trim()) return toast('Name (EN) is required');
           if (!f.category.value) return toast('Pick a category');
+
+          // If the image is a remote URL (e.g. Pixabay), download it to the server
+          // so it is stored locally instead of relying on an expiring external link.
+          let finalImage = { ...image };
+          if (finalImage.url && finalImage.url.startsWith('http') && !finalImage.url.startsWith('/uploads')) {
+            try {
+              const downloaded = await api('/api/upload/image/url', { method: 'POST', body: { url: finalImage.url } });
+              finalImage = { url: downloaded.url, thumbUrl: downloaded.thumbUrl };
+            } catch (err) {
+              return toast(err.message || 'Could not save image to server');
+            }
+          }
+
           const payload = {
             name: { en: f.en.value.trim(), fr: f.fr.value.trim(), rw: f.rw.value.trim() },
             description: { en: f.descEn.value.trim(), fr: f.descFr.value.trim(), rw: f.descRw.value.trim() },
@@ -458,7 +471,7 @@ function itemEditor(item) {
             stockQty: Number(f.stockQty.value) || 0,
             lowStockThreshold: Number(f.lowStock.value) || 0,
             tags: f.tags.value.split(',').map((t) => t.trim()).filter((t) => ['vegetarian', 'spicy', 'popular', 'new'].includes(t)),
-            image,
+            image: finalImage,
             options: options.filter((o) => o.name.trim()).map((o) => ({ name: o.name.trim(), required: !!o.required, multiple: !!o.multiple, choices: o.choices.filter((c) => c.label.trim()).map((c) => ({ label: c.label.trim(), extraPrice: Number(c.extraPrice) || 0 })) }))
           };
           try {

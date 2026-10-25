@@ -239,6 +239,62 @@ function itemEditor(item) {
     preview.src = imgUrl(v);
   });
 
+  // search Pixabay for a free image
+  const searchBtn = el('button', { class: 'btn btn-ghost btn-sm', text: 'Search Pixabay…' });
+  searchBtn.addEventListener('click', () => openImageSearch());
+
+  function openImageSearch() {
+    const query = el('input', { class: 'input', placeholder: 'Search images (e.g. pizza, burger, sushi)…' });
+    const results = el('div', { class: 'full', style: 'display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;max-height:420px;overflow-y:auto;border:1px solid #ddd;padding:8px;background:#fff' });
+    let busy = false;
+    async function doSearch() {
+      if (busy) return;
+      busy = true;
+      results.textContent = '';
+      results.append(el('div', { class: 'muted', text: 'Searching…' }));
+      try {
+        const data = await api(`/api/menu/images/search?q=${encodeURIComponent(query.value.trim())}`);
+        results.textContent = '';
+        if (!data.hits || !data.hits.length) {
+          results.append(el('div', { class: 'muted', text: 'No images found.' }));
+          return;
+        }
+        for (const h of data.hits) {
+          const wrap = el('div', { style: 'border:1px solid #ddd;border-radius:6px;overflow:hidden;cursor:pointer;background:#fff' });
+          const img = el('img', { src: h.webformatURL, style: 'width:100%;height:90px;object-fit:cover;display:block', alt: h.tags || '' });
+          const pick = el('button', { class: 'btn btn-primary btn-sm', style: 'width:100%;padding:4px;font-size:0.75rem', text: 'Use this image' });
+          pick.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            image = { url: h.webformatURL, thumbUrl: h.webformatURL };
+            preview.src = imgUrl(h.webformatURL);
+            imageUrlInput.value = h.webformatURL;
+            closeModal();
+            toast('Image selected');
+          });
+          wrap.append(img, pick);
+          results.append(wrap);
+        }
+      } catch (err) {
+        results.textContent = '';
+        results.append(el('div', { class: 'muted', style: 'color:#c00' }, { text: err.message || 'Search failed' }));
+      } finally {
+        busy = false;
+      }
+    }
+    query.addEventListener('input', () => {
+      clearTimeout(window.__pixabayDebounce);
+      window.__pixabayDebounce = setTimeout(doSearch, 300);
+    });
+    openModal({
+      title: 'Search Pixabay images',
+      body: el('div', { class: 'form-grid' }, field('Search', query), results),
+      footer: [
+        el('button', { class: 'btn btn-ghost', onclick: closeModal, text: 'Cancel' })
+      ]
+    });
+    doSearch();
+  }
+
   // options editor
   let options = ((item && item.options) || []).map((o) => ({ ...o, choices: o.choices.map((c) => ({ ...c })) }));
   const optWrap = el('div', { class: 'full' });
@@ -292,7 +348,7 @@ function itemEditor(item) {
     field('Available from', f.from),
     field('Available to', f.to),
     field('Tags (comma sep)', f.tags, { full: true }),
-    el('div', { class: 'full', style: 'display:flex;gap:16px;align-items:center' }, preview, file, el('div', { class: 'full', style: 'flex:1;min-width:0' }, el('label', { text: 'Image URL (paste)', style: 'font-size:0.8rem;display:block;margin-bottom:4px' }), imageUrlInput)),
+    el('div', { class: 'full', style: 'display:flex;gap:16px;align-items:center' }, preview, file, searchBtn, el('div', { class: 'full', style: 'flex:1;min-width:0' }, el('label', { text: 'Image URL (paste)', style: 'font-size:0.8rem;display:block;margin-bottom:4px' }), imageUrlInput)),
     el('label', { class: 'form-field' }, el('span', { text: 'Is available' }), f.available),
     el('label', { class: 'form-field' }, el('span', { text: 'Track stock' }), f.trackStock),
     field('Stock qty', f.stockQty),

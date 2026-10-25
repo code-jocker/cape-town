@@ -245,113 +245,114 @@ function itemEditor(item) {
     setPreview(v);
   });
 
-  // search Pixabay for a free image
+  // search Pixabay for a free image (inline panel — stays inside this modal so preview stays live)
   const searchBtn = el('button', { class: 'btn btn-ghost btn-sm', text: 'Search Pixabay…' });
-  searchBtn.addEventListener('click', () => openImageSearch());
+  const searchPanel = el('div', { class: 'image-search-panel', hidden: true });
+  const panelQuery = el('input', { class: 'input', placeholder: 'Search images (e.g. pizza, burger, sushi)…' });
+  const panelSuggestions = el('div', { class: 'image-suggestions' });
+  const panelResults = el('div', { class: 'image-results' });
+  const panelClose = el('button', { class: 'btn btn-ghost btn-sm', text: 'Back' });
+  searchPanel.append(
+    field('Search', panelQuery),
+    panelSuggestions,
+    el('label', { style: 'font-size:0.78rem;font-weight:700;color:var(--color-text-muted)' }, 'Results'),
+    panelResults,
+    panelClose
+  );
 
-  function openImageSearch() {
-    const query = el('input', { class: 'input', placeholder: 'Search images (e.g. pizza, burger, sushi)…' });
-    const suggestions = el('div', { class: 'image-suggestions' });
-    const results = el('div', { class: 'image-results' });
-    let busy = false;
+  let searchBusy = false;
 
-    function renderSuggestions(q) {
-      suggestions.textContent = '';
-      const term = (q || '').trim().toLowerCase();
-      if (!term) return;
-      const seen = new Set();
-      const add = (label, catLabel) => {
-        const key = label + '|' + (catLabel || '');
-        if (seen.has(key)) return;
-        seen.add(key);
-        const chip = el('button', {
-          class: 'image-suggest-chip',
-          text: label + (catLabel ? ` · ${catLabel}` : ''),
-          title: 'Search for ' + label
-        });
-        chip.addEventListener('click', (ev) => {
-          ev.stopPropagation();
-          query.value = label;
-          doSearch();
-        });
-        suggestions.append(chip);
-      };
-      for (const it of items) {
-        const name = (it.name && it.name.en) || '';
-        const tags = it.tags || [];
-        if (name.toLowerCase().includes(term)) add(name, null);
-        for (const t of tags) { if (t.toLowerCase().includes(term)) add(t, null); }
-      }
-      for (const c of categories) {
-        const cname = (c.name && c.name.en) || '';
-        if (cname.toLowerCase().includes(term)) add(cname, 'category');
-      }
+  function renderSearchSuggestions(q) {
+    panelSuggestions.textContent = '';
+    const term = (q || '').trim().toLowerCase();
+    if (!term) return;
+    const seen = new Set();
+    const add = (label, catLabel) => {
+      const key = label + '|' + (catLabel || '');
+      if (seen.has(key)) return;
+      seen.add(key);
+      const chip = el('button', {
+        class: 'image-suggest-chip',
+        text: label + (catLabel ? ` · ${catLabel}` : ''),
+        title: 'Search for ' + label
+      });
+      chip.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        panelQuery.value = label;
+        doSearch();
+      });
+      panelSuggestions.append(chip);
+    };
+    for (const it of items) {
+      const name = (it.name && it.name.en) || '';
+      const tags = it.tags || [];
+      if (name.toLowerCase().includes(term)) add(name, null);
+      for (const t of tags) { if (t.toLowerCase().includes(term)) add(t, null); }
     }
-
-    async function doSearch() {
-      if (busy) return;
-      busy = true;
-      results.textContent = '';
-      results.append(el('div', { class: 'muted', text: 'Searching…' }));
-      try {
-        const data = await api(`/api/menu/images/search?q=${encodeURIComponent(query.value.trim())}`);
-        results.textContent = '';
-        if (!data.hits || !data.hits.length) {
-          results.append(el('div', { class: 'muted', text: 'No images found.' }));
-          return;
-        }
-        for (const h of data.hits) {
-          const wrap = el('div', { class: 'image-result-card', role: 'button', tabindex: '0', 'aria-label': 'Use image ' + (h.tags || '') });
-          const img = el('img', { src: h.webformatURL, style: 'width:100%;height:86px;object-fit:cover;display:block', alt: h.tags || '' });
-          const pick = el('button', { class: 'btn btn-primary btn-sm', text: 'Use this image' });
-          const apply = () => {
-            image = { url: h.webformatURL, thumbUrl: h.webformatURL };
-            setPreview(h.webformatURL);
-            imageUrlInput.value = h.webformatURL;
-            closeModal();
-            toast('Image selected');
-          };
-          pick.addEventListener('click', (ev) => { ev.stopPropagation(); apply(); });
-          // Clicking the photo/card selects it and activates its "Use this image" button.
-          wrap.addEventListener('click', (ev) => {
-            if (ev.target === pick) return;
-            // deselect others
-            for (const c of results.querySelectorAll('.image-result-card')) c.classList.remove('selected');
-            wrap.classList.add('selected');
-            apply();
-          });
-          wrap.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); apply(); } });
-          wrap.append(img, pick);
-          results.append(wrap);
-        }
-      } catch (err) {
-        results.textContent = '';
-        results.append(el('div', { class: 'muted', style: 'color:var(--color-danger)' }, { text: err.message || 'Search failed' }));
-      } finally {
-        busy = false;
-      }
+    for (const c of categories) {
+      const cname = (c.name && c.name.en) || '';
+      if (cname.toLowerCase().includes(term)) add(cname, 'category');
     }
-
-    query.addEventListener('input', () => {
-      renderSuggestions(query.value);
-      clearTimeout(window.__pixabayDebounce);
-      window.__pixabayDebounce = setTimeout(doSearch, 300);
-    });
-    openModal({
-      title: 'Search images',
-      body: el('div', { class: 'form-grid', style: 'grid-template-columns:1fr;gap:12px' },
-        field('Search', query),
-        suggestions,
-        el('label', { style: 'font-size:0.78rem;font-weight:700;color:var(--color-text-muted)' }, 'Results'),
-        results
-      ),
-      footer: [
-        el('button', { class: 'btn btn-ghost', onclick: closeModal, text: 'Cancel' })
-      ]
-    });
-    renderSuggestions('');
-    doSearch();
   }
+
+  async function doSearch() {
+    if (searchBusy) return;
+    searchBusy = true;
+    panelResults.textContent = '';
+    panelResults.append(el('div', { class: 'muted', text: 'Searching…' }));
+    try {
+      const data = await api(`/api/menu/images/search?q=${encodeURIComponent(panelQuery.value.trim())}`);
+      panelResults.textContent = '';
+      if (!data.hits || !data.hits.length) {
+        panelResults.append(el('div', { class: 'muted', text: 'No images found.' }));
+        return;
+      }
+      for (const h of data.hits) {
+        const wrap = el('div', { class: 'image-result-card', role: 'button', tabindex: '0', 'aria-label': 'Use image ' + (h.tags || '') });
+        const img = el('img', { src: h.webformatURL, style: 'width:100%;height:86px;object-fit:cover;display:block', alt: h.tags || '' });
+        const pick = el('button', { class: 'btn btn-primary btn-sm', text: 'Use this image' });
+        const apply = () => {
+          image = { url: h.webformatURL, thumbUrl: h.webformatURL };
+          setPreview(h.webformatURL);
+          imageUrlInput.value = h.webformatURL;
+          searchPanel.hidden = true;
+          toast('Image selected');
+        };
+        pick.addEventListener('click', (ev) => { ev.stopPropagation(); apply(); });
+        wrap.addEventListener('click', (ev) => {
+          if (ev.target === pick) return;
+          for (const c of panelResults.querySelectorAll('.image-result-card')) c.classList.remove('selected');
+          wrap.classList.add('selected');
+          apply();
+        });
+        wrap.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); apply(); } });
+        wrap.append(img, pick);
+        panelResults.append(wrap);
+      }
+    } catch (err) {
+      panelResults.textContent = '';
+      panelResults.append(el('div', { class: 'muted', style: 'color:var(--color-danger)' }, { text: err.message || 'Search failed' }));
+    } finally {
+      searchBusy = false;
+    }
+  }
+
+  panelQuery.addEventListener('input', () => {
+    renderSearchSuggestions(panelQuery.value);
+    clearTimeout(window.__pixabayDebounce);
+    window.__pixabayDebounce = setTimeout(doSearch, 300);
+  });
+  panelClose.addEventListener('click', () => { searchPanel.hidden = true; });
+
+  searchBtn.addEventListener('click', () => {
+    const showing = !searchPanel.hidden;
+    searchPanel.hidden = showing;
+    if (!showing) {
+      renderSearchSuggestions('');
+      doSearch();
+      panelQuery.focus();
+    }
+  });
 
   // options editor
   let options = ((item && item.options) || []).map((o) => ({ ...o, choices: o.choices.map((c) => ({ ...c })) }));
@@ -408,7 +409,8 @@ function itemEditor(item) {
       el('div', { class: 'image-card' },
         previewWrap,
         el('div', { class: 'image-controls' }, file, searchBtn),
-        el('div', { class: 'image-url-wrap', style: 'flex:1;min-width:0' }, el('label', { text: 'Image URL (paste)', style: 'font-size:0.78rem;font-weight:700;color:var(--color-text-muted)' }), imageUrlInput)
+        el('div', { class: 'image-url-wrap', style: 'flex:1;min-width:0' }, el('label', { text: 'Image URL (paste)', style: 'font-size:0.78rem;font-weight:700;color:var(--color-text-muted)' }), imageUrlInput),
+        searchPanel
       )
     ),
     el('div', { class: 'editor-section' },

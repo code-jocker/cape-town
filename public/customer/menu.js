@@ -46,7 +46,12 @@ async function boot() {
   }
 
   showApp();
+
+  // Start socket connection early so socket.io.js downloads in parallel with the menu API.
+  setupSocket();
+
   await loadMenu();
+
   initTracker({
     tableId: state.tableId,
     sessionId: state.sessionId,
@@ -58,7 +63,6 @@ async function boot() {
   setupSearch();
   setupFab();
   setupNav();
-  setupSocket();
   restoreOfflineOrder();
   refreshCartBar();
   registerSW();
@@ -87,7 +91,9 @@ function fatal(message) {
 }
 
 async function loadMenu() {
-  const data = await apiRetryable(`/api/public/menu?lang=${getLang()}`);
+  // Single attempt with a shorter timeout so a slow menu fetch fails fast
+  // instead of adding retry delays before the UI shows anything.
+  const data = await api(`/api/public/menu?lang=${getLang()}`, { timeout: 8000 });
   state.items = data.items;
   state.categories = data.categories;
   state.announcement = data.announcement || '';
@@ -295,8 +301,8 @@ function itemRow(item) {
   const row = el('div', { class: `item-row${soldOut ? ' soldout' : ''}`, 'data-item': item._id });
 
   const img = el('img', {
-   class: 'item-photo', src: imgUrl((item.image && item.image.thumbUrl) || (item.image && item.image.url)) || '/icons/logo.svg',
-    alt: '', width: '64', height: '80', decoding: 'async'
+    class: 'item-photo', src: imgUrl((item.image && item.image.thumbUrl) || (item.image && item.image.url)) || '/icons/logo.svg',
+    alt: '', width: '64', height: '80', decoding: 'async', loading: 'lazy'
   });
 
   const tags = el('div', { class: 'item-tags' });
